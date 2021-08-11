@@ -4,12 +4,12 @@ import { environment } from '@env/environment';
 import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class FileService {
   constructor(private http: _HttpClient) {}
 
   removeFile(fileName: string): Observable<boolean> {
-    return this.http.request<boolean>('delete', environment.serverFileServiceURL + '/delete', { body: fileName, observe: 'body' });
+    return this.http.request<boolean>('delete', `${environment.serverFileServiceURL}/delete`, { body: fileName, observe: 'body' });
   }
 }

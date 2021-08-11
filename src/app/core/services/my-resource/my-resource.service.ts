@@ -6,13 +6,13 @@ import { Permission } from 'src/app/domains/iresource-range-permission-wrapper';
 import { IMyResource } from 'src/app/domains/my-resource/imy-resource';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class MyResourceService {
   constructor(private http: _HttpClient) {}
 
   findOne(id: number): Observable<IMyResource> {
-    return this.http.get<IMyResource>(environment.serverMyResourceServiceURL + '/' + id);
+    return this.http.get<IMyResource>(`${environment.serverMyResourceServiceURL}/${id}`);
   }
 
   save(myResource: IMyResource): Observable<IMyResource> {
@@ -20,14 +20,14 @@ export class MyResourceService {
   }
 
   delete(ids: number[]): Observable<void> {
-    return this.http.delete<void>(environment.serverMyResourceServiceURL + '/' + ids);
+    return this.http.delete<void>(`${environment.serverMyResourceServiceURL}/${ids}`);
   }
 
   finish(id: number): Observable<void> {
-    return this.http.put<void>(environment.serverMyResourceServiceURL + '/finish/' + id);
+    return this.http.put<void>(`${environment.serverMyResourceServiceURL}/finish/${id}`);
   }
 
-  getPermissions(roleId: string): Observable<{ mask: Permission }[]> {
+  getPermissions(roleId: string): Observable<Array<{ mask: Permission }>> {
     return this.http.get(environment.serverPermissionServiceURL, { resourceTypeClassName: environment.MyResourceTypeClassName, roleId });
   }
 }

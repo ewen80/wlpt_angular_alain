@@ -12,7 +12,7 @@ import { IResourceCheckIn } from 'src/app/domains/resource/iresource-checkin';
 @Component({
   selector: 'app-my-resource-list',
   templateUrl: './my-resource-list.component.html',
-  styles: [],
+  styles: []
 })
 export class MyResourceListComponent implements OnInit {
   constructor(private myResourceService: MyResourceService, private settingService: SettingsService, private acl: ACLService) {}
@@ -28,10 +28,10 @@ export class MyResourceListComponent implements OnInit {
 
   qxs: Array<{ key: string; value: string }> = [];
 
-  tabs: {
+  tabs: Array<{
     title: string;
     id: number | undefined;
-  }[] = [];
+  }> = [];
 
   columns: STColumn[] = [
     { title: '', index: 'id', type: 'checkbox' },
@@ -43,22 +43,22 @@ export class MyResourceListComponent implements OnInit {
       sort: true,
       click: (record: STData, instance?: STComponent) => {
         this.showDetail(record.id);
-      },
+      }
     },
     { title: '场地名称', index: 'changdiName', width: 150, sort: true },
     { title: '场地地址', index: 'changdiAddress', sort: true },
     { title: '是否办结', index: 'finish' },
-    { title: '所属区', index: 'qxName', sort: 'qxId' },
+    { title: '所属区', index: 'qxName', sort: 'qxId' }
   ];
 
   stRes = {
     process: (data: STData[], rawData?: any) => {
-      return data.map((d) => {
+      return data.map(d => {
         d.qxName = Region.codes.get(d.qxId);
         d.finish = d.resourceCheckIn?.finish ? '是' : '否';
         return d;
       });
-    },
+    }
   };
 
   selectedIds: number[] = []; // 选中id数组
@@ -76,13 +76,13 @@ export class MyResourceListComponent implements OnInit {
   // 初始化新建按钮
   initNewButton() {
     this.myResourceService.getPermissions(this.settingService.user.roleId).subscribe({
-      next: (permissions: { mask: Permission }[]) => {
-        if (permissions.some((item) => item.mask === Permission.WRITE)) {
+      next: (permissions: Array<{ mask: Permission }>) => {
+        if (permissions.some(item => item.mask === Permission.WRITE)) {
           this.acl.attachAbility(['NEW']);
         } else {
           this.acl.removeAbility(['NEW']);
         }
-      },
+      }
     });
   }
 
@@ -90,7 +90,7 @@ export class MyResourceListComponent implements OnInit {
   showDetail(id: number | undefined): void {
     this.tabs.push({
       title: id === undefined ? '新建记录' : '查看信息',
-      id,
+      id
     });
     this.selectedTabIndex = this.tabs.length;
   }
@@ -100,7 +100,7 @@ export class MyResourceListComponent implements OnInit {
     this.myResourceService.delete(this.selectedIds).subscribe({
       next: () => {
         this.st.reload();
-      },
+      }
     });
   }
 
@@ -112,7 +112,7 @@ export class MyResourceListComponent implements OnInit {
     if (e.type === 'checkbox') {
       this.selectedIds = [];
       if (e.checkbox !== undefined && e.checkbox.length > 0) {
-        e.checkbox.forEach((v) => {
+        e.checkbox.forEach(v => {
           this.selectedIds.push(v.id);
         });
       }
@@ -130,15 +130,15 @@ export class MyResourceListComponent implements OnInit {
     let filterStr = '';
 
     if (this.searchChangdiName) {
-      filterStr += 'changdiName:*' + this.searchChangdiName + '*,';
+      filterStr += `changdiName:*${this.searchChangdiName}*,`;
     }
     if (this.searchChangdiAddress) {
-      filterStr += 'changdiAddress:*' + this.searchChangdiAddress + '*,';
+      filterStr += `changdiAddress:*${this.searchChangdiAddress}*,`;
     }
     if (this.searchQxIds.length > 0) {
       filterStr += 'qxId()';
-      this.searchQxIds.forEach((value) => {
-        filterStr += value + '_';
+      this.searchQxIds.forEach(value => {
+        filterStr += `${value}_`;
       });
       filterStr += ',';
     }

@@ -10,7 +10,7 @@ import { Region } from 'src/app/domains/region';
 @Component({
   selector: 'app-weixing-list',
   templateUrl: './weixing-list.component.html',
-  styles: [],
+  styles: []
 })
 export class WeixingListComponent implements OnInit {
   constructor(private weixingResourceService: WeixingResourceService, private settingService: SettingsService, private acl: ACLService) {}
@@ -26,10 +26,10 @@ export class WeixingListComponent implements OnInit {
 
   qxs: Array<{ key: string; value: string }> = [];
 
-  tabs: {
+  tabs: Array<{
     title: string;
     id: number | undefined;
-  }[] = [];
+  }> = [];
 
   columns: STColumn[] = [
     { title: '', index: 'id', type: 'checkbox' },
@@ -41,18 +41,18 @@ export class WeixingListComponent implements OnInit {
       sort: true,
       click: (record: STData, instance?: STComponent) => {
         this.showDetail(record.id);
-      },
+      }
     },
     { title: '申请单位', index: 'sqdw', width: 150 },
     { title: '申请类型', index: 'sqlxName', sort: true },
     { title: '所属区', index: 'qxName', sort: 'qxId' },
     { title: '安装地址', index: 'azdz' },
-    { title: '核查日期', index: 'hcrq', sort: true },
+    { title: '核查日期', index: 'hcrq', sort: true }
   ];
 
   stRes = {
     process: (data: STData[], rawData?: any) => {
-      return data.map((d) => {
+      return data.map(d => {
         d.qxName = Region.codes.get(d.qxId);
         switch (d.sqlx) {
           case 'xb':
@@ -64,7 +64,7 @@ export class WeixingListComponent implements OnInit {
         }
         return d;
       });
-    },
+    }
   };
 
   selectedIds: number[] = []; // 选中id数组
@@ -82,13 +82,13 @@ export class WeixingListComponent implements OnInit {
   // 初始化新建按钮
   initNewButton() {
     this.weixingResourceService.getPermissions(this.settingService.user.roleId).subscribe({
-      next: (permissions: { mask: Permission }[]) => {
-        if (permissions.some((item) => item.mask === Permission.WRITE)) {
+      next: (permissions: Array<{ mask: Permission }>) => {
+        if (permissions.some(item => item.mask === Permission.WRITE)) {
           this.acl.attachAbility(['NEW']);
         } else {
           this.acl.removeAbility(['NEW']);
         }
-      },
+      }
     });
   }
 
@@ -96,7 +96,7 @@ export class WeixingListComponent implements OnInit {
   showDetail(id: number | undefined): void {
     this.tabs.push({
       title: id === undefined ? '新建记录' : '查看信息',
-      id,
+      id
     });
     this.selectedTabIndex = this.tabs.length;
   }
@@ -106,7 +106,7 @@ export class WeixingListComponent implements OnInit {
     this.weixingResourceService.delete(this.selectedIds).subscribe({
       next: () => {
         this.st.reload();
-      },
+      }
     });
   }
 
@@ -118,7 +118,7 @@ export class WeixingListComponent implements OnInit {
     if (e.type === 'checkbox') {
       this.selectedIds = [];
       if (e.checkbox !== undefined && e.checkbox.length > 0) {
-        e.checkbox.forEach((v) => {
+        e.checkbox.forEach(v => {
           this.selectedIds.push(v.id);
         });
       }
@@ -136,12 +136,12 @@ export class WeixingListComponent implements OnInit {
     let filterStr = '';
 
     if (this.searchSqdw) {
-      filterStr += 'sqdw:*' + this.searchSqdw + '*,';
+      filterStr += `sqdw:*${this.searchSqdw}*,`;
     }
     if (this.searchQxIds.length > 0) {
       filterStr += 'qxId()';
-      this.searchQxIds.forEach((value) => {
-        filterStr += value + '_';
+      this.searchQxIds.forEach(value => {
+        filterStr += `${value}_`;
       });
       filterStr += ',';
     }

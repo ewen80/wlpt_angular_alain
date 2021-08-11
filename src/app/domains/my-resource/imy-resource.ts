@@ -12,7 +12,7 @@ export interface IMyResource {
   sign?: ISignature;
   // finished?: boolean;
   roomIds?: IMyResourceRoom[];
-  permissions?: { mask: Permission }[];
+  permissions?: Array<{ mask: Permission }>;
   resourceCheckIn?: IResourceCheckIn;
   attachments?: IAttachment[];
 }

@@ -1,26 +1,27 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { STColumn, STData, STComponent, STChange } from '@delon/abc/st';
-import { Region } from 'src/app/domains/region';
-import { NzModalService, ModalButtonOptions } from 'ng-zorro-antd/modal';
-import { MyResourceRoomDetailComponent } from '../my-resource-room-detail/my-resource-room-detail.component';
-import { IMyResource } from 'src/app/domains/my-resource/imy-resource';
-import { MyResourceService } from 'src/app/core/services/my-resource/my-resource.service';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { MyResourceRoomService } from 'src/app/core/services/my-resource/my-resource-room.service';
-import { Observable } from 'rxjs';
-import { environment } from '@env/environment';
-import { Permission } from 'src/app/domains/iresource-range-permission-wrapper';
 import { ACLService } from '@delon/acl';
-import { IResourceCheckIn } from 'src/app/domains/resource/iresource-checkin';
+import { environment } from '@env/environment';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzModalService, ModalButtonOptions } from 'ng-zorro-antd/modal';
 import { NzUploadChangeParam, NzUploadFile } from 'ng-zorro-antd/upload';
+import { Observable } from 'rxjs';
 import { FileService } from 'src/app/core/services/file.service';
+import { MyResourceRoomService } from 'src/app/core/services/my-resource/my-resource-room.service';
+import { MyResourceService } from 'src/app/core/services/my-resource/my-resource.service';
 import { IAttachment } from 'src/app/domains/iattachment';
+import { Permission } from 'src/app/domains/iresource-range-permission-wrapper';
+import { IMyResource } from 'src/app/domains/my-resource/imy-resource';
+import { Region } from 'src/app/domains/region';
+import { IResourceCheckIn } from 'src/app/domains/resource/iresource-checkin';
+
+import { MyResourceRoomDetailComponent } from '../my-resource-room-detail/my-resource-room-detail.component';
 
 @Component({
   selector: 'app-my-resource-detail',
   templateUrl: './my-resource-detail.component.html',
-  styles: [],
+  styles: []
 })
 export class MyResourceDetailComponent implements OnInit {
   constructor(
@@ -31,7 +32,7 @@ export class MyResourceDetailComponent implements OnInit {
     private myResourceService: MyResourceService,
     private myResourceRoomService: MyResourceRoomService,
     private message: NzMessageService,
-    private fileService: FileService,
+    private fileService: FileService
   ) {}
 
   myResource?: IMyResource;
@@ -58,16 +59,16 @@ export class MyResourceDetailComponent implements OnInit {
       sort: true,
       click: (record: STData, instance?: STComponent) => {
         this.showRoom(record.id);
-      },
+      }
     },
     { title: '描述', index: 'description', width: 150 },
-    { title: '附件', render: 'attachments', width: 150 },
+    { title: '附件', render: 'attachments', width: 150 }
   ];
 
   // 文件上传相关
   fileDownloadRootUrl = environment.serverFileDownloadRootUrl;
   attachments: NzUploadFile[] = [];
-  fileUploadServiceURL = environment.serverUrl + environment.serverFileServiceURL + '/upload'; // 文件上传地址
+  fileUploadServiceURL = `${environment.serverUrl + environment.serverFileServiceURL}/upload`; // 文件上传地址
 
   removeFile = (file: NzUploadFile) => {
     return this.fileService.removeFile(file.response.name);
@@ -77,7 +78,7 @@ export class MyResourceDetailComponent implements OnInit {
     this.resourceForm = this.fb.group({
       changdiName: ['', [Validators.required]],
       changdiAddress: ['', [Validators.required]],
-      qxId: ['', [Validators.required]],
+      qxId: ['', [Validators.required]]
     });
 
     Region.codes.forEach((value: string, key: string) => {
@@ -88,7 +89,7 @@ export class MyResourceDetailComponent implements OnInit {
     this.roomDetailClosed.subscribe({
       next: () => {
         this.getRooms();
-      },
+      }
     });
 
     if (this.resourceId) {
@@ -103,7 +104,7 @@ export class MyResourceDetailComponent implements OnInit {
   // 初始化保存按钮
   initSaveButton(): void {
     // 修改资源
-    if (this.myResource?.permissions?.some((item) => item.mask === Permission.WRITE)) {
+    if (this.myResource?.permissions?.some(item => item.mask === Permission.WRITE)) {
       this.acl.attachAbility(['WRITE']);
     } else {
       this.acl.removeAbility(['WRITE']);
@@ -112,7 +113,7 @@ export class MyResourceDetailComponent implements OnInit {
 
   // 初始化办结按钮
   initFinishButton(): void {
-    if (!this.myResource?.resourceCheckIn?.finished && this.myResource?.permissions?.some((item) => item.mask === Permission.FINISH)) {
+    if (!this.myResource?.resourceCheckIn?.finished && this.myResource?.permissions?.some(item => item.mask === Permission.FINISH)) {
       this.acl.attachAbility(['FINISH']);
     } else {
       this.acl.removeAbility(['FINISH']);
@@ -123,7 +124,7 @@ export class MyResourceDetailComponent implements OnInit {
   initDetail(): void {
     if (this.resourceId) {
       this.myResourceService.findOne(this.resourceId).subscribe({
-        next: (data) => {
+        next: data => {
           this.myResource = data;
           if (this.myResource?.sign) {
             this.signBase64 = `data:image/${this.myResource.sign.imageExtention};base64,${this.myResource.sign.signBase64}`;
@@ -136,7 +137,7 @@ export class MyResourceDetailComponent implements OnInit {
           this.initSaveButton();
           this.initFinishButton();
           this.initAttachments();
-        },
+        }
       });
     }
   }
@@ -144,17 +145,17 @@ export class MyResourceDetailComponent implements OnInit {
   // 初始化附件
   initAttachments(): void {
     this.attachments = [];
-    this.myResource?.attachments?.forEach((attachment) => {
+    this.myResource?.attachments?.forEach(attachment => {
       this.attachments.push({
         uid: attachment.id!,
         name: attachment.name,
         status: 'done',
-        url: environment.serverFileDownloadRootUrl + '\\' + attachment.path,
+        url: `${environment.serverFileDownloadRootUrl}\\${attachment.path}`,
         response: {
           name: attachment.path,
           date: attachment.date,
-          status: 'done',
-        },
+          status: 'done'
+        }
       });
     });
   }
@@ -163,11 +164,11 @@ export class MyResourceDetailComponent implements OnInit {
     if (this.resourceForm.valid) {
       // 转换附件类型
       const attachs: IAttachment[] = [];
-      this.attachments.forEach((attachment) => {
+      this.attachments.forEach(attachment => {
         attachs.push({
           name: attachment.name,
           path: attachment.response.name,
-          date: attachment.response.date,
+          date: attachment.response.date
         });
       });
       if (this.resourceId) {
@@ -182,16 +183,16 @@ export class MyResourceDetailComponent implements OnInit {
           changdiName: this.resourceForm.controls.changdiName.value,
           changdiAddress: this.resourceForm.controls.changdiAddress.value,
           qxId: this.resourceForm.controls.qxId.value,
-          attachments: attachs,
+          attachments: attachs
         };
       }
       this.myResourceService.save(this.myResource!).subscribe({
-        next: (result) => {
+        next: result => {
           this.resourceId = result.id;
           this.myResource = result;
           this.dataChanged.emit();
           this.message.success('保存成功');
-        },
+        }
       });
     }
   }
@@ -202,7 +203,7 @@ export class MyResourceDetailComponent implements OnInit {
       nzContent: MyResourceRoomDetailComponent,
       nzComponentParams: {
         myResourceId: this.resourceId,
-        roomId,
+        roomId
       },
       nzAfterClose: this.roomDetailClosed,
       nzFooter: [
@@ -211,7 +212,7 @@ export class MyResourceDetailComponent implements OnInit {
           onClick: () => {
             // this.getRooms();
             roomModal.destroy();
-          },
+          }
         },
         {
           label: '确定',
@@ -222,18 +223,18 @@ export class MyResourceDetailComponent implements OnInit {
               component.save();
               roomModal.destroy();
             }
-          },
-        },
-      ],
+          }
+        }
+      ]
     });
   }
 
   getRooms(): void {
     if (this.resourceId) {
       this.myResourceRoomService.findByMyResourceId(this.resourceId).subscribe({
-        next: (rooms) => {
+        next: rooms => {
           return (this.myResourceRomms = rooms);
-        },
+        }
       });
     }
   }
@@ -242,7 +243,7 @@ export class MyResourceDetailComponent implements OnInit {
     if (e.type === 'checkbox') {
       this.selectedRoomIds = [];
       if (e.checkbox !== undefined && e.checkbox.length > 0) {
-        e.checkbox.forEach((v) => {
+        e.checkbox.forEach(v => {
           this.selectedRoomIds.push(v.id);
         });
       }
@@ -253,7 +254,7 @@ export class MyResourceDetailComponent implements OnInit {
     this.myResourceRoomService.delete(this.selectedRoomIds).subscribe({
       next: () => {
         this.getRooms();
-      },
+      }
     });
   }
 
@@ -262,22 +263,22 @@ export class MyResourceDetailComponent implements OnInit {
     this.myResourceService.finish(this.resourceId!).subscribe({
       next: () => {
         this.message.success('办结成功');
-      },
+      }
     });
   }
 
   // 处理上传列表
   handleChange(info: NzUploadChangeParam): void {
     const fileList: NzUploadFile[] = [];
-    info.fileList.forEach((file) => {
+    info.fileList.forEach(file => {
       if (file.status === 'done') {
         fileList.push(file);
       }
     });
 
     if (info.file.status === 'done') {
-      fileList.map((file) => {
-        file.url = environment.serverFileDownloadRootUrl + '\\' + file.response.name;
+      fileList.map(file => {
+        file.url = `${environment.serverFileDownloadRootUrl}\\${file.response.name}`;
       });
       this.attachments = fileList;
       if (this.myResource?.id) {

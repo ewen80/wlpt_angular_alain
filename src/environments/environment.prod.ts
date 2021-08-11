@@ -34,5 +34,5 @@ export const environment = {
   defaultAvatar: '../assets/tmp/img/avatar.jpg',
 
   production: true,
-  useHash: false,
+  useHash: false
 };

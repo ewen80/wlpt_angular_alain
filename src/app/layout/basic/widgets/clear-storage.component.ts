@@ -10,9 +10,9 @@ import { NzModalService } from 'ng-zorro-antd/modal';
   `,
   // eslint-disable-next-line @angular-eslint/no-host-metadata-property
   host: {
-    '[class.d-block]': 'true',
+    '[class.d-block]': 'true'
   },
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HeaderClearStorageComponent {
   constructor(private modalSrv: NzModalService, private messageSrv: NzMessageService) {}
@@ -24,7 +24,7 @@ export class HeaderClearStorageComponent {
       nzOnOk: () => {
         localStorage.clear();
         this.messageSrv.success('Clear Finished!');
-      },
+      }
     });
   }
 }

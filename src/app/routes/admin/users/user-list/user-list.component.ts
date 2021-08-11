@@ -2,13 +2,14 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { STChange, STColumn, STComponent, STData } from '@delon/abc/st';
 import { environment } from '@env/environment';
 import { UserService } from 'src/app/core/services/user.service';
-import { ChangePasswordComponent } from '../change-password/change-password.component';
 import { Region } from 'src/app/domains/region';
+
+import { ChangePasswordComponent } from '../change-password/change-password.component';
 
 @Component({
   selector: 'app-userlist',
   templateUrl: './user-list.component.html',
-  styles: [],
+  styles: []
 })
 export class UserlistComponent implements OnInit {
   constructor(private userService: UserService) {}
@@ -22,10 +23,10 @@ export class UserlistComponent implements OnInit {
 
   selectedTabIndex = 0;
 
-  tabs: {
+  tabs: Array<{
     title: string;
     userId: string | undefined;
-  }[] = [];
+  }> = [];
 
   removeButtonDisabled = true;
   selectedUserIds: string[] = []; // 选中用户id数组
@@ -43,7 +44,7 @@ export class UserlistComponent implements OnInit {
       sort: true,
       click: (record: STData, instance?: STComponent) => {
         this.add(record.id);
-      },
+      }
     },
     { title: '用户名', index: 'name', width: 150, sort: true },
     { title: '所属角色id', index: 'roleId', sort: true },
@@ -59,11 +60,11 @@ export class UserlistComponent implements OnInit {
             size: 'md',
             params: (record: any) => {
               return { userId: record.id };
-            },
-          },
-        },
-      ],
-    },
+            }
+          }
+        }
+      ]
+    }
   ];
   selectedRows: STData[] = [];
 
@@ -83,18 +84,18 @@ export class UserlistComponent implements OnInit {
   search(): void {
     let filterStr = '';
     if (this.searchUserId) {
-      filterStr += 'id:*' + this.searchUserId + '*,';
+      filterStr += `id:*${this.searchUserId}*,`;
     }
     if (this.searchUserName) {
-      filterStr += 'name:*' + this.searchUserName + '*,';
+      filterStr += `name:*${this.searchUserName}*,`;
     }
     if (this.searchRoleId) {
-      filterStr += 'role.id:*' + this.searchRoleId + '*,';
+      filterStr += `role.id:*${this.searchRoleId}*,`;
     }
     if (this.searchQxIds.length > 0) {
       filterStr += 'qxId()';
-      this.searchQxIds.forEach((value) => {
-        filterStr += value + '_';
+      this.searchQxIds.forEach(value => {
+        filterStr += `${value}_`;
       });
       filterStr += ',';
     }
@@ -107,7 +108,7 @@ export class UserlistComponent implements OnInit {
   add(userId: string | undefined): void {
     this.tabs.push({
       title: userId === undefined ? '新建用户' : '用户信息',
-      userId,
+      userId
     });
     this.selectedTabIndex = this.tabs.length;
   }
@@ -117,7 +118,7 @@ export class UserlistComponent implements OnInit {
     this.userService.delete(this.selectedUserIds).subscribe({
       next: () => {
         this.st.reload();
-      },
+      }
     });
   }
 
@@ -125,7 +126,7 @@ export class UserlistComponent implements OnInit {
     if (e.type === 'checkbox') {
       this.selectedUserIds = [];
       if (e.checkbox !== undefined && e.checkbox.length > 0) {
-        e.checkbox.forEach((v) => {
+        e.checkbox.forEach(v => {
           this.selectedUserIds.push(v.id);
         });
       }
@@ -145,7 +146,7 @@ export class UserlistComponent implements OnInit {
 
   // 返回数据预处理，qxId -> qxName
   dataProcess(data: STData[]): STData[] {
-    return data.map((d) => {
+    return data.map(d => {
       d.qxName = Region.codes.get(d.qxId);
       return d;
     });

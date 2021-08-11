@@ -1,5 +1,6 @@
 import { NgModule, Type } from '@angular/core';
 import { SharedModule } from '@shared';
+
 // dashboard pages
 import { DashboardComponent } from './dashboard/dashboard.component';
 // single pages
@@ -15,7 +16,7 @@ import { MyResourceListComponent } from './resources/my-resource/my-resource-lis
 import { UploadComponent } from './resources/upload/upload.component';
 import { RouteRoutingModule } from './routes-routing.module';
 
-const COMPONENTS: Type<void>[] = [
+const COMPONENTS: Array<Type<void>> = [
   DashboardComponent,
   // passport pages
   UserLoginComponent,
@@ -23,11 +24,11 @@ const COMPONENTS: Type<void>[] = [
   UserRegisterResultComponent,
   // single pages
   CallbackComponent,
-  UserLockComponent,
+  UserLockComponent
 ];
 
 @NgModule({
   imports: [SharedModule, RouteRoutingModule],
-  declarations: COMPONENTS,
+  declarations: COMPONENTS
 })
 export class RoutesModule {}

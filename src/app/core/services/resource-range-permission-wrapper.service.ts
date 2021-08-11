@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { IResourceRangePermissionWrapper, Permission } from 'src/app/domains/iresource-range-permission-wrapper';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class ResourceRangePermissionWrapperService {
   constructor(private http: _HttpClient) {}
@@ -15,6 +15,6 @@ export class ResourceRangePermissionWrapperService {
   }
 
   delete(resourceRangeIds: string): Observable<void> {
-    return this.http.delete(environment.serverPermissionServiceURL + '/' + resourceRangeIds);
+    return this.http.delete(`${environment.serverPermissionServiceURL}/${resourceRangeIds}`);
   }
 }

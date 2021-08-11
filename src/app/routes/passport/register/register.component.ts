@@ -8,7 +8,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 @Component({
   selector: 'passport-register',
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.less'],
+  styleUrls: ['./register.component.less']
 })
 export class UserRegisterComponent implements OnDestroy {
   // #region fields
@@ -37,7 +37,7 @@ export class UserRegisterComponent implements OnDestroy {
   passwordProgressMap: { [key: string]: 'success' | 'normal' | 'exception' } = {
     ok: 'success',
     pass: 'normal',
-    pool: 'exception',
+    pool: 'exception'
   };
 
   // #endregion
@@ -54,7 +54,7 @@ export class UserRegisterComponent implements OnDestroy {
       confirm: [null, [Validators.required, Validators.minLength(6), UserRegisterComponent.passwordEquar]],
       mobilePrefix: ['+86'],
       mobile: [null, [Validators.required, Validators.pattern(/^1\d{10}$/)]],
-      captcha: [null, [Validators.required]],
+      captcha: [null, [Validators.required]]
     });
   }
 
@@ -106,7 +106,7 @@ export class UserRegisterComponent implements OnDestroy {
 
   submit(): void {
     this.error = '';
-    Object.keys(this.form.controls).forEach((key) => {
+    Object.keys(this.form.controls).forEach(key => {
       this.form.controls[key].markAsDirty();
       this.form.controls[key].updateValueAndValidity();
     });

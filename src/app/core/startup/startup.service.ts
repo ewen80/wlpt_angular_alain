@@ -1,19 +1,18 @@
 import { HttpClient } from '@angular/common/http';
+import { ReturnStatement } from '@angular/compiler';
 import { Inject, Injectable, Injector } from '@angular/core';
 import { Router } from '@angular/router';
 import { ACLService } from '@delon/acl';
 import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
-import { ALAIN_I18N_TOKEN, MenuService, SettingsService, TitleService } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, MenuService, SettingsService, TitleService, Menu } from '@delon/theme';
+import { environment } from '@env/environment';
+import { NzIconService } from 'ng-zorro-antd/icon';
 import { throwError, zip } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
+import { IUser } from 'src/app/domains/iuser';
 
-import { NzIconService } from 'ng-zorro-antd/icon';
 import { ICONS } from '../../../style-icons';
 import { ICONS_AUTO } from '../../../style-icons-auto';
-import { environment } from '@env/environment';
-import { ReturnStatement } from '@angular/compiler';
-import { IUser } from 'src/app/domains/iuser';
-import { Menu } from '@delon/theme';
 
 /**
  * Used for application startup
@@ -29,7 +28,7 @@ export class StartupService {
     private titleService: TitleService,
     @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
     private httpClient: HttpClient,
-    private injector: Injector,
+    private injector: Injector
   ) {
     iconSrv.addIcon(...ICONS_AUTO, ...ICONS);
   }
@@ -114,7 +113,7 @@ export class StartupService {
   private viaSession(resolv: any, reject: any): void {
     const app: any = {
       name: environment.appName,
-      description: environment.appDescription,
+      description: environment.appDescription
     };
     // Application information: including site name, description, year
     this.settingService.setApp(app);
@@ -131,7 +130,7 @@ export class StartupService {
       token: userObj.token,
       avatar: userObj.user.avater,
       roleId: userObj.user.roleId,
-      qxId: userObj.user.qxId,
+      qxId: userObj.user.qxId
     };
     if (!user.avatar) {
       user.avatar = environment.defaultAvatar;
@@ -146,7 +145,7 @@ export class StartupService {
 
   // 读取菜单信息
   private loadMenu(userId: string) {
-    const menuUrl = environment.serverMenuServiceURL + '/' + userId;
+    const menuUrl = `${environment.serverMenuServiceURL}/${userId}`;
     this.httpClient.get(menuUrl).subscribe({
       next: (resp: any) => {
         const menus: Menu[] = new Array<Menu>();
@@ -154,7 +153,7 @@ export class StartupService {
           menus.push(this.getChildMenu(menu));
         });
         this.menuService.add(menus);
-      },
+      }
     });
   }
 
@@ -166,9 +165,9 @@ export class StartupService {
       key: obj.id,
       icon: {
         type: 'icon',
-        value: obj.iconClass,
+        value: obj.iconClass
       },
-      children: [],
+      children: []
     };
 
     // 判断是否有子菜单,如果是叶子节点就返回上级菜单

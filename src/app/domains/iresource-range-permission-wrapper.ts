@@ -4,10 +4,10 @@ export enum Permission {
   READ = 1,
   WRITE = 2,
   ADMINISTRATION = 16,
-  FINISH = 32,
+  FINISH = 32
 }
 
 export interface IResourceRangePermissionWrapper {
   resourceRangeDTO: IResourceRange;
-  permissions: { mask: Permission }[];
+  permissions: Array<{ mask: Permission }>;
 }

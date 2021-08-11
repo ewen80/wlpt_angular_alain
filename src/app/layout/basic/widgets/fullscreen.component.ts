@@ -9,9 +9,9 @@ import * as screenfull from 'screenfull';
   `,
   // eslint-disable-next-line @angular-eslint/no-host-metadata-property
   host: {
-    '[class.d-block]': 'true',
+    '[class.d-block]': 'true'
   },
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HeaderFullScreenComponent {
   status = false;

@@ -1,25 +1,25 @@
+import { getLocaleExtraDayPeriodRules } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, FormGroupName, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { STChange, STColumn, STComponent, STData } from '@delon/abc/st';
 import { environment } from '@env/environment';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzModalService, NzModalRef } from 'ng-zorro-antd/modal';
 import { of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { ResourceTypeService } from 'src/app/core/services/resource-type.service';
-import { IResourceType } from 'src/app/domains/iresource-type';
-import { IResourceRange } from 'src/app/domains/iresource-range';
-import { NzModalService, NzModalRef } from 'ng-zorro-antd/modal';
-import { getLocaleExtraDayPeriodRules } from '@angular/common';
-import { RoleService } from 'src/app/core/services/role.service';
-import { IRole } from 'src/app/domains/irole';
-import { ResourceRangeService } from 'src/app/core/services/ressource-range.service';
-import { IResourceRangePermissionWrapper, Permission } from 'src/app/domains/iresource-range-permission-wrapper';
 import { ResourceRangePermissionWrapperService } from 'src/app/core/services/resource-range-permission-wrapper.service';
-import { NzMessageService } from 'ng-zorro-antd/message';
+import { ResourceTypeService } from 'src/app/core/services/resource-type.service';
+import { ResourceRangeService } from 'src/app/core/services/ressource-range.service';
+import { RoleService } from 'src/app/core/services/role.service';
+import { IResourceRange } from 'src/app/domains/iresource-range';
+import { IResourceRangePermissionWrapper, Permission } from 'src/app/domains/iresource-range-permission-wrapper';
+import { IResourceType } from 'src/app/domains/iresource-type';
+import { IRole } from 'src/app/domains/irole';
 
 @Component({
   selector: 'app-resource-detail',
   templateUrl: './resource-detail.component.html',
-  styles: [],
+  styles: []
 })
 export class ResourceDetailComponent implements OnInit {
   constructor(
@@ -29,7 +29,7 @@ export class ResourceDetailComponent implements OnInit {
     private roleService: RoleService,
     private resourceRangeService: ResourceRangeService,
     private permissionWrapperService: ResourceRangePermissionWrapperService,
-    private message: NzMessageService,
+    private message: NzMessageService
   ) {}
 
   resourceTypeForm!: FormGroup;
@@ -53,13 +53,13 @@ export class ResourceDetailComponent implements OnInit {
     { title: '角色id', index: 'resourceRangeDTO.roleId', width: 150, sort: true },
     { title: 'filter', index: 'resourceRangeDTO.filter' },
     { title: '全匹配', index: 'resourceRangeDTO.matchAll', sort: true },
-    { title: '权限', index: 'permission' },
+    { title: '权限', index: 'permission' }
   ];
 
   permissions = [
     { label: '读', value: Permission.READ, checked: false },
     { label: '写', value: Permission.WRITE, checked: false },
-    { label: '办结', value: Permission.FINISH, checked: false },
+    { label: '办结', value: Permission.FINISH, checked: false }
   ];
 
   selectedRanges: string[] = []; // 资源列表选中数组
@@ -71,15 +71,15 @@ export class ResourceDetailComponent implements OnInit {
         {
           Validators: [Validators.required],
           asyncValidators: [this.uniqueClassNameValidator()],
-          updateOn: 'blur',
-        },
+          updateOn: 'blur'
+        }
       ],
       name: ['', [Validators.required]],
-      description: [''],
+      description: ['']
     });
 
     this.resourceRangeSearchForm = this.fb.group({
-      roleId: [],
+      roleId: []
     });
 
     this.resourceRangeDetailForm = this.fb.group({
@@ -88,9 +88,9 @@ export class ResourceDetailComponent implements OnInit {
         null,
         {
           Validators: [Validators.required],
-          asyncValidators: [this.uniqueRangeRoleIdValidator()],
-        },
-      ],
+          asyncValidators: [this.uniqueRangeRoleIdValidator()]
+        }
+      ]
       // permissions: [],
     });
 
@@ -106,8 +106,8 @@ export class ResourceDetailComponent implements OnInit {
     return (control: AbstractControl) => {
       if (control.value !== '') {
         return this.resourceTypeService.checkClassNameExist(control.value).pipe(
-          map((checkResult) => (checkResult ? { uniqueResourceTypeClassName: false } : null)),
-          catchError(() => of({ uniqueRoleId: false })),
+          map(checkResult => (checkResult ? { uniqueResourceTypeClassName: false } : null)),
+          catchError(() => of({ uniqueRoleId: false }))
         );
       }
       return of(null);
@@ -122,7 +122,7 @@ export class ResourceDetailComponent implements OnInit {
   // 读取type信息
   loadResourceType(className: string): void {
     this.resourceTypeForm.controls.className.disable(); // 有className则禁用className输入框
-    this.resourceTypeService.findOne(className).subscribe((type) => {
+    this.resourceTypeService.findOne(className).subscribe(type => {
       this.resourceTypeForm.controls.className.setValue(type.className);
       this.resourceTypeForm.controls.name.setValue(type.name);
       this.resourceTypeForm.controls.description.setValue(type.description);
@@ -135,14 +135,14 @@ export class ResourceDetailComponent implements OnInit {
   loadResourceRange(className: string | undefined, roleId: string | undefined): void {
     let filter = '';
     if (className) {
-      filter = 'resourceType.className:' + className + ',';
+      filter = `resourceType.className:${className},`;
     }
     if (roleId) {
-      filter += 'role.id:*' + roleId + '*';
+      filter += `role.id:*${roleId}*`;
     }
 
     this.resourceRangeList.req.params = { filter };
-    this.resourceRangeList.data = environment.serverPermissionServiceURL + '/wrappers';
+    this.resourceRangeList.data = `${environment.serverPermissionServiceURL}/wrappers`;
     this.resourceRangeList.reload();
   }
 
@@ -157,17 +157,17 @@ export class ResourceDetailComponent implements OnInit {
       const resourceType: IResourceType = {
         className: this.resourceTypeForm.controls.className.value,
         name: this.resourceTypeForm.controls.name.value,
-        description: this.resourceTypeForm.controls.description.value,
+        description: this.resourceTypeForm.controls.description.value
       };
       this.resourceTypeService.save(resourceType).subscribe({
-        next: (r) => {
+        next: r => {
           this.className = r.className;
           // 新增成功后，className字段不能再更新，刷新range列表
           this.resourceTypeForm.controls.className.disable(); // 有className则禁用className输入框
           // this.loadRange(r.className);
           // 触发数据变化事件
           this.dataChanged.emit();
-        },
+        }
       });
     }
   }
@@ -176,7 +176,7 @@ export class ResourceDetailComponent implements OnInit {
     const modalRef = this.modal.create({
       nzTitle: '新增资源范围',
       nzContent: tpl,
-      nzFooter: tplFooter,
+      nzFooter: tplFooter
     });
   }
 
@@ -184,7 +184,7 @@ export class ResourceDetailComponent implements OnInit {
     this.roleService.findAll().subscribe({
       next: (roles: IRole[]) => {
         this.roleList = roles;
-      },
+      }
     });
   }
 
@@ -193,8 +193,8 @@ export class ResourceDetailComponent implements OnInit {
     return (control: AbstractControl) => {
       if (this.className && control.value) {
         return this.resourceRangeService.checkExist(this.className, control.value).pipe(
-          map((checkResult) => (checkResult ? { uniqueRangeRoleId: false } : null)),
-          catchError(() => of({ uniqueRangeRoleId: false })),
+          map(checkResult => (checkResult ? { uniqueRangeRoleId: false } : null)),
+          catchError(() => of({ uniqueRangeRoleId: false }))
         );
       } else {
         return of(null);
@@ -206,7 +206,7 @@ export class ResourceDetailComponent implements OnInit {
   rangeDetailReset(modalRef: NzModalRef): void {
     this.resourceRangeDetailForm.reset();
     this.resourceRangeDetailForm.controls.resourceRangeFilter.setValue('');
-    this.permissions.map((permission) => {
+    this.permissions.map(permission => {
       permission.checked = false;
     });
     modalRef.destroy();
@@ -220,15 +220,15 @@ export class ResourceDetailComponent implements OnInit {
         id: 0,
         filter: this.resourceRangeDetailForm.controls.resourceRangeFilter.value,
         roleId: this.resourceRangeDetailForm.controls.resourceRangeRoleId.value,
-        resourceTypeClassName: this.className as string,
+        resourceTypeClassName: this.className as string
       },
       permissions: this.permissions
-        .filter((permission) => {
+        .filter(permission => {
           return permission.checked;
         })
-        .map((permission) => {
+        .map(permission => {
           return { mask: permission.value };
-        }),
+        })
     };
 
     this.permissionWrapperService.save(wrapper).subscribe({
@@ -243,17 +243,17 @@ export class ResourceDetailComponent implements OnInit {
       error: () => {
         // 权限保存失败
         this.message.error('权限保存失败');
-      },
+      }
     });
   }
 
   // 对ResourceRange服务器返回数据的处理
   rangeListResponseProcess(data: STData[], rawData?: any): STData[] {
-    return data.map((d) => {
+    return data.map(d => {
       d.permission = '';
-      const ps = d.permissions as { mask: Permission }[];
-      ps.forEach((p) => {
-        d.permission += Permission[p.mask] + '   ';
+      const ps = d.permissions as Array<{ mask: Permission }>;
+      ps.forEach(p => {
+        d.permission += `${Permission[p.mask]}   `;
       });
       return d;
     });
@@ -264,7 +264,7 @@ export class ResourceDetailComponent implements OnInit {
     if (e.type === 'checkbox') {
       this.selectedRanges = [];
       if (e.checkbox !== undefined && e.checkbox.length > 0) {
-        e.checkbox.forEach((v) => {
+        e.checkbox.forEach(v => {
           this.selectedRanges.push(v.resourceRangeDTO.id);
         });
       }
@@ -279,7 +279,7 @@ export class ResourceDetailComponent implements OnInit {
         this.loadResourceRange(this.className, undefined);
         // 刷新资源列表
         this.dataChanged.emit();
-      },
+      }
     });
   }
 }

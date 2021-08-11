@@ -23,7 +23,7 @@ const CODEMESSAGE: { [key: number]: string } = {
   500: '服务器发生错误，请检查服务器。',
   502: '网关错误。',
   503: '服务不可用，服务器暂时过载或维护。',
-  504: '网关超时。',
+  504: '网关超时。'
 };
 
 /**
@@ -78,16 +78,16 @@ export class DefaultInterceptor implements HttpInterceptor {
 
   private tryRefreshToken(ev: HttpResponseBase, req: HttpRequest<any>, next: HttpHandler): Observable<any> {
     // 1、若请求为刷新Token请求，表示来自刷新Token可以直接跳转登录页
-    if ([environment.serverAuthRefreshURL].some((url) => req.url.includes(url))) {
+    if ([environment.serverAuthRefreshURL].some(url => req.url.includes(url))) {
       this.toLogin();
       return throwError(ev);
     }
     // 2、如果 `refreshToking` 为 `true` 表示已经在请求刷新 Token 中，后续所有请求转入等待状态，直至结果返回后再重新发起请求
     if (this.refreshToking) {
       return this.refreshToken$.pipe(
-        filter((v) => !!v),
+        filter(v => !!v),
         take(1),
-        switchMap(() => next.handle(this.reAttachToken(req))),
+        switchMap(() => next.handle(this.reAttachToken(req)))
       );
     }
     // 3、尝试调用刷新 Token
@@ -95,7 +95,7 @@ export class DefaultInterceptor implements HttpInterceptor {
     this.refreshToken$.next(null);
 
     return this.refreshTokenRequest().pipe(
-      switchMap((res) => {
+      switchMap(res => {
         // 通知后续请求继续执行
         this.refreshToking = false;
         this.refreshToken$.next(res);
@@ -104,11 +104,11 @@ export class DefaultInterceptor implements HttpInterceptor {
         // 重新发起请求
         return next.handle(this.reAttachToken(req));
       }),
-      catchError((err) => {
+      catchError(err => {
         this.refreshToking = false;
         this.toLogin();
         return throwError(err);
-      }),
+      })
     );
   }
 
@@ -122,8 +122,8 @@ export class DefaultInterceptor implements HttpInterceptor {
     const token = this.tokenSrv.get()?.token;
     return req.clone({
       setHeaders: {
-        token: `Bearer ${token}`,
-      },
+        token: `Bearer ${token}`
+      }
     });
   }
 
@@ -138,7 +138,7 @@ export class DefaultInterceptor implements HttpInterceptor {
         switchMap(() => {
           this.refreshToking = true;
           return this.refreshTokenRequest();
-        }),
+        })
       )
       .subscribe(
         () => {
@@ -151,9 +151,9 @@ export class DefaultInterceptor implements HttpInterceptor {
           this.tokenSrv.set(authToken);
           this.refreshToking = false;
         },
-        (err) => {
+        err => {
           this.toLogin();
-        },
+        }
       );
   }
 
@@ -204,7 +204,7 @@ export class DefaultInterceptor implements HttpInterceptor {
         if (ev instanceof HttpErrorResponse) {
           console.warn(
             '未可知错误，大部分是由于后端不支持跨域CORS或无效配置引起，请参考 https://ng-alain.com/docs/server 解决跨域问题',
-            ev,
+            ev
           );
         }
         break;
@@ -229,11 +229,11 @@ export class DefaultInterceptor implements HttpInterceptor {
       withCredentials: true,
       setHeaders: {
         Accept: 'application/json',
-        'X-Requested-With': 'XMLHttpRequest', // 告诉后台发送方是接口不是浏览器，不要弹出basic认证的窗口
-      },
+        'X-Requested-With': 'XMLHttpRequest' // 告诉后台发送方是接口不是浏览器，不要弹出basic认证的窗口
+      }
     });
     return next.handle(newReq).pipe(
-      mergeMap((ev) => {
+      mergeMap(ev => {
         // 允许统一对请求错误处理
         if (ev instanceof HttpResponseBase) {
           return this.handleData(ev, newReq, next);
@@ -241,7 +241,7 @@ export class DefaultInterceptor implements HttpInterceptor {
         // 若一切都正常，则后续操作
         return of(ev);
       }),
-      catchError((err: HttpErrorResponse) => this.handleData(err, newReq, next)),
+      catchError((err: HttpErrorResponse) => this.handleData(err, newReq, next))
     );
   }
 }

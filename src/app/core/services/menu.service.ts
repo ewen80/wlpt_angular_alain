@@ -5,13 +5,13 @@ import { Observable } from 'rxjs';
 import { IMenu } from 'src/app/domains/imenu';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class MenuService {
   constructor(private http: _HttpClient) {}
 
   findAll(userId: string): Observable<IMenu[]> {
-    return this.http.get<IMenu[]>(environment.serverMenuServiceURL + '/' + userId);
+    return this.http.get<IMenu[]>(`${environment.serverMenuServiceURL}/${userId}`);
   }
 
   save(menu: IMenu): Observable<IMenu> {
@@ -23,6 +23,6 @@ export class MenuService {
   }
 
   delete(id: number): Observable<void> {
-    return this.http.delete(environment.serverMenuServiceURL + '/' + id.toString());
+    return this.http.delete(`${environment.serverMenuServiceURL}/${id.toString()}`);
   }
 }

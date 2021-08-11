@@ -9,14 +9,14 @@ import { SettingsService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzTabChangeEvent } from 'ng-zorro-antd/tabs';
-import { Md5 } from 'ts-md5';
 import { IUser } from 'src/app/domains/iuser';
+import { Md5 } from 'ts-md5';
 
 @Component({
   selector: 'passport-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.less'],
-  providers: [SocialService],
+  providers: [SocialService]
 })
 export class UserLoginComponent implements OnDestroy {
   // #region fields
@@ -55,14 +55,14 @@ export class UserLoginComponent implements OnDestroy {
     @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
     private startupSrv: StartupService,
     public http: _HttpClient,
-    public msg: NzMessageService,
+    public msg: NzMessageService
   ) {
     this.form = fb.group({
       userId: [null, [Validators.required]],
       password: [null, [Validators.required]],
       mobile: [null, [Validators.required, Validators.pattern(/^1\d{10}$/)]],
       captcha: [null, [Validators.required]],
-      remember: [true],
+      remember: [true]
     });
   }
 
@@ -110,20 +110,20 @@ export class UserLoginComponent implements OnDestroy {
     // 默认配置中对所有HTTP请求都会强制 [校验](https://ng-alain.com/auth/getting-started) 用户 Token
     // 然一般来说登录请求不需要校验，因此可以在请求URL加上：`/login?_allow_anonymous=true` 表示不触发用户 Token 校验
     const passwordMD5 = Md5.hashStr(this.password.value).toString().toUpperCase(); // 对密码进行MD5加密并转成大写字符
-    const token = window.btoa(this.userId.value + ':' + passwordMD5); // Basic基本认证
+    const token = window.btoa(`${this.userId.value}:${passwordMD5}`); // Basic基本认证
     this.http
-      .get(environment.serverUserServiceURL + '/' + this.userId.value + '?_allow_anonymous=true', null, {
-        headers: new HttpHeaders({ Authorization: 'Basic ' + token }),
+      .get(`${environment.serverUserServiceURL}/${this.userId.value}?_allow_anonymous=true`, null, {
+        headers: new HttpHeaders({ Authorization: `Basic ${token}` })
       })
       .subscribe({
-        next: (resp) => {
+        next: resp => {
           // 清空路由复用信息
           this.reuseTabService.clear();
           // 设置用户Token信息
           const authToken = {
             user: resp,
             token: this.userId.value,
-            expired: +new Date() + environment.tokenExpiredTime,
+            expired: +new Date() + environment.tokenExpiredTime
           };
           this.tokenService.set(authToken);
           // 重新获取 StartupService 内容，我们始终认为应用信息一般都会受当前用户授权范围而影响
@@ -134,7 +134,7 @@ export class UserLoginComponent implements OnDestroy {
             }
             this.router.navigateByUrl(url);
           });
-        },
+        }
       });
   }
 
@@ -145,9 +145,9 @@ export class UserLoginComponent implements OnDestroy {
     let callback = ``;
     // eslint-disable-next-line
     if (environment.production) {
-      callback = 'https://ng-alain.github.io/ng-alain/#/passport/callback/' + type;
+      callback = `https://ng-alain.github.io/ng-alain/#/passport/callback/${type}`;
     } else {
-      callback = 'http://localhost:4200/#/passport/callback/' + type;
+      callback = `http://localhost:4200/#/passport/callback/${type}`;
     }
     switch (type) {
       case 'auth0':
@@ -155,7 +155,7 @@ export class UserLoginComponent implements OnDestroy {
         break;
       case 'github':
         url = `//github.com/login/oauth/authorize?client_id=9d6baae4b04a23fcafa2&response_type=code&redirect_uri=${decodeURIComponent(
-          callback,
+          callback
         )}`;
         break;
       case 'weibo':
@@ -165,9 +165,9 @@ export class UserLoginComponent implements OnDestroy {
     if (openType === 'window') {
       this.socialService
         .login(url, '/', {
-          type: 'window',
+          type: 'window'
         })
-        .subscribe((res) => {
+        .subscribe(res => {
           if (res) {
             this.settingsService.setUser(res);
             this.router.navigateByUrl('/');
@@ -175,7 +175,7 @@ export class UserLoginComponent implements OnDestroy {
         });
     } else {
       this.socialService.login(url, '/', {
-        type: 'href',
+        type: 'href'
       });
     }
   }

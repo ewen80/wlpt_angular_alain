@@ -1,27 +1,27 @@
+import { formatDate } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { STColumn, STData, STComponent, STChange } from '@delon/abc/st';
-import { Region } from 'src/app/domains/region';
-import { NzModalService, ModalButtonOptions } from 'ng-zorro-antd/modal';
-import { IMyResource } from 'src/app/domains/my-resource/imy-resource';
-import { MyResourceService } from 'src/app/core/services/my-resource/my-resource.service';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { MyResourceRoomService } from 'src/app/core/services/my-resource/my-resource-room.service';
-import { Observable } from 'rxjs';
-import { environment } from '@env/environment';
-import { Permission } from 'src/app/domains/iresource-range-permission-wrapper';
 import { ACLService } from '@delon/acl';
-import { IWeixingResource } from 'src/app/domains/weixing-resource/iweixing-resource';
-import { WeixingResourceService } from 'src/app/core/services/weixing/weixing.service';
-import { formatDate } from '@angular/common';
+import { environment } from '@env/environment';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzModalService, ModalButtonOptions } from 'ng-zorro-antd/modal';
 import { NzUploadChangeParam, NzUploadFile } from 'ng-zorro-antd/upload';
+import { Observable } from 'rxjs';
 import { FileService } from 'src/app/core/services/file.service';
+import { MyResourceRoomService } from 'src/app/core/services/my-resource/my-resource-room.service';
+import { MyResourceService } from 'src/app/core/services/my-resource/my-resource.service';
+import { WeixingResourceService } from 'src/app/core/services/weixing/weixing.service';
 import { IAttachment } from 'src/app/domains/iattachment';
+import { Permission } from 'src/app/domains/iresource-range-permission-wrapper';
+import { IMyResource } from 'src/app/domains/my-resource/imy-resource';
+import { Region } from 'src/app/domains/region';
+import { IWeixingResource } from 'src/app/domains/weixing-resource/iweixing-resource';
 
 @Component({
   selector: 'app-weixing-detail',
   templateUrl: './weixing-detail.component.html',
-  styles: [],
+  styles: []
 })
 export class WeixingDetailComponent implements OnInit {
   constructor(
@@ -30,7 +30,7 @@ export class WeixingDetailComponent implements OnInit {
     private acl: ACLService,
     private weixingResourceService: WeixingResourceService,
     private message: NzMessageService,
-    private fileService: FileService,
+    private fileService: FileService
   ) {}
 
   resourceForm!: FormGroup;
@@ -44,7 +44,7 @@ export class WeixingDetailComponent implements OnInit {
 
   // 文件上传相关
   fileDownloadRootUrl = environment.serverFileDownloadRootUrl;
-  fileUploadServiceURL = environment.serverUrl + environment.serverFileServiceURL + '/upload'; // 文件上传地址
+  fileUploadServiceURL = `${environment.serverUrl + environment.serverFileServiceURL}/upload`; // 文件上传地址
   attachments: NzUploadFile[] = [];
 
   // 境内收视节目源选择
@@ -52,7 +52,7 @@ export class WeixingDetailComponent implements OnInit {
     { value: 'yxdslw', label: '有线电视联网' },
     { value: 'klxh', label: '开路信号' },
     { value: 'iptv', label: 'IPTV' },
-    { value: 'other', label: '其他' },
+    { value: 'other', label: '其他' }
   ];
 
   removeFile = (file: NzUploadFile) => {
@@ -83,7 +83,7 @@ export class WeixingDetailComponent implements OnInit {
       lpm: ['', [Validators.required]],
       lc: ['', [Validators.required]],
       zds: ['', [Validators.required]],
-      hcrq: [Date(), [Validators.required]],
+      hcrq: [Date(), [Validators.required]]
     });
 
     Region.codes.forEach((value: string, key: string) => {
@@ -100,7 +100,7 @@ export class WeixingDetailComponent implements OnInit {
   // 初始化保存按钮
   initSaveButton(): void {
     // 修改资源
-    if (this.weixingResource?.permissions?.some((item) => item.mask === Permission.WRITE)) {
+    if (this.weixingResource?.permissions?.some(item => item.mask === Permission.WRITE)) {
       this.acl.attachAbility(['WRITE']);
     } else {
       this.acl.removeAbility(['WRITE']);
@@ -111,7 +111,7 @@ export class WeixingDetailComponent implements OnInit {
   initDetail(): void {
     if (this.resourceId) {
       this.weixingResourceService.findOne(this.resourceId).subscribe({
-        next: (data) => {
+        next: data => {
           this.weixingResource = data;
           if (this.weixingResource?.sign) {
             this.signBase64 = `data:image/${this.weixingResource.sign.imageExtention};base64,${this.weixingResource.sign.signBase64}`;
@@ -130,7 +130,7 @@ export class WeixingDetailComponent implements OnInit {
           this.resourceForm.controls.txsl.setValue(data.txsl);
           this.resourceForm.controls.txlx.setValue(data.txlx);
 
-          if (this.jnssjmys.find((item) => item.value === data.jnssjmy)) {
+          if (this.jnssjmys.find(item => item.value === data.jnssjmy)) {
             this.resourceForm.controls.jnssjmy.setValue(data.jnssjmy);
           } else {
             this.resourceForm.controls.jnssjmy.setValue('other');
@@ -151,7 +151,7 @@ export class WeixingDetailComponent implements OnInit {
           this.initAttachments();
 
           this.initSaveButton();
-        },
+        }
       });
     }
   }
@@ -159,17 +159,17 @@ export class WeixingDetailComponent implements OnInit {
   // 初始化附件
   initAttachments(): void {
     this.attachments = [];
-    this.weixingResource?.attachments?.forEach((attachment) => {
+    this.weixingResource?.attachments?.forEach(attachment => {
       this.attachments.push({
         uid: attachment.id!,
         name: attachment.name,
         status: 'done',
-        url: environment.serverFileDownloadRootUrl + '\\' + attachment.path,
+        url: `${environment.serverFileDownloadRootUrl}\\${attachment.path}`,
         response: {
           name: attachment.path,
           date: attachment.date,
-          status: 'done',
-        },
+          status: 'done'
+        }
       });
     });
   }
@@ -178,11 +178,11 @@ export class WeixingDetailComponent implements OnInit {
     if (this.resourceForm.valid) {
       // 转换附件类型
       const attachs: IAttachment[] = [];
-      this.attachments.forEach((attachment) => {
+      this.attachments.forEach(attachment => {
         attachs.push({
           name: attachment.name,
           path: attachment.response.name,
-          date: attachment.response.date,
+          date: attachment.response.date
         });
       });
 
@@ -250,17 +250,17 @@ export class WeixingDetailComponent implements OnInit {
           zds: this.resourceForm.controls.zds.value,
           hcrq: hcrqString,
 
-          attachments: attachs,
+          attachments: attachs
         };
       }
 
       this.weixingResourceService.save(this.weixingResource!).subscribe({
-        next: (result) => {
+        next: result => {
           this.resourceId = result.id;
           this.weixingResource = result;
           this.dataChanged.emit();
           this.message.success('保存成功');
-        },
+        }
       });
     }
   }
@@ -268,15 +268,15 @@ export class WeixingDetailComponent implements OnInit {
   // 处理上传列表
   handleChange(info: NzUploadChangeParam): void {
     const fileList: NzUploadFile[] = [];
-    info.fileList.forEach((file) => {
+    info.fileList.forEach(file => {
       if (file.status === 'done') {
         fileList.push(file);
       }
     });
 
     if (info.file.status === 'done') {
-      fileList.map((file) => {
-        file.url = environment.serverFileDownloadRootUrl + '\\' + file.response.name;
+      fileList.map(file => {
+        file.url = `${environment.serverFileDownloadRootUrl}\\${file.response.name}`;
       });
       this.attachments = fileList;
       if (this.weixingResource?.id) {

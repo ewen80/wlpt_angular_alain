@@ -1,13 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 import { UserService } from 'src/app/core/services/user.service';
-import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Component({
   selector: 'app-change-password',
   templateUrl: './change-password.component.html',
-  styles: [],
+  styles: []
 })
 export class ChangePasswordComponent implements OnInit {
   @Input()
@@ -20,7 +20,7 @@ export class ChangePasswordComponent implements OnInit {
   ngOnInit(): void {
     this.changePasswordForm = this.fb.group({
       password: ['', [Validators.required]],
-      rePassword: ['', [Validators.required, this.passwordConfirmValidator()]],
+      rePassword: ['', [Validators.required, this.passwordConfirmValidator()]]
     });
   }
 
@@ -47,7 +47,7 @@ export class ChangePasswordComponent implements OnInit {
         },
         error: () => {
           this.msg.error('修改失败');
-        },
+        }
       });
     }
   }

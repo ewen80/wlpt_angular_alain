@@ -26,7 +26,7 @@ import {
   TeamOutline,
   AppstoreOutline,
   MenuOutline,
-  DownloadOutline,
+  DownloadOutline
 } from '@ant-design/icons-angular/icons';
 
 export const ICONS_AUTO = [
@@ -53,5 +53,5 @@ export const ICONS_AUTO = [
   TeamOutline,
   AppstoreOutline,
   MenuOutline,
-  DownloadOutline,
+  DownloadOutline
 ];

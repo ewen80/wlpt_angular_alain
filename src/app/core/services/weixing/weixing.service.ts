@@ -6,17 +6,17 @@ import { Permission } from 'src/app/domains/iresource-range-permission-wrapper';
 import { IWeixingResource } from 'src/app/domains/weixing-resource/iweixing-resource';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class WeixingResourceService {
   constructor(private http: _HttpClient) {}
 
   findOne(id: number): Observable<IWeixingResource> {
-    return this.http.get<IWeixingResource>(environment.serverWeixingResourceServiceURL + '/' + id);
+    return this.http.get<IWeixingResource>(`${environment.serverWeixingResourceServiceURL}/${id}`);
   }
 
   findAll(): Observable<IWeixingResource[]> {
-    return this.http.get<IWeixingResource[]>(environment.serverWeixingResourceServiceURL + '/nopage');
+    return this.http.get<IWeixingResource[]>(`${environment.serverWeixingResourceServiceURL}/nopage`);
   }
 
   save(myResource: IWeixingResource): Observable<IWeixingResource> {
@@ -24,13 +24,13 @@ export class WeixingResourceService {
   }
 
   delete(ids: number[]): Observable<void> {
-    return this.http.delete<void>(environment.serverWeixingResourceServiceURL + '/' + ids);
+    return this.http.delete<void>(`${environment.serverWeixingResourceServiceURL}/${ids}`);
   }
 
-  getPermissions(roleId: string): Observable<{ mask: Permission }[]> {
+  getPermissions(roleId: string): Observable<Array<{ mask: Permission }>> {
     return this.http.get(environment.serverPermissionServiceURL, {
       resourceTypeClassName: environment.WeixingResourceTypeClassName,
-      roleId,
+      roleId
     });
   }
 }

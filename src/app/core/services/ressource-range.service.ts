@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { IResourceRange } from 'src/app/domains/iresource-range';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class ResourceRangeService {
   constructor(private http: _HttpClient) {}
@@ -13,14 +13,14 @@ export class ResourceRangeService {
   findOne(resourceClassName: string, roleId: string): Observable<IResourceRange> {
     return this.http.get<IResourceRange>(environment.serverResourceRangeServiceURL, {
       resourceClassName,
-      roleId,
+      roleId
     });
   }
 
   checkExist(resourceClassName: string, roleId: string): Observable<boolean> {
-    return this.http.get<boolean>(environment.serverResourceRangeServiceURL + '/checkexist', {
+    return this.http.get<boolean>(`${environment.serverResourceRangeServiceURL}/checkexist`, {
       resourceClassName,
-      roleId,
+      roleId
     });
   }
 

@@ -7,11 +7,12 @@ import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { RoleService } from 'src/app/core/services/role.service';
+
 import { RoleDetailComponent } from '../role-detail/role-detail.component';
 
 @Component({
   selector: 'app-role-list',
-  templateUrl: './roles-list.component.html',
+  templateUrl: './roles-list.component.html'
   // changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RolesListComponent {
@@ -22,10 +23,10 @@ export class RolesListComponent {
 
   selectedTabIndex = 0;
 
-  tabs: {
+  tabs: Array<{
     title: string;
     roleId: string | undefined;
-  }[] = [];
+  }> = [];
 
   removeButtonDisabled = true;
   selectedRoleIds: string[] = []; // 选中角色id数组
@@ -43,11 +44,11 @@ export class RolesListComponent {
       sort: true,
       click: (record: STData, instance?: STComponent) => {
         this.add(record.id);
-      },
+      }
     },
     { title: '角色名', index: 'name', width: 150, sort: true },
     { title: '用户数', index: 'users.length' },
-    { title: '描述', index: 'description' },
+    { title: '描述', index: 'description' }
   ];
   selectedRows: STData[] = [];
 
@@ -57,7 +58,7 @@ export class RolesListComponent {
     if (e.type === 'checkbox') {
       this.selectedRoleIds = [];
       if (e.checkbox !== undefined && e.checkbox.length > 0) {
-        e.checkbox.forEach((v) => {
+        e.checkbox.forEach(v => {
           this.selectedRoleIds.push(v.id);
         });
       }
@@ -66,7 +67,7 @@ export class RolesListComponent {
 
   // 返回数据预处理，判断用户数是否为0，为0才能删除
   dataProcess(data: STData[]): STData[] {
-    return data.map((v) => {
+    return data.map(v => {
       v.disabled = v.users.length !== 0;
       return v;
     });
@@ -78,14 +79,14 @@ export class RolesListComponent {
     this.roleService.delete(this.selectedRoleIds).subscribe({
       next: () => {
         this.st.reload();
-      },
+      }
     });
   }
 
   add(roleId: string | undefined): void {
     this.tabs.push({
       title: roleId === undefined ? '新建角色' : '角色信息',
-      roleId,
+      roleId
     });
     this.selectedTabIndex = this.tabs.length;
   }
@@ -102,10 +103,10 @@ export class RolesListComponent {
   submit(): void {
     let filterStr = '';
     if (this.search_roleId) {
-      filterStr += 'id:*' + this.search_roleId + '*,';
+      filterStr += `id:*${this.search_roleId}*,`;
     }
     if (this.search_roleName) {
-      filterStr += 'name:*' + this.search_roleName + '*,';
+      filterStr += `name:*${this.search_roleName}*,`;
     }
 
     this.st.req.params = { filter: filterStr };

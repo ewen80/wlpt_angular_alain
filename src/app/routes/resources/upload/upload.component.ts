@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { NzUploadChangeParam } from 'ng-zorro-antd/upload';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzUploadChangeParam } from 'ng-zorro-antd/upload';
 
 @Component({
   selector: 'app-upload',
   templateUrl: './upload.component.html',
-  styles: [],
+  styles: []
 })
 export class UploadComponent {
   constructor(private msg: NzMessageService) {}

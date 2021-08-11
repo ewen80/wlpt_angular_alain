@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
   template: `<router-outlet></router-outlet> `,
   // eslint-disable-next-line @angular-eslint/no-host-metadata-property
   host: {
-    '[class.alain-blank]': 'true',
-  },
+    '[class.alain-blank]': 'true'
+  }
 })
 export class LayoutBlankComponent {}

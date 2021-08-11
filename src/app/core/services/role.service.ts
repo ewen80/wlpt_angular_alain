@@ -6,22 +6,22 @@ import { Observable } from 'rxjs';
 import { IRole } from 'src/app/domains/irole';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class RoleService {
   constructor(private http: _HttpClient) {}
 
   findAll(): Observable<IRole[]> {
-    return this.http.get<IRole[]>(environment.serverRoleServiceURL + '/all');
+    return this.http.get<IRole[]>(`${environment.serverRoleServiceURL}/all`);
   }
 
   findOne(roleId: string): Observable<IRole> {
-    return this.http.get<IRole>(environment.serverRoleServiceURL + '/' + roleId);
+    return this.http.get<IRole>(`${environment.serverRoleServiceURL}/${roleId}`);
   }
 
   // 检查roleId是否已经存在
   checkIdExist(roleId: string): Observable<boolean> {
-    return this.http.get<boolean>(environment.serverRoleServiceURL + '/check/' + roleId);
+    return this.http.get<boolean>(`${environment.serverRoleServiceURL}/check/${roleId}`);
   }
 
   save(role: IRole): Observable<IRole> {
@@ -35,6 +35,6 @@ export class RoleService {
 
   // 删除角色
   delete(roleIds: string[]): Observable<void> {
-    return this.http.delete(environment.serverRoleServiceURL + '/' + roleIds);
+    return this.http.delete(`${environment.serverRoleServiceURL}/${roleIds}`);
   }
 }

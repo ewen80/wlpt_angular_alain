@@ -5,12 +5,12 @@ import { Router } from '@angular/router';
 import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
 import { SettingsService, User, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { UserService } from 'src/app/core/services/user.service';
 import { Md5 } from 'ts-md5';
-import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Component({
   selector: 'header-user',
@@ -68,7 +68,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
       <button nz-button nzType="primary" [disabled]="!updatePasswordForm.valid" (click)="updatePassword()">确定</button>
     </ng-template>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HeaderUserComponent implements OnInit {
   get user(): User {
@@ -89,7 +89,7 @@ export class HeaderUserComponent implements OnInit {
     private modal: NzModalService,
     private fb: FormBuilder,
     private userService: UserService,
-    private msg: NzMessageService,
+    private msg: NzMessageService
   ) {
     this.updatePasswordForm = this.fb.group({
       oldPassword: [
@@ -97,11 +97,11 @@ export class HeaderUserComponent implements OnInit {
         {
           Validators: [Validators.required],
           asyncValidators: [this.oldPasswordValidator()],
-          updateOn: 'blur',
-        },
+          updateOn: 'blur'
+        }
       ],
       newPassword: ['', [Validators.required, this.newPasswordValidator()]],
-      reNewPassword: ['', [Validators.required, this.newPasswordConfirmValidator()]],
+      reNewPassword: ['', [Validators.required, this.newPasswordConfirmValidator()]]
     });
   }
   ngOnInit(): void {
@@ -114,13 +114,13 @@ export class HeaderUserComponent implements OnInit {
       if (control.value) {
         const passwordMD5 = Md5.hashStr(control.value).toString().toUpperCase();
         return this.userService.checkPassword(this.userId, passwordMD5).pipe(
-          map((result) => {
+          map(result => {
             if (result) {
               return null;
             } else {
               return { checkOldPassword: false };
             }
-          }),
+          })
         );
       }
       return of(null);
@@ -153,16 +153,16 @@ export class HeaderUserComponent implements OnInit {
     // 调用服务器端退出
     this.httpClient
       .get(environment.serverLogoutURL, null, {
-        observe: 'response',
+        observe: 'response'
       })
       .subscribe({
-        next: (resp) => {
+        next: resp => {
           // 如果服务器成功退出返回200
           if (resp.status === 200) {
             this.tokenService.clear();
             this.router.navigateByUrl(this.tokenService.login_url!);
           }
-        },
+        }
       });
   }
 
@@ -171,7 +171,7 @@ export class HeaderUserComponent implements OnInit {
     this.updatePasswordModalRef = this.modal.create({
       nzTitle: modalTitle,
       nzContent: modalContent,
-      nzFooter: modalFooter,
+      nzFooter: modalFooter
     });
   }
 
@@ -187,7 +187,7 @@ export class HeaderUserComponent implements OnInit {
         this.msg.success('修改成功');
         this.logout();
       },
-      error: () => this.msg.error('修改失败'),
+      error: () => this.msg.error('修改失败')
     });
   }
 }

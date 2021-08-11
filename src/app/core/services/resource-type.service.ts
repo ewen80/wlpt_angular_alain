@@ -5,17 +5,17 @@ import { Observable, of } from 'rxjs';
 import { IResourceType } from 'src/app/domains/iresource-type';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class ResourceTypeService {
   constructor(private http: _HttpClient) {}
 
   delete(ids: string[]): Observable<void> {
-    return this.http.delete(environment.serverResourceTypeServiceURL + '/' + ids + '/');
+    return this.http.delete(`${environment.serverResourceTypeServiceURL}/${ids}/`);
   }
 
   checkClassNameExist(className: string): Observable<boolean> {
-    return this.http.get<boolean>(environment.serverResourceTypeServiceURL + '/check/' + className + '/'); // 由于classsName最后含有点，会被后端SpringMVC认为是文件后缀名忽略，所以最后加一个/
+    return this.http.get<boolean>(`${environment.serverResourceTypeServiceURL}/check/${className}/`); // 由于classsName最后含有点，会被后端SpringMVC认为是文件后缀名忽略，所以最后加一个/
   }
 
   save(resourceType: IResourceType): Observable<IResourceType> {
@@ -23,6 +23,6 @@ export class ResourceTypeService {
   }
 
   findOne(className: string): Observable<IResourceType> {
-    return this.http.get<IResourceType>(environment.serverResourceTypeServiceURL + '/' + className + '/');
+    return this.http.get<IResourceType>(`${environment.serverResourceTypeServiceURL}/${className}/`);
   }
 }

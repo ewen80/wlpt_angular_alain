@@ -5,7 +5,7 @@ import { IResourceCheckIn } from '../resource/iresource-checkin';
 
 export interface IWeixingResource {
   id?: number;
-  permissions?: { mask: Permission }[];
+  permissions?: Array<{ mask: Permission }>;
   resourceCheckIn?: IResourceCheckIn;
   attachments?: IAttachment[];
   sign?: ISignature;

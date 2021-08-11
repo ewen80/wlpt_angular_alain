@@ -38,7 +38,7 @@ export const environment = {
   defaultAvatar: '../assets/tmp/img/avatar.jpg',
 
   production: false,
-  useHash: false,
+  useHash: false
 };
 
 /*

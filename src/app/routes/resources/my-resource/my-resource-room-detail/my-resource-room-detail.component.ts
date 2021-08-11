@@ -1,24 +1,24 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NzUploadChangeParam, NzUploadFile } from 'ng-zorro-antd/upload';
-import { NzMessageService } from 'ng-zorro-antd/message';
 import { environment } from '@env/environment';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzUploadChangeParam, NzUploadFile } from 'ng-zorro-antd/upload';
 import { FileService } from 'src/app/core/services/file.service';
-import { IMyResourceRoom } from 'src/app/domains/my-resource/imy-resource-room';
 import { MyResourceRoomService } from 'src/app/core/services/my-resource/my-resource-room.service';
 import { IAttachment } from 'src/app/domains/iattachment';
+import { IMyResourceRoom } from 'src/app/domains/my-resource/imy-resource-room';
 
 @Component({
   selector: 'app-room-detail',
   templateUrl: './my-resource-room-detail.component.html',
-  styles: [],
+  styles: []
 })
 export class MyResourceRoomDetailComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private msg: NzMessageService,
     private fileService: FileService,
-    private myResourceRoomService: MyResourceRoomService,
+    private myResourceRoomService: MyResourceRoomService
   ) {}
 
   @Input() roomId: number | undefined;
@@ -29,7 +29,7 @@ export class MyResourceRoomDetailComponent implements OnInit {
   roomDetailForm!: FormGroup;
 
   attachments: NzUploadFile[] = [];
-  fileUploadServiceURL = environment.serverUrl + environment.serverFileServiceURL + '/upload'; // 文件上传地址
+  fileUploadServiceURL = `${environment.serverUrl + environment.serverFileServiceURL}/upload`; // 文件上传地址
 
   removeFile = (file: NzUploadFile) => {
     return this.fileService.removeFile(file.response.name);
@@ -38,7 +38,7 @@ export class MyResourceRoomDetailComponent implements OnInit {
   ngOnInit(): void {
     this.roomDetailForm = this.fb.group({
       roomName: ['', [Validators.required]],
-      roomDescription: [''],
+      roomDescription: ['']
     });
     this.initRoom();
   }
@@ -46,26 +46,26 @@ export class MyResourceRoomDetailComponent implements OnInit {
   initRoom(): void {
     if (this.roomId) {
       this.myResourceRoomService.findOne(this.roomId).subscribe({
-        next: (room) => {
+        next: room => {
           this.room = room;
           this.roomDetailForm.controls.roomName.setValue(room.name);
           this.roomDetailForm.controls.roomDescription.setValue(room.description);
           // 初始化附件
           this.attachments = [];
-          room.attachments.forEach((attachment) => {
+          room.attachments.forEach(attachment => {
             this.attachments.push({
               uid: attachment.id!,
               name: attachment.name,
               status: 'done',
-              url: environment.serverFileDownloadRootUrl + '\\' + attachment.path,
+              url: `${environment.serverFileDownloadRootUrl}\\${attachment.path}`,
               response: {
                 name: attachment.path,
                 date: attachment.date,
-                status: 'done',
-              },
+                status: 'done'
+              }
             });
           });
-        },
+        }
       });
     }
   }
@@ -73,15 +73,15 @@ export class MyResourceRoomDetailComponent implements OnInit {
   handleChange(info: NzUploadChangeParam): void {
     // 处理上传列表
     const fileList: NzUploadFile[] = [];
-    info.fileList.forEach((file) => {
+    info.fileList.forEach(file => {
       if (file.status === 'done') {
         fileList.push(file);
       }
     });
 
     if (info.file.status === 'done') {
-      fileList.map((file) => {
-        file.url = environment.serverFileDownloadRootUrl + '\\' + file.response.name;
+      fileList.map(file => {
+        file.url = `${environment.serverFileDownloadRootUrl}\\${file.response.name}`;
       });
       this.attachments = fileList;
       if (this.room?.id) {
@@ -107,11 +107,11 @@ export class MyResourceRoomDetailComponent implements OnInit {
     if (this.validate()) {
       // 转换附件类型
       const attachs: IAttachment[] = [];
-      this.attachments.forEach((attachment) => {
+      this.attachments.forEach(attachment => {
         attachs.push({
           name: attachment.name,
           path: attachment.response.name,
-          date: attachment.response.date,
+          date: attachment.response.date
         });
       });
       const myResourceRoom: IMyResourceRoom = {
@@ -119,12 +119,12 @@ export class MyResourceRoomDetailComponent implements OnInit {
         name: this.roomDetailForm.controls.roomName.value,
         description: this.roomDetailForm.controls.roomDescription.value,
         myResourceId: this.myResourceId,
-        attachments: attachs,
+        attachments: attachs
       };
       this.myResourceRoomService.save(myResourceRoom).subscribe({
-        next: (room) => {
+        next: room => {
           this.roomId = room.id;
-        },
+        }
       });
       // this.dataChanged.emit();
     }

@@ -1,24 +1,24 @@
 import { AfterViewInit, ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { NzTreeNodeOptions, NzTreeNode, NzFormatEmitEvent, NzFormatBeforeDropEvent } from 'ng-zorro-antd/tree';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { IMenu } from 'src/app/domains/imenu';
-import { MenuService } from 'src/app/core/services/menu.service';
-import { SettingsService } from '@delon/theme';
-import { NzModalService, NzModalRef } from 'ng-zorro-antd/modal';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { SettingsService } from '@delon/theme';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzModalService, NzModalRef } from 'ng-zorro-antd/modal';
+import { NzTreeNodeOptions, NzTreeNode, NzFormatEmitEvent, NzFormatBeforeDropEvent } from 'ng-zorro-antd/tree';
 import { Observable, of } from 'rxjs';
+import { MenuService } from 'src/app/core/services/menu.service';
+import { IMenu } from 'src/app/domains/imenu';
 
 @Component({
   selector: 'app-menus',
   templateUrl: './menus.component.html',
-  styles: [],
+  styles: []
 })
 export class MenusComponent implements OnInit {
   constructor(
     private menuService: MenuService,
     private settingService: SettingsService,
     private modal: NzModalService,
-    private fb: FormBuilder,
+    private fb: FormBuilder
   ) {}
 
   private dragMenuParent: NzTreeNode | null = null;
@@ -35,7 +35,7 @@ export class MenusComponent implements OnInit {
     this.menuForm = this.fb.group({
       name: ['', [Validators.required]],
       path: ['', [Validators.required]],
-      iconClass: [''],
+      iconClass: ['']
     });
 
     this.loadMenu();
@@ -43,14 +43,14 @@ export class MenusComponent implements OnInit {
 
   loadMenu(): void {
     this.menuService.findAll(this.settingService.user.id).subscribe({
-      next: (menus) => {
+      next: menus => {
         const menuNodes: NzTreeNodeOptions[] = [];
-        menus.forEach((menu) => {
+        menus.forEach(menu => {
           const node = this.menuNodeTransfer(menu);
           menuNodes.push(node);
         });
         this.nodes = menuNodes;
-      },
+      }
     });
   }
 
@@ -79,8 +79,8 @@ export class MenusComponent implements OnInit {
       nzContent: content,
       nzFooter: footer,
       nzComponentParams: {
-        selectedNode,
-      },
+        selectedNode
+      }
     });
   }
 
@@ -96,7 +96,7 @@ export class MenusComponent implements OnInit {
       path: this.menuForm.controls.path.value,
       iconClass: this.menuForm.controls.iconClass.value,
       orderId: this.menuId ? +selectedNode.key : 0,
-      parentId: this.menuId ? (selectedNode.parentNode ? +selectedNode.parentNode.key : 0) : +selectedNode.key,
+      parentId: this.menuId ? (selectedNode.parentNode ? +selectedNode.parentNode.key : 0) : +selectedNode.key
     };
 
     // 如果是新增节点，新增节点顺序是所有兄弟节点最后
@@ -109,7 +109,7 @@ export class MenusComponent implements OnInit {
 
     // 后端保存节点
     this.menuService.save(menu).subscribe({
-      next: (m) => {
+      next: m => {
         const node = this.menuNodeTransfer(m);
         // 新增节点的处理
         if (this.menuId === 0) {
@@ -126,7 +126,7 @@ export class MenusComponent implements OnInit {
           }
         }
         this.closeMenuModal(modalRef);
-      },
+      }
     });
   }
 
@@ -140,7 +140,7 @@ export class MenusComponent implements OnInit {
         if (parentNode) {
           parentNode.isLeaf = !parentNode.children || parentNode?.getChildren().length === 0;
         }
-      },
+      }
     });
   }
 
@@ -156,13 +156,13 @@ export class MenusComponent implements OnInit {
           path: brotherNodes[i].origin.path,
           iconClass: brotherNodes[i].origin.icon,
           parentId: dragNode.parentNode ? +dragNode.parentNode.key : 0,
-          orderId: i,
+          orderId: i
         };
         menus.push(menu);
       }
 
       this.menuService.batchSave(menus).subscribe({
-        next: () => {},
+        next: () => {}
       });
     }
   }
@@ -197,11 +197,11 @@ export class MenusComponent implements OnInit {
       isLeaf: false,
       expanded: true,
       orderId: menu.orderId,
-      path: menu.path,
+      path: menu.path
     };
 
     if (menu.children && menu.children.length > 0) {
-      menu.children.forEach((child) => {
+      menu.children.forEach(child => {
         const childNode = this.menuNodeTransfer(child);
         node.children?.push(childNode);
       });

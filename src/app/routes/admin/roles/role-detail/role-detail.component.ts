@@ -2,19 +2,19 @@ import { Component, OnInit, ViewChild, Input, TemplateRef, Output, EventEmitter 
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { STColumn, STComponent } from '@delon/abc/st';
 import { environment } from '@env/environment';
-import { catchError, map } from 'rxjs/operators';
-import { RoleService } from 'src/app/core/services/role.service';
-import { IRole } from 'src/app/domains/irole';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService, NzModalRef } from 'ng-zorro-antd/modal';
 import { NzTransferComponent, TransferItem } from 'ng-zorro-antd/transfer';
-import { NzMessageService } from 'ng-zorro-antd/message';
 import { of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { RoleService } from 'src/app/core/services/role.service';
 import { UserService } from 'src/app/core/services/user.service';
+import { IRole } from 'src/app/domains/irole';
 
 @Component({
   selector: 'app-role-detail',
   templateUrl: './role-detail.component.html',
-  styles: [],
+  styles: []
 })
 export class RoleDetailComponent implements OnInit {
   // 角色id
@@ -41,7 +41,7 @@ export class RoleDetailComponent implements OnInit {
   usersColumn: STColumn[] = [
     // { title: '', index: 'id', type: 'checkbox' },
     { title: '用户id', index: 'id', width: 150, sort: true },
-    { title: '用户名', index: 'name', width: 150, sort: true },
+    { title: '用户名', index: 'name', width: 150, sort: true }
   ];
 
   constructor(
@@ -49,7 +49,7 @@ export class RoleDetailComponent implements OnInit {
     private roleService: RoleService,
     private userService: UserService,
     private modal: NzModalService,
-    private message: NzMessageService,
+    private message: NzMessageService
   ) {}
 
   ngOnInit(): void {
@@ -59,16 +59,16 @@ export class RoleDetailComponent implements OnInit {
         {
           Validators: [Validators.required],
           asyncValidators: [this.uniqueRoleIdValidator()],
-          updateOn: 'blur',
-        },
+          updateOn: 'blur'
+        }
       ],
       roleName: ['', [Validators.required]],
-      description: [''],
+      description: ['']
     });
 
     this.usersSearchForm = this.fb.group({
       userId: [''],
-      userName: [''],
+      userName: ['']
     });
 
     if (this.roleId) {
@@ -79,11 +79,11 @@ export class RoleDetailComponent implements OnInit {
   // 读取角色信息
   loadRole(roleId: string): void {
     this.roleInfoForm.controls.roleId.disable(); // 有角色id则禁用roleId输入框
-    this.roleService.findOne(roleId).subscribe((role) => {
+    this.roleService.findOne(roleId).subscribe(role => {
       this.roleInfoForm.controls.roleId.setValue(role.id);
       this.roleInfoForm.controls.roleName.setValue(role.name);
       this.roleInfoForm.controls.description.setValue(role.description);
-      this.userList.data = environment.serverUserServiceURL + '/role/' + role.id;
+      this.userList.data = `${environment.serverUserServiceURL}/role/${role.id}`;
       this.userList.reload();
     });
   }
@@ -94,16 +94,16 @@ export class RoleDetailComponent implements OnInit {
       const role: IRole = {
         id: this.roleInfoForm.controls.roleId.value,
         name: this.roleInfoForm.controls.roleName.value,
-        description: this.roleInfoForm.controls.description.value,
+        description: this.roleInfoForm.controls.description.value
       };
       this.roleService.save(role).subscribe({
-        next: (r) => {
+        next: r => {
           this.roleId = r.id;
           // 新增成功后，roleId字段不能再更新，刷新用户列表
           this.loadRole(r.id);
           // 触发数据变化事件
           this.dataChanged.emit();
-        },
+        }
       });
     }
   }
@@ -113,10 +113,10 @@ export class RoleDetailComponent implements OnInit {
     const searchUserId = this.usersSearchForm.controls.userId.value;
     const searchUserName = this.usersSearchForm.controls.userName.value;
     if (searchUserId) {
-      filterStr += 'id:*' + searchUserId + '*';
+      filterStr += `id:*${searchUserId}*`;
     }
     if (searchUserName) {
-      filterStr += 'name:*' + searchUserName + '*';
+      filterStr += `name:*${searchUserName}*`;
     }
 
     this.userList.req.params = { filter: filterStr };
@@ -134,8 +134,8 @@ export class RoleDetailComponent implements OnInit {
     return (control: AbstractControl) => {
       if (control.value !== '') {
         return this.roleService.checkIdExist(control.value).pipe(
-          map((checkResult) => (checkResult ? { uniqueRoleId: false } : null)),
-          catchError(() => of({ uniqueRoleId: false })),
+          map(checkResult => (checkResult ? { uniqueRoleId: false } : null)),
+          catchError(() => of({ uniqueRoleId: false }))
         );
       }
       return of(null);
@@ -145,33 +145,33 @@ export class RoleDetailComponent implements OnInit {
   showAddUsersDialog(tpl: TemplateRef<any>): void {
     // 每次打开对话框刷新transfer数据源
     this.userService.findAll().subscribe({
-      next: (users) => {
+      next: users => {
         const ti: TransferItem[] = [];
         let dir: 'left' | 'right' = 'left';
 
-        users.forEach((user) => {
+        users.forEach(user => {
           if (user.roleId === this.roleId) {
             dir = 'right';
           }
           ti.push({
             key: user.id,
             title: `${user.id}(${user.name})`,
-            direction: dir,
+            direction: dir
           });
         });
         this.usersTransferDataSource = ti;
-      },
+      }
     });
 
     const modalRef = this.modal.create({
       nzTitle: '用户管理',
       nzContent: tpl,
       nzOnOk: () =>
-        new Promise((resolve) => {
+        new Promise(resolve => {
           // 保存角色的用户成员
           if (this.roleId) {
             const userIds: string[] = [];
-            this.usersTransfer.rightDataSource.forEach((user) => {
+            this.usersTransfer.rightDataSource.forEach(user => {
               userIds.push(user.key);
             });
             this.roleService.setUsers(this.roleId, userIds).subscribe({
@@ -185,10 +185,10 @@ export class RoleDetailComponent implements OnInit {
               error: () => {
                 this.message.error('保存失败');
                 resolve(false);
-              },
+              }
             });
           }
-        }),
+        })
     });
   }
 }

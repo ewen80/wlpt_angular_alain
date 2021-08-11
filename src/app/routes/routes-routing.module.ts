@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SimpleGuard } from '@delon/auth';
 import { environment } from '@env/environment';
+
 import { MenuGuard } from '../guards/menu.guard';
 // layout
 import { LayoutBasicComponent } from '../layout/basic/basic.component';
@@ -28,8 +29,8 @@ const routes: Routes = [
       { path: 'login', component: UserLoginComponent, data: { title: '登录' } },
       { path: 'register', component: UserRegisterComponent, data: { title: '注册', titleI18n: 'pro-register' } },
       { path: 'register-result', component: UserRegisterResultComponent, data: { title: '注册结果', titleI18n: 'pro-register-result' } },
-      { path: 'lock', component: UserLockComponent, data: { title: '锁屏', titleI18n: 'lock' } },
-    ],
+      { path: 'lock', component: UserLockComponent, data: { title: '锁屏', titleI18n: 'lock' } }
+    ]
   },
   // 单页不包裹Layout
   { path: 'passport/callback/:type', component: CallbackComponent },
@@ -43,21 +44,21 @@ const routes: Routes = [
       {
         path: 'home',
         component: DashboardComponent,
-        data: { title: '仪表盘' },
+        data: { title: '仪表盘' }
       },
-      { path: 'exception', loadChildren: () => import('./exception/exception.module').then((m) => m.ExceptionModule) },
+      { path: 'exception', loadChildren: () => import('./exception/exception.module').then(m => m.ExceptionModule) },
       // 后台管理子模块
       {
         path: 'admin',
-        loadChildren: () => import('./admin/admin.module').then((m) => m.AdminModule),
+        loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule)
       },
       // 各资源模块
       {
         path: 'resources',
-        loadChildren: () => import('./resources/resources.module').then((m) => m.ResourcesModule),
-      },
+        loadChildren: () => import('./resources/resources.module').then(m => m.ResourcesModule)
+      }
       // { path: 'widgets', loadChildren: () => import('./widgets/widgets.module').then(m => m.WidgetsModule) },
-    ],
+    ]
   },
 
   // 空白布局
@@ -67,7 +68,7 @@ const routes: Routes = [
   //     children: [
   //     ]
   // },
-  { path: '**', redirectTo: 'exception/404' },
+  { path: '**', redirectTo: 'exception/404' }
 ];
 
 @NgModule({
@@ -76,9 +77,9 @@ const routes: Routes = [
       useHash: environment.useHash,
       // NOTICE: If you use `reuse-tab` component and turn on keepingScroll you can set to `disabled`
       // Pls refer to https://ng-alain.com/components/reuse-tab
-      scrollPositionRestoration: 'top',
-    }),
+      scrollPositionRestoration: 'top'
+    })
   ],
-  exports: [RouterModule],
+  exports: [RouterModule]
 })
 export class RouteRoutingModule {}

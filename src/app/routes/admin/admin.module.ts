@@ -2,6 +2,7 @@ import { NgModule, Type } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { SharedModule } from '@shared';
+
 import { AdminRoutingModule } from './admin-routing.module';
 import { MenusComponent } from './resources/menus/menus.component';
 import { ResourceDetailComponent } from './resources/resource-detail/resource-detail.component';
@@ -12,7 +13,7 @@ import { ChangePasswordComponent } from './users/change-password/change-password
 import { UserdetailComponent } from './users/user-detail/user-detail.component';
 import { UserlistComponent } from './users/user-list/user-list.component';
 
-const COMPONENTS: Type<void>[] = [
+const COMPONENTS: Array<Type<void>> = [
   RolesListComponent,
   RoleDetailComponent,
   UserlistComponent,
@@ -20,11 +21,11 @@ const COMPONENTS: Type<void>[] = [
   ResourceListComponent,
   ResourceDetailComponent,
   ChangePasswordComponent,
-  MenusComponent,
+  MenusComponent
 ];
 
 @NgModule({
   imports: [SharedModule, AdminRoutingModule, ReactiveFormsModule, RouterModule],
-  declarations: COMPONENTS,
+  declarations: COMPONENTS
 })
 export class AdminModule {}

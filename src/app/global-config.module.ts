@@ -1,13 +1,14 @@
 import { ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core';
 import { throwIfAlreadyLoaded } from '@core';
 // import { DelonMockModule } from '@delon/mock';
+import { STRequestOptions } from '@delon/abc/st';
+import { DelonACLModule } from '@delon/acl';
+import { DA_STORE_TOKEN, SessionStorageStore } from '@delon/auth';
 import { AlainThemeModule } from '@delon/theme';
 import { AlainConfig, ALAIN_CONFIG } from '@delon/util/config';
 
 // Please refer to: https://ng-alain.com/docs/global-config
 // #region NG-ALAIN Config
-
-import { DelonACLModule } from '@delon/acl';
 
 const alainConfig: AlainConfig = {
   // 列表分页配置
@@ -17,13 +18,13 @@ const alainConfig: AlainConfig = {
     req: {
       reName: {
         pi: 'pageIndex',
-        ps: 'pageSize',
+        ps: 'pageSize'
       },
       process: (ro: STRequestOptions) => {
         let params = new HttpParams();
         const roparams: any = ro.params;
 
-        Object.keys(roparams).forEach((key) => {
+        Object.keys(roparams).forEach(key => {
           if (key === 'sort') {
             const sortStr = roparams[key];
             if (sortStr && sortStr.indexOf('.')) {
@@ -49,33 +50,33 @@ const alainConfig: AlainConfig = {
         ro.params = params;
 
         return ro;
-      },
+      }
     },
     res: {
       reName: {
         total: 'totalElements',
-        list: 'content',
-      },
+        list: 'content'
+      }
     },
     page: {
       zeroIndexed: true,
       showSize: true,
-      total: '共 {{total}} 条',
+      total: '共 {{total}} 条'
     },
     sortReName: {
       ascend: 'ASC',
-      descend: 'DESC',
+      descend: 'DESC'
     },
-    singleSort: {},
+    singleSort: {}
   },
   pageHeader: { homeI18n: 'home' },
   lodop: {
     license: `A59B099A586B3851E0F0D7FDBF37B603`,
-    licenseA: `C94CEE276DB2187AE6B65D56B3FC2848`,
+    licenseA: `C94CEE276DB2187AE6B65D56B3FC2848`
   },
   auth: {
-    login_url: '/passport/login',
-  },
+    login_url: '/passport/login'
+  }
 };
 
 // const alainModules = [AlainThemeModule.forRoot(), DelonACLModule.forRoot(), DelonMockModule.forRoot()];
@@ -118,8 +119,6 @@ const alainProvides = [{ provide: ALAIN_CONFIG, useValue: alainConfig }];
 // #region NG-ZORRO Config
 
 import { NzConfig, NZ_CONFIG } from 'ng-zorro-antd/core/config';
-import { DA_STORE_TOKEN, SessionStorageStore } from '@delon/auth';
-import { STRequestOptions } from '@delon/abc/st';
 import { HttpParams } from '@angular/common/http';
 
 const ngZorroConfig: NzConfig = {};
@@ -129,7 +128,7 @@ const zorroProvides = [{ provide: NZ_CONFIG, useValue: ngZorroConfig }];
 // #endregion
 
 @NgModule({
-  imports: [...alainModules],
+  imports: [...alainModules]
 })
 export class GlobalConfigModule {
   constructor(@Optional() @SkipSelf() parentModule: GlobalConfigModule) {
@@ -142,8 +141,8 @@ export class GlobalConfigModule {
       providers: [
         ...alainProvides,
         ...zorroProvides,
-        { provide: DA_STORE_TOKEN, useClass: SessionStorageStore }, // TOKEN存储在Session中，关闭浏览器TOKEN就失效。https://ng-alain.com/auth/set/zh
-      ],
+        { provide: DA_STORE_TOKEN, useClass: SessionStorageStore } // TOKEN存储在Session中，关闭浏览器TOKEN就失效。https://ng-alain.com/auth/set/zh
+      ]
     };
   }
 }
