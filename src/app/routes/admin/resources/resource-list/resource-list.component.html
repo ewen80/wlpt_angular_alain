@@ -1,0 +1,52 @@
+<page-header [title]="'资源管理'">
+  <nz-tabset nzType="editable-card" nzHideAdd [(nzSelectedIndex)]="selectedTabIndex" (nzClose)="closeTab($event)">
+    <nz-tab nzTitle="资源列表">
+      <nz-card [nzBordered]="false">
+        <form nz-form [nzLayout]="'inline'" (ngSubmit)="submit()" class="search__form">
+          <div nz-row [nzGutter]="{ xs: 8, sm: 8, md: 8, lg: 24, xl: 48, xxl: 48 }">
+            <div nz-col nzMd="8">
+              <nz-form-item>
+                <nz-form-label nzFor="className">资源类名</nz-form-label>
+                <nz-form-control>
+                  <input nz-input [(ngModel)]="search_className" name="className" placeholder="请输入资源类名" id="className" />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col nzMd="8">
+              <nz-form-item>
+                <nz-form-label nzFor="name">资源名</nz-form-label>
+                <nz-form-control>
+                  <input nz-input name="name" [(ngModel)]="search_name" placeholder="请输入资源名" id="name" />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col nzMd="8" [class.text-right]="false">
+              <button nz-button type="submit" [nzType]="'primary'">查询</button>
+              <button nz-button type="reset" (click)="reset()" class="mx-sm">重置</button>
+            </div>
+          </div>
+        </form>
+        <button nz-button (click)="add(undefined)" [nzType]="'primary'">
+          <i nz-icon nzType="plus"></i>
+          <span>新建</span>
+        </button>
+        <button nz-button (click)="remove()" [nzType]="'primary'" [disabled]="selectedResourceTypeClassNames.length === 0">
+          <i nz-icon nzType="minus"></i>
+          <span>删除</span>
+        </button>
+        <st
+          #st
+          [widthMode]="{ type: 'strict' }"
+          [columns]="columns"
+          [data]="url"
+          (change)="stChange($event)"
+          [res]="{ process: dataProcess }"
+        >
+        </st>
+      </nz-card>
+    </nz-tab>
+    <nz-tab *ngFor="let tab of tabs" [nzTitle]="tab.title" nzClosable>
+      <app-resource-detail [className]="tab.className" (dataChanged)="resourceTypeDataChanged()"></app-resource-detail>
+    </nz-tab>
+  </nz-tabset>
+</page-header>

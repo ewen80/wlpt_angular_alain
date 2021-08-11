@@ -1,0 +1,52 @@
+<form nz-form [formGroup]="resourceForm" se-container="2">
+  <se-title>基础信息</se-title>
+  <se label="场地名称" [error]="{ required: '不能为空' }">
+    <input nz-input formControlName="changdiName" required id="changdiName" />
+  </se>
+  <se label="所属区" [error]="{ required: '不能为空' }">
+    <nz-select nzShowSearch nzAllowClear formControlName="qxId" required>
+      <nz-option *ngFor="let qx of qxs" [nzLabel]="qx.value" [nzValue]="qx.key"> </nz-option>
+    </nz-select>
+  </se>
+  <se label="场地地址" col="1" [error]="{ required: '不能为空' }">
+    <input nz-input formControlName="changdiAddress" required id="changdiAddress" />
+  </se>
+  <se-title>附件信息</se-title>
+  <se>
+    <nz-upload [nzAction]="fileUploadServiceURL" [nzFileList]="attachments" [nzRemove]="removeFile" (nzChange)="handleChange($event)">
+      <button nz-button><i nz-icon nzType="upload"></i>上传附件</button>
+    </nz-upload>
+  </se>
+  <se-title>房间信息</se-title>>
+  <se col="1">
+    <button nz-button type="button" nzType="primary" (click)="showRoom()" [disabled]="!resourceId">新增房间</button>
+    <button nz-button type="button" nzType="primary" (click)="removeRoom()" [disabled]="selectedRoomIds.length === 0">删除房间</button>
+  </se>
+  <se col="1">
+    <st [columns]="stColumns" [data]="myResourceRomms" (dataChanged)="getRooms()" (change)="stChange($event)">
+      <ng-template st-row="attachments" let-item>
+        <nz-row *ngFor="let attachment of item.attachments">
+          <nz-col>
+            <a href="{{ fileDownloadRootUrl + '\\' + attachment.path }}" target="_blank">{{ attachment.name }}</a>
+          </nz-col>
+        </nz-row>
+      </ng-template>
+    </st>
+  </se>
+  <se-title>签名信息</se-title>
+  <se label="签名人">
+    <div>{{ myResource?.sign?.name }}</div>
+  </se>
+  <se label="签署日期">
+    <div>{{ myResource?.sign?.createdAt }}</div>
+  </se>
+  <se col="1">
+    <img nz-image *ngIf="signBase64 !== ''" [nzSrc]="signBase64" width="200px" height="80px" nzDisablePreview="true" />
+  </se>
+  <se col="1">
+    <button nz-button type="submit" nzType="primary" acl [acl-ability]="'WRITE'" [disabled]="resourceForm.invalid" (click)="save()">
+      确定
+    </button>
+    <button nz-button type="button" nzType="primary" acl [acl-ability]="'FINISH'" (click)="finish()">办结</button>
+  </se>
+</form>

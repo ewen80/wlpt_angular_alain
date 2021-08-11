@@ -1,0 +1,70 @@
+<nz-card [nzBordered]="false" nzTitle="资源类型">
+  <form nz-form [formGroup]="resourceTypeForm" (ngSubmit)="submit()" se-container="2" labelWidth="150">
+    <se label="className" [error]="{ required: '不能为空', uniqueResourceTypeClassName: '该类名已经存在' }">
+      <input type="text" nz-input formControlName="className" required placeholder="必填项" />
+    </se>
+    <se label="名称" [error]="{ required: '不能为空' }">
+      <input type="text" nz-input formControlName="name" required placeholder="必填项" />
+    </se>
+    <se label="描述" col="1">
+      <input type="text" nz-input formControlName="description" />
+    </se>
+    <se>
+      <button nz-button type="submit" nzType="primary" [disabled]="resourceTypeForm.invalid">确定</button>
+    </se>
+  </form>
+</nz-card>
+<nz-card [nzBordered]="false" nzTitle="资源范围管理">
+  <form nz-form [formGroup]="resourceRangeSearchForm" (ngSubmit)="searchRanges()">
+    <div nz-row [nzGutter]="16">
+      <div nz-col>
+        <nz-form-item>
+          <nz-form-label nzFor="search_roleId">角色id</nz-form-label>
+          <nz-form-control>
+            <input type="text" nz-input id="search_roleId" formControlName="roleId" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col>
+        <button nz-button nzType="primary" type="submit">查询</button>
+        <button nz-button type="reset" (click)="resetSearch()" class="mx-sm">重置</button>
+      </div>
+    </div>
+  </form>
+
+  <button nz-button nzType="primary" (click)="showAddRangesDialog(addRangesDialog, tplFooter)" [disabled]="className === undefined">
+    <i nz-icon nzType="lock" nzTheme="outline" style="font-size: 20px"></i>新增资源范围
+  </button>
+  <button nz-button nzType="primary" (click)="removeRanges()" [disabled]="selectedRanges.length === 0">
+    <i nz-icon nzType="minus" nzTheme="outline" style="font-size: 20px"></i>删除资源范围
+  </button>
+  <st
+    #resourceRangeList
+    [columns]="resourceRangeColumn"
+    [res]="{ process: rangeListResponseProcess }"
+    (change)="rangeListChanged($event)"
+  ></st>
+</nz-card>
+
+<ng-template #addRangesDialog>
+  <form nz-form [formGroup]="resourceRangeDetailForm" se-container="1">
+    <se label="filter">
+      <input type="text" nz-input name="filter" formControlName="resourceRangeFilter" placeholder="无输入内容表示匹配所有范围" />
+    </se>
+    <se label="角色id" [error]="{ required: '不能为空', uniqueRangeRoleId: '该角色已经存在资源范围，请选择其他角色' }">
+      <nz-select nzShowSearch name="roleId" formControlName="resourceRangeRoleId" required>
+        <nz-option *ngFor="let role of roleList" [nzLabel]="role.id" [nzValue]="role.id"></nz-option>
+      </nz-select>
+    </se>
+    <se label="权限">
+      <!-- <nz-radio-group formControlName="permissions">
+        <label nz-radio [nzValue]="p.value" *ngFor="let p of permissions">{{ p.label }}</label>
+      </nz-radio-group> -->
+      <nz-checkbox-group [(ngModel)]="permissions" [ngModelOptions]="{ standalone: true }"></nz-checkbox-group>
+    </se>
+  </form>
+</ng-template>
+<ng-template #tplFooter let-ref="modalRef">
+  <button nz-button (click)="rangeDetailReset(ref)">取消</button>
+  <button nz-button nzType="primary" [disabled]="!resourceRangeDetailForm.valid" (click)="rangeDetailOK(ref)">确定</button>
+</ng-template>

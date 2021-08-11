@@ -1,0 +1,23 @@
+<nz-card [nzBordered]="false" nzTitle="用户信息">
+  <form nz-form [formGroup]="userInfoForm" (ngSubmit)="submit()" se-container="1" labelWidth="80">
+    <se label="用户id" [error]="{ required: '不能为空', uniqueUserId: 'id已经存在' }">
+      <input type="text" nz-input formControlName="userId" required placeholder="必填项" />
+    </se>
+    <se label="用户名" [error]="{ required: '不能为空' }">
+      <input type="text" nz-input formControlName="userName" required placeholder="必填项" />
+    </se>
+    <se label="角色" [error]="{ required: '不能为空' }">
+      <nz-select nzShowSearch nzPlaceHolder="选择角色" nzAllowClear formControlName="roleId" required>
+        <nz-option *ngFor="let role of roleList" [nzLabel]="role.id" [nzValue]="role.id"> </nz-option>
+      </nz-select>
+    </se>
+    <se label="所属区" [error]="{ required: '不能为空' }">
+      <nz-select nzShowSearch nzAllowClear formControlName="qxId" required>
+        <nz-option *ngFor="let qx of qxs" [nzLabel]="qx.value" [nzValue]="qx.key"> </nz-option>
+      </nz-select>
+    </se>
+    <se>
+      <button nz-button type="submit" nzType="primary" [disabled]="userInfoForm.invalid">确定</button>
+    </se>
+  </form>
+</nz-card>

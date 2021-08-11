@@ -1,0 +1,75 @@
+<page-header [title]="'场地查看管理'"></page-header>
+<nz-tabset nzType="editable-card" nzHideAdd [(nzSelectedIndex)]="selectedTabIndex" (nzClose)="closeTab($event)">
+  <nz-tab nzTitle="场地列表">
+    <nz-card [nzBordered]="false">
+      <form nz-form [nzLayout]="'inline'" (ngSubmit)="search()" class="search__form">
+        <div nz-row [nzGutter]="{ xs: 8, sm: 8, md: 8, lg: 24, xl: 48, xxl: 48 }">
+          <div nz-col nzMd="6">
+            <nz-form-item>
+              <nz-form-label nzFor="changdiName">场地名称</nz-form-label>
+              <nz-form-control>
+                <input nz-input [(ngModel)]="searchChangdiName" name="changdiName" id="changdiName" />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col nzMd="6">
+            <nz-form-item>
+              <nz-form-label nzFor="changdiAddr">场地地址</nz-form-label>
+              <nz-form-control>
+                <input nz-input name="changdiAddr" [(ngModel)]="searchChangdiAddress" id="changdiAddr" />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col nzMd="6">
+            <nz-form-item>
+              <nz-form-label nzFor="qxId">所属区</nz-form-label>
+              <nz-form-control>
+                <nz-select name="qxId" nzMode="multiple" nzPlaceHolder="所属区" [(ngModel)]="searchQxIds">
+                  <nz-option *ngFor="let qx of qxs" [nzLabel]="qx.value" [nzValue]="qx.key"></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col [class.text-right]="false" nzMd="6">
+            <button nz-button type="submit" [nzType]="'primary'">查询</button>
+            <button nz-button type="reset" (click)="reset()" class="mx-sm">重置</button>
+          </div>
+        </div>
+      </form>
+      <nz-row [nzGutter]="16">
+        <nz-col>
+          <button nz-button (click)="showDetail(undefined)" [nzType]="'primary'" acl [acl-ability]="'NEW'">
+            <i nz-icon nzType="plus"></i>
+            <span>新建</span>
+          </button>
+        </nz-col>
+        <nz-col>
+          <button nz-button (click)="remove()" [nzType]="'primary'" [disabled]="selectedIds.length === 0">
+            <i nz-icon nzType="minus"></i>
+            <span>删除</span>
+          </button>
+        </nz-col>
+        <nz-col nzLg="8"></nz-col>
+        <nz-col>
+          <div>
+            <nz-radio-group [(ngModel)]="searchFinished" class="mr-md" (ngModelChange)="searchFinishedChanged($event)">
+              <label nz-radio-button [nzValue]="'all'">
+                <span>全部</span>
+              </label>
+              <label nz-radio-button [nzValue]="'unFinished'">
+                <span>待办结</span>
+              </label>
+              <label nz-radio-button [nzValue]="'finished'">
+                <span>已办结</span>
+              </label>
+            </nz-radio-group>
+          </div>
+        </nz-col>
+      </nz-row>
+      <st #st [widthMode]="{ type: 'strict' }" [columns]="columns" [data]="dataUrl" [res]="stRes" (change)="stChange($event)"> </st>
+    </nz-card>
+  </nz-tab>
+  <nz-tab *ngFor="let tab of tabs" [nzTitle]="tab.title" nzClosable>
+    <app-my-resource-detail [resourceId]="tab.id" (dataChanged)="tableDataChanged()"></app-my-resource-detail>
+  </nz-tab>
+</nz-tabset>

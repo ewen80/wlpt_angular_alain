@@ -1,0 +1,55 @@
+<page-header [title]="'菜单管理'"></page-header>
+<nz-card [nzBordered]="false">
+  <nz-tree
+    nzBlockNode
+    [nzData]="nodes"
+    [nzTreeTemplate]="nzTreeTemplate"
+    nzShowIcon
+    nzDraggable
+    (nzOnDrop)="menuOnDrop($event)"
+    [nzBeforeDrop]="beforeMenuDrop"
+  >
+  </nz-tree>
+</nz-card>
+
+<ng-template #nzTreeTemplate let-node let-origin="origin">
+  <span>
+    <span>
+      <button nz-button nzType="text" (click)="showUpdateMenuModal(menuModalTitle, menuModalContent, menuModalFooter, node)">
+        <i nz-icon [nzType]="node.icon"></i>
+        <span>{{ node.title }}</span>
+      </button>
+    </span>
+    <span>
+      <button nz-button nzType="text" (click)="showAddMenuModal(menuModalTitle, menuModalContent, menuModalFooter, node)">
+        <i nz-icon nzType="plus"></i>
+      </button>
+      <button nz-button nzType="text" (click)="deleteMenu(node)">
+        <i nz-icon nzType="minus"></i>
+      </button>
+    </span>
+  </span>
+</ng-template>
+
+<ng-template #menuModalTitle>
+  <span>{{ modalTitle }} </span>
+</ng-template>
+
+<ng-template #menuModalContent>
+  <form nz-form [formGroup]="menuForm" se-container="1">
+    <se label="菜单名">
+      <input nz-input formControlName="name" placeholder="必填项" required />
+    </se>
+    <se label="路径">
+      <input nz-input formControlName="path" placeholder="必填项" required />
+    </se>
+    <se label="图标">
+      <input nz-input formControlName="iconClass" placeholder="ng-zorro icon" />
+    </se>
+  </form>
+</ng-template>
+
+<ng-template #menuModalFooter let-ref="modalRef" let-params>
+  <button nz-button (click)="closeMenuModal(ref)">取消</button>
+  <button nz-button nzType="primary" (click)="saveMenu(params.selectedNode, ref)" [disabled]="!menuForm.valid">确定</button>
+</ng-template>

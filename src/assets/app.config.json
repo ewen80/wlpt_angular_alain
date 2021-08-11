@@ -1,0 +1,8 @@
+{
+    "Server":{
+        "AutenticateUrl": "/authentication"
+    },
+    "User":{
+        "DefaultAvatar":"/assets/img/avatars/4.png"
+    }
+}

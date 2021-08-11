@@ -1,0 +1,52 @@
+<page-header [title]="'场地查看管理'"></page-header>
+<nz-tabset nzType="editable-card" nzHideAdd [(nzSelectedIndex)]="selectedTabIndex" (nzClose)="closeTab($event)">
+  <nz-tab nzTitle="场地列表">
+    <nz-card [nzBordered]="false">
+      <form nz-form [nzLayout]="'inline'" (ngSubmit)="search()" class="search__form">
+        <div nz-row [nzGutter]="{ xs: 8, sm: 8, md: 8, lg: 24, xl: 48, xxl: 48 }">
+          <div nz-col nzMd="8">
+            <nz-form-item>
+              <nz-form-label nzFor="changdiName">申请单位</nz-form-label>
+              <nz-form-control>
+                <input nz-input [(ngModel)]="searchSqdw" name="sqdw" id="sqdw" />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col nzMd="8">
+            <nz-form-item>
+              <nz-form-label nzFor="qxId">所属区</nz-form-label>
+              <nz-form-control>
+                <nz-select name="qxId" nzMode="multiple" nzPlaceHolder="所属区" [(ngModel)]="searchQxIds">
+                  <nz-option *ngFor="let qx of qxs" [nzLabel]="qx.value" [nzValue]="qx.key"></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col [class.text-right]="false" nzMd="8">
+            <button nz-button type="submit" [nzType]="'primary'">查询</button>
+            <button nz-button type="reset" (click)="reset()" class="mx-sm">重置</button>
+          </div>
+        </div>
+      </form>
+      <nz-row [nzGutter]="16">
+        <nz-col>
+          <button nz-button (click)="showDetail(undefined)" [nzType]="'primary'" acl [acl-ability]="'NEW'">
+            <i nz-icon nzType="plus"></i>
+            <span>新建</span>
+          </button>
+        </nz-col>
+        <nz-col>
+          <button nz-button (click)="remove()" [nzType]="'primary'" [disabled]="selectedIds.length === 0">
+            <i nz-icon nzType="minus"></i>
+            <span>删除</span>
+          </button>
+        </nz-col>
+        <nz-col nzLg="8"></nz-col>
+      </nz-row>
+      <st #st [widthMode]="{ type: 'strict' }" [columns]="columns" [data]="dataUrl" [res]="stRes" (change)="stChange($event)"> </st>
+    </nz-card>
+  </nz-tab>
+  <nz-tab *ngFor="let tab of tabs" [nzTitle]="tab.title" nzClosable>
+    <app-weixing-detail [resourceId]="tab.id" (dataChanged)="tableDataChanged()"></app-weixing-detail>
+  </nz-tab>
+</nz-tabset>

@@ -1,0 +1,50 @@
+<nz-card [nzBordered]="false" nzTitle="角色信息">
+  <form nz-form [formGroup]="roleInfoForm" (ngSubmit)="submit()" se-container="2" labelWidth="80">
+    <se label="角色id" [error]="{ required: '不能为空', uniqueRoleId: 'id已经存在' }">
+      <input type="text" nz-input formControlName="roleId" required placeholder="必填项" />
+    </se>
+    <se label="角色名" [error]="{ required: '不能为空' }">
+      <input type="text" nz-input formControlName="roleName" required placeholder="必填项" />
+    </se>
+    <se label="描述" col="1">
+      <input type="text" nz-input formControlName="description" />
+    </se>
+    <se>
+      <button nz-button type="submit" nzType="primary" [disabled]="roleInfoForm.invalid">确定</button>
+    </se>
+  </form>
+</nz-card>
+<nz-card [nzBordered]="false" nzTitle="成员管理">
+  <form nz-form [formGroup]="usersSearchForm" (ngSubmit)="searchUsers()">
+    <div nz-row [nzGutter]="16">
+      <div nz-col>
+        <nz-form-item>
+          <nz-form-label nzFor="search_userId">用户id</nz-form-label>
+          <nz-form-control>
+            <input type="text" nz-input id="search_userId" formControlName="userId" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col>
+        <nz-form-item>
+          <nz-form-label nzFor="search_userName">用户名</nz-form-label>
+          <nz-form-control>
+            <input type="text" nz-input id="search_userName" formControlName="userName" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col>
+        <button nz-button nzType="primary" type="submit">查询</button>
+        <button nz-button type="reset" (click)="resetSearchUsers()" class="mx-sm">重置</button>
+      </div>
+    </div>
+  </form>
+
+  <button nz-button nzType="primary" (click)="showAddUsersDialog(addUsersDialog)" [disabled]="roleId === undefined">
+    <i nz-icon nzType="user-add" nzTheme="outline" style="font-size: 20px"></i>用户管理
+  </button>
+  <st #userList [columns]="usersColumn"></st>
+</nz-card>
+<ng-template #addUsersDialog>
+  <nz-transfer #usersTransfer nzShowSearch [nzDataSource]="usersTransferDataSource"> </nz-transfer>
+</ng-template>
