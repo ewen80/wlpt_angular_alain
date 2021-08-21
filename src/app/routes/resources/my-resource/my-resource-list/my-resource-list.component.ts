@@ -73,14 +73,14 @@ export class MyResourceListComponent implements OnInit {
     this.initNewButton();
   }
 
-  // 初始化新建按钮
+  // 初始化新建删除按钮
   initNewButton() {
     this.myResourceService.getPermissions(this.settingService.user.roleId).subscribe({
       next: (permissions: Array<{ mask: Permission }>) => {
         if (permissions.some(item => item.mask === Permission.WRITE)) {
-          this.acl.attachAbility(['NEW']);
+          this.acl.attachAbility(['WRITE']);
         } else {
-          this.acl.removeAbility(['NEW']);
+          this.acl.removeAbility(['WRITE']);
         }
       }
     });
