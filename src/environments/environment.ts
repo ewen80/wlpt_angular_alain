@@ -10,6 +10,8 @@ export const environment = {
   serverUrl: `http://localhost:8080`,
   // 后台文件下载根地址
   serverFileDownloadRootUrl: 'http://localhost/waap/downloads/',
+  // 服务器初始化服务地址
+  serverInitMenuURL: '/admin/menuinit',
   // 服务器后端token刷新验证地址
   serverAuthRefreshURL: '/authentication/refresh',
   // 服务器后端用户服务地址

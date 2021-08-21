@@ -6,6 +6,8 @@ export const environment = {
   serverUrl: `http://aliyun.ewen.pw:9001`,
   // 后台文件下载根地址
   serverFileDownloadRootUrl: 'http://aliyun.ewen.pw:9101/downloads',
+  // 服务器初始化服务地址
+  serverInitMenuURL: '/admin/menuinit',
   // 服务器后端token刷新验证地址
   serverAuthRefreshURL: '/authentication/refresh',
   // 服务器后端用户服务地址

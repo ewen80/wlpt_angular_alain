@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { MenuGuard } from 'src/app/guards/menu.guard';
+import { InitComponent } from './init/init.component';
 
 import { MenusComponent } from './resources/menus/menus.component';
 import { ResourceListComponent } from './resources/resource-list/resource-list.component';
@@ -17,7 +18,9 @@ const routes: Routes = [
       { path: 'resources', component: ResourceListComponent },
       { path: 'resources/menus', component: MenusComponent }
     ]
-  }
+  },
+  { path: 'init', component: InitComponent},
+
 ];
 
 @NgModule({

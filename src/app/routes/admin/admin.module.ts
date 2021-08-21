@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { SharedModule } from '@shared';
 
 import { AdminRoutingModule } from './admin-routing.module';
+import { InitComponent } from './init/init.component';
 import { MenusComponent } from './resources/menus/menus.component';
 import { ResourceDetailComponent } from './resources/resource-detail/resource-detail.component';
 import { ResourceListComponent } from './resources/resource-list/resource-list.component';
@@ -21,7 +22,8 @@ const COMPONENTS: Array<Type<void>> = [
   ResourceListComponent,
   ResourceDetailComponent,
   ChangePasswordComponent,
-  MenusComponent
+  MenusComponent,
+  InitComponent
 ];
 
 @NgModule({
