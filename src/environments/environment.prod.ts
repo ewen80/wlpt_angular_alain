@@ -3,9 +3,9 @@ export const environment = {
   appName: 'wlpt',
   appDescription: '基于ng-alain',
   // 服务器后端根地址
-  serverUrl: `http://aliyun.ewen.pw:9001`,
+  serverUrl: `https://aliyun.ewen.pw:9001`,
   // 后台文件下载根地址
-  serverFileDownloadRootUrl: 'http://aliyun.ewen.pw:9101/downloads',
+  serverFileDownloadRootUrl: 'https://aliyun.ewen.pw:9101/downloads',
   // 服务器初始化服务地址
   serverInitMenuURL: '/admin/menuinit',
   // 服务器后端token刷新验证地址
