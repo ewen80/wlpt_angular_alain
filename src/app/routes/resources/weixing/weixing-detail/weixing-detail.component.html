@@ -1,5 +1,5 @@
-<nz-card [nzBordered]="false" nzTitle="基础信息">
-  <form nz-form [formGroup]="resourceForm" se-container="2" labelWidth="100">
+<form nz-form [formGroup]="resourceForm" se-container="2" labelWidth="100">
+    <se-title>基本信息</se-title>
     <se label="申请单位" [error]="{ required: '不能为空' }">
       <input type="text" nz-input formControlName="sqdw" required />
     </se>
@@ -8,6 +8,7 @@
       <nz-radio-group formControlName="sqlx">
         <label nz-radio nzValue="xb">新办</label>
         <label nz-radio nzValue="bg">变更</label>
+        <label nz-radio nzValue="yx">延续</label>
       </nz-radio-group>
     </se>
     <se label="所属区" [error]="{ required: '不能为空' }">
@@ -83,7 +84,7 @@
     <se label="楼层"><input nz-input formControlName="lc" required id="lc" /></se>
     <se label="终端数"><nz-input-number nz-input formControlName="zds" required id="zds"></nz-input-number></se>
 
-    <nz-divider nzOrientation="center" nzText="附件列表"></nz-divider>
+    <!-- <nz-divider nzOrientation="center" nzText="附件列表"></nz-divider>
     <se>
       <nz-upload [nzAction]="fileUploadServiceURL" [nzFileList]="attachments" [nzRemove]="removeFile" (nzChange)="handleChange($event)">
         <button nz-button><i nz-icon nzType="upload"></i>上传附件</button>
@@ -100,7 +101,7 @@
     </se>
     <se col="1">
       <img nz-image *ngIf="signBase64 !== ''" [nzSrc]="signBase64" width="200px" height="80px" nzDisablePreview="true" />
-    </se>
+    </se> -->
     <nz-divider></nz-divider>
     <se col="1"
       ><button nz-button type="submit" nzType="primary" acl [acl-ability]="'WRITE'" [disabled]="resourceForm.invalid" (click)="save()">
@@ -108,5 +109,13 @@
       </button>
       <!-- <button nz-button type="button" nzType="primary" acl [acl-ability]="'FINISH'" (click)="finish()">办结</button> -->
     </se>
-  </form>
-</nz-card>
+  <se-title>场地审核信息</se-title>
+  <se col="1">
+    <button nz-button type="button" nzType="primary" (click)="showAudit()" [disabled]="!resourceId">新增审核信息</button>
+    <button nz-button type="button" nzType="primary" (click)="removeAudits()" [disabled]="selectedAuditIds.length === 0">删除审核信息</button>
+  </se>
+  <se col="1">
+    <st  [columns]="auditColumns" [data]="fieldAudits" (dataChanged)="getAudits()" (change)="stChange($event)"></st>
+  </se>
+  
+</form>

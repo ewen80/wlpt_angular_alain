@@ -28,6 +28,6 @@ export class MyResourceService {
   }
 
   getPermissions(roleId: string): Observable<Array<{ mask: Permission }>> {
-    return this.http.get(environment.serverPermissionServiceURL, { resourceTypeClassName: environment.MyResourceTypeClassName, roleId });
+    return this.http.get(environment.serverPermissionServiceURL, { resourceTypeClassName: environment.myResourceTypeClassName, roleId });
   }
 }

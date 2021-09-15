@@ -1,4 +1,5 @@
 import { IAttachment } from '../iattachment';
+import { IFieldAudit } from '../ifield-audit';
 import { Permission } from '../iresource-range-permission-wrapper';
 import { ISignature } from '../isignature';
 import { IResourceCheckIn } from '../resource/iresource-checkin';
@@ -7,8 +8,9 @@ export interface IWeixingResource {
   id?: number;
   permissions?: Array<{ mask: Permission }>;
   resourceCheckIn?: IResourceCheckIn;
-  attachments?: IAttachment[];
-  sign?: ISignature;
+  // attachments?: IAttachment[];
+  // sign?: ISignature;
+  fieldAudits?: IFieldAudit[];
 
   // 编号
   bh?: string;
@@ -54,6 +56,6 @@ export interface IWeixingResource {
   lc: string;
   // 终端数
   zds: number;
-  // 核查日期
-  hcrq: string;
+  // // 核查日期
+  // hcrq: string;
 }

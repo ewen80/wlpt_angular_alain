@@ -1,0 +1,49 @@
+<form nz-form [formGroup]="formGroup">
+    <nz-row>
+      <nz-col nzSpan="24">
+        <nz-form-item>
+          <nz-form-label nzFor="content">审核意见</nz-form-label>
+          <nz-form-control nzErrorTip="请填写意见">
+            <textarea nz-input formControlName="content" id="content" name="content" required ></textarea>
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+    </nz-row>
+    <nz-row>
+      <nz-col nzSpan="24">
+        <nz-form-item>
+          <nz-form-label nzFor="auditDate">审核日期</nz-form-label>
+          <nz-form-control>
+            <nz-date-picker formControlName="auditDate" name="auditDate" id="auditDate" required></nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+    </nz-row>
+    <nz-row>
+      <nz-col nzSpan="24">
+        <nz-form-item>
+          <nz-form-label nzFor="auditDepartment">审核单位</nz-form-label>
+          <nz-form-control>
+            <input nz-input formControlName="auditDepartment" name="auditDepartment" id="auditDepartment" required />
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+    </nz-row>
+    <nz-row>
+      <nz-col nzSpan="24">
+        <nz-form-item>
+          <nz-form-label>场地负责人签名</nz-form-label>
+          <nz-form-control>
+            <img nz-image *ngIf="signImageUrl" [nzSrc]="signImageUrl" width="200px" height="80px" nzDisablePreview="true" />
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+    </nz-row>
+    <nz-row>
+      <nz-col>
+        <nz-upload [nzAction]="fileUploadServiceURL" [nzFileList]="attachments" [nzRemove]="removeFile" (nzChange)="handleChange($event)">
+          <button nz-button><i nz-icon nzType="upload"></i>上传附件</button>
+        </nz-upload>
+      </nz-col>
+    </nz-row>
+  </form>

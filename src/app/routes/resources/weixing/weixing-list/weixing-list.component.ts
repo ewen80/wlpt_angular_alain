@@ -47,7 +47,6 @@ export class WeixingListComponent implements OnInit {
     { title: '申请类型', index: 'sqlxName', sort: true },
     { title: '所属区', index: 'qxName', sort: 'qxId' },
     { title: '安装地址', index: 'azdz' },
-    { title: '核查日期', index: 'hcrq', sort: true }
   ];
 
   stRes = {

@@ -8,6 +8,7 @@ import { MyResourceRoomDetailComponent } from './my-resource/my-resource-room-de
 import { ResourcesRoutingModule } from './resources-routing.module';
 import { UploadComponent } from './upload/upload.component';
 import { WeixingDetailComponent } from './weixing/weixing-detail/weixing-detail.component';
+import { WeixingFieldAuditComponent } from './weixing/weixing-audit/weixing-audit.component';
 import { WeixingListComponent } from './weixing/weixing-list/weixing-list.component';
 
 @NgModule({
@@ -18,7 +19,8 @@ import { WeixingListComponent } from './weixing/weixing-list/weixing-list.compon
     UploadComponent,
 
     WeixingListComponent,
-    WeixingDetailComponent
+    WeixingDetailComponent,
+    WeixingFieldAuditComponent
   ],
   imports: [SharedModule, ReactiveFormsModule, ResourcesRoutingModule]
 })

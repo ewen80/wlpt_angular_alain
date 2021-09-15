@@ -20,12 +20,16 @@ export const environment = {
   serverResourceRangeServiceURL: '/admin/resourceranges',
   serverPermissionServiceURL: '/admin/permissions',
   // 服务器自定义资源 *MyResource
-  MyResourceTypeClassName: 'pw.ewen.WLPT.domains.entities.resources.myresource.MyResource',
+  myResourceTypeClassName: 'pw.ewen.WLPT.domains.entities.resources.myresource.MyResource',
   serverMyResourceServiceURL: '/resources/myresources',
-  serverMyResourceRoomServiceURL: '/resources/myresource/room',
+  serverMyResourceRoomServiceURL: '/resources/myresource/rooms',
   //                *Weixing
-  WeixingResourceTypeClassName: 'pw.ewen.WLPT.domains.entities.resources.weixing.WeixingResource',
+  weixingResourceTypeClassName: 'pw.ewen.WLPT.domains.entities.resources.weixing.WeixingResource',
   serverWeixingResourceServiceURL: '/resources/weixings',
+  //                  卫星现场审核意见service
+  serverWeixingFieldAuditServiceURL: '/resources/weixings/fieldaudits',
+  // 服务器现场审核意见
+  serverFieldAuditServiceURL: '/fieldaudits',
   // 服务器文件上传、删除等
   serverFileServiceURL: '/file',
   // 服务器端退出账号
@@ -34,6 +38,8 @@ export const environment = {
   tokenExpiredTime: 1000 * 60 * 5,
   // 默认用户头像
   defaultAvatar: '../assets/tmp/img/avatar.jpg',
+  // 默认场地审核单位名称
+  defaultFieldAuditDepartment: '上海市社会文化管理处',
 
   production: true,
   useHash: false

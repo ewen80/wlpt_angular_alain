@@ -8,15 +8,18 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService, ModalButtonOptions } from 'ng-zorro-antd/modal';
 import { NzUploadChangeParam, NzUploadFile } from 'ng-zorro-antd/upload';
 import { Observable } from 'rxjs';
+import { FieldAuditService } from 'src/app/core/services/field-audit.service';
 import { FileService } from 'src/app/core/services/file.service';
 import { MyResourceRoomService } from 'src/app/core/services/my-resource/my-resource-room.service';
 import { MyResourceService } from 'src/app/core/services/my-resource/my-resource.service';
+import { WeixingFieldAuditService } from 'src/app/core/services/weixing/weixing-field-audit.service';
 import { WeixingResourceService } from 'src/app/core/services/weixing/weixing.service';
 import { IAttachment } from 'src/app/domains/iattachment';
 import { Permission } from 'src/app/domains/iresource-range-permission-wrapper';
 import { IMyResource } from 'src/app/domains/my-resource/imy-resource';
 import { Region } from 'src/app/domains/region';
 import { IWeixingResource } from 'src/app/domains/weixing-resource/iweixing-resource';
+import { WeixingFieldAuditComponent } from '../weixing-audit/weixing-audit.component';
 
 @Component({
   selector: 'app-weixing-detail',
@@ -29,23 +32,28 @@ export class WeixingDetailComponent implements OnInit {
     private modal: NzModalService,
     private acl: ACLService,
     private weixingResourceService: WeixingResourceService,
+    private weixingFieldAuditService: WeixingFieldAuditService,
+    private fieldAuditService: FieldAuditService,
     private message: NzMessageService,
-    private fileService: FileService
+    // private fileService: FileService
   ) {}
 
   resourceForm!: FormGroup;
   @Input() resourceId?: number;
   @Output() dataChanged = new EventEmitter();
+  @Output() auditClosed = new EventEmitter();
 
   weixingResource?: IWeixingResource;
-  signBase64 = ''; // 签名图片base64数据
+  // signBase64 = ''; // 签名图片base64数据
 
   qxs: Array<{ key: string; value: string }> = [];
+  selectedAuditIds: number[]  = [];
+  fieldAudits: STData[] = [];
 
-  // 文件上传相关
-  fileDownloadRootUrl = environment.serverFileDownloadRootUrl;
-  fileUploadServiceURL = `${environment.serverUrl + environment.serverFileServiceURL}/upload`; // 文件上传地址
-  attachments: NzUploadFile[] = [];
+  // // 文件上传相关
+  // fileDownloadRootUrl = environment.serverFileDownloadRootUrl;
+  // fileUploadServiceURL = `${environment.serverUrl + environment.serverFileServiceURL}/upload`; // 文件上传地址
+  // attachments: NzUploadFile[] = [];
 
   // 境内收视节目源选择
   jnssjmys = [
@@ -55,9 +63,25 @@ export class WeixingDetailComponent implements OnInit {
     { value: 'other', label: '其他' }
   ];
 
-  removeFile = (file: NzUploadFile) => {
-    return this.fileService.removeFile(file.response.name);
-  };
+  // 审核意见列表列配置
+  auditColumns: STColumn[] = [
+    { title: '', index: 'id', type: 'checkbox' },
+    {
+      title: '审核意见',
+      index: 'content',
+      type: 'link',
+      width: 150,
+      click: (record: STData, instance?: STComponent) => {
+        this.showAudit(record.id);
+      }
+    },
+    { title: '审核日期', index: 'auditDate', width: 150 },
+    { title: '审核人', index: 'auditUserId', width: 150 }
+  ];
+
+  // removeFile = (file: NzUploadFile) => {
+  //   return this.fileService.removeFile(file.response.name);
+  // };
 
   ngOnInit(): void {
     this.resourceForm = this.fb.group({
@@ -83,7 +107,7 @@ export class WeixingDetailComponent implements OnInit {
       lpm: ['', [Validators.required]],
       lc: ['', [Validators.required]],
       zds: ['', [Validators.required]],
-      hcrq: [Date(), [Validators.required]]
+      // hcrq: [Date(), [Validators.required]]
     });
 
     Region.codes.forEach((value: string, key: string) => {
@@ -95,6 +119,13 @@ export class WeixingDetailComponent implements OnInit {
     } else {
       this.acl.attachAbility(['WRITE']);
     }
+
+    // 核查意见对话框关闭时
+    this.auditClosed.subscribe({
+      next: () => {
+        this.getAudits();
+      }
+    });
   }
 
   // 初始化保存按钮
@@ -113,9 +144,9 @@ export class WeixingDetailComponent implements OnInit {
       this.weixingResourceService.findOne(this.resourceId).subscribe({
         next: data => {
           this.weixingResource = data;
-          if (this.weixingResource?.sign) {
-            this.signBase64 = `data:image/${this.weixingResource.sign.imageExtention};base64,${this.weixingResource.sign.signBase64}`;
-          }
+          // if (this.weixingResource?.sign) {
+          //   this.signBase64 = `data:image/${this.weixingResource.sign.imageExtention};base64,${this.weixingResource.sign.signBase64}`;
+          // }
 
           this.resourceForm.controls.qxId.setValue(data.qxId);
           this.resourceForm.controls.sqdw.setValue(data.sqdw);
@@ -145,49 +176,52 @@ export class WeixingDetailComponent implements OnInit {
           this.resourceForm.controls.lpm.setValue(data.lpm);
           this.resourceForm.controls.lc.setValue(data.lc);
           this.resourceForm.controls.zds.setValue(data.zds);
-          this.resourceForm.controls.hcrq.setValue(new Date(data.hcrq));
+          // this.resourceForm.controls.hcrq.setValue(new Date(data.hcrq));
 
-          // 初始化上传列表
-          this.initAttachments();
+          // 获取审核意见
+          this.getAudits();
 
-          this.initSaveButton();
+          // // 初始化上传列表
+          // this.initAttachments();
+
+          // this.initSaveButton();
         }
       });
     }
   }
 
-  // 初始化附件
-  initAttachments(): void {
-    this.attachments = [];
-    this.weixingResource?.attachments?.forEach(attachment => {
-      this.attachments.push({
-        uid: attachment.id!,
-        name: attachment.name,
-        status: 'done',
-        url: `${environment.serverFileDownloadRootUrl}\\${attachment.path}`,
-        response: {
-          name: attachment.path,
-          date: attachment.date,
-          status: 'done'
-        }
-      });
-    });
-  }
+  // // 初始化附件
+  // initAttachments(): void {
+  //   this.attachments = [];
+  //   this.weixingResource?.attachments?.forEach(attachment => {
+  //     this.attachments.push({
+  //       uid: attachment.id!,
+  //       name: attachment.name,
+  //       status: 'done',
+  //       url: `${environment.serverFileDownloadRootUrl}\\${attachment.path}`,
+  //       response: {
+  //         name: attachment.path,
+  //         date: attachment.date,
+  //         status: 'done'
+  //       }
+  //     });
+  //   });
+  // }
 
   save(): void {
     if (this.resourceForm.valid) {
-      // 转换附件类型
-      const attachs: IAttachment[] = [];
-      this.attachments.forEach(attachment => {
-        attachs.push({
-          name: attachment.name,
-          path: attachment.response.name,
-          date: attachment.response.date
-        });
-      });
+      // // 转换附件类型
+      // const attachs: IAttachment[] = [];
+      // this.attachments.forEach(attachment => {
+      //   attachs.push({
+      //     name: attachment.name,
+      //     path: attachment.response.name,
+      //     date: attachment.response.date
+      //   });
+      // });
 
-      const hcrq = new Date(this.resourceForm.controls.hcrq.value);
-      const hcrqString = hcrq.toISOString().split('T')[0];
+      // const hcrq = new Date(this.resourceForm.controls.hcrq.value);
+      // const hcrqString = hcrq.toISOString().split('T')[0];
 
       if (this.resourceId) {
         // 如果是修改
@@ -218,9 +252,9 @@ export class WeixingDetailComponent implements OnInit {
         this.weixingResource!.lpm = this.resourceForm.controls.lpm.value;
         this.weixingResource!.lc = this.resourceForm.controls.lc.value;
         this.weixingResource!.zds = this.resourceForm.controls.zds.value;
-        this.weixingResource!.hcrq = hcrqString;
+        // this.weixingResource!.hcrq = hcrqString;
 
-        this.weixingResource!.attachments = attachs;
+        // this.weixingResource!.attachments = attachs;
       } else {
         // 如果是新增
         this.weixingResource = {
@@ -248,9 +282,9 @@ export class WeixingDetailComponent implements OnInit {
           lpm: this.resourceForm.controls.lpm.value,
           lc: this.resourceForm.controls.lc.value,
           zds: this.resourceForm.controls.zds.value,
-          hcrq: hcrqString,
+          // hcrq: hcrqString,
 
-          attachments: attachs
+          // attachments: attachs
         };
       }
 
@@ -265,35 +299,98 @@ export class WeixingDetailComponent implements OnInit {
     }
   }
 
-  // 处理上传列表
-  handleChange(info: NzUploadChangeParam): void {
-    const fileList: NzUploadFile[] = [];
-    info.fileList.forEach(file => {
-      if (file.status === 'done') {
-        fileList.push(file);
-      }
-    });
+  // // 处理上传列表
+  // handleChange(info: NzUploadChangeParam): void {
+  //   const fileList: NzUploadFile[] = [];
+  //   info.fileList.forEach(file => {
+  //     if (file.status === 'done') {
+  //       fileList.push(file);
+  //     }
+  //   });
 
-    if (info.file.status === 'done') {
-      fileList.map(file => {
-        file.url = `${environment.serverFileDownloadRootUrl}\\${file.response.name}`;
+  //   if (info.file.status === 'done') {
+  //     fileList.map(file => {
+  //       file.url = `${environment.serverFileDownloadRootUrl}\\${file.response.name}`;
+  //     });
+  //     this.attachments = fileList;
+  //     if (this.weixingResource?.id) {
+  //       // 修改情况，修改后台数据
+  //       this.save();
+  //     }
+  //     this.message.success(`${info.file.name} uploaded`);
+  //   } else if (info.file.status === 'error') {
+  //     this.attachments = fileList;
+  //     this.message.error(`${info.file.name} upload failed.`);
+  //   } else if (info.file.status === 'removed') {
+  //     this.attachments = fileList;
+  //     if (this.weixingResource?.id) {
+  //       // 修改情况，修改后台数据
+  //       this.save();
+  //     }
+  //     this.message.success(`${info.file.name} removed`);
+  //   }
+  // }
+
+  // 弹出现场审核意见对话框
+  showAudit(auditId?:number): void {
+    const modal = this.modal.create({
+      nzTitle: '现场审核信息',
+      nzContent: WeixingFieldAuditComponent,
+      nzComponentParams: {
+        weixingId: this.resourceId,
+        auditId: auditId ? auditId : 0,
+      },
+      nzAfterClose: this.auditClosed,
+      nzFooter: [
+        {
+          label: '取消',
+          onClick: () => {
+            modal.destroy();
+          }
+        },
+        {
+          label: '确定',
+          type: 'primary',
+
+          onClick: (component?: any) => {
+            if (component.validate()) {
+              component.save();
+              modal.destroy();
+            }
+          }
+        }
+      ]
+    });
+  }
+
+  // 获取现场审核意见
+  getAudits(): void {
+    if(this.resourceId){
+      this.weixingFieldAuditService.findByWeixingId(this.resourceId).subscribe({
+        next: result=> this.fieldAudits = result,
+      })
+    }
+  }
+    
+
+  // 删除现场审核意见
+  removeAudits(): void {
+    if(this.resourceId){
+      this.weixingFieldAuditService.delete(this.selectedAuditIds, this.resourceId).subscribe({
+        next: ()=> this.getAudits()
       });
-      this.attachments = fileList;
-      if (this.weixingResource?.id) {
-        // 修改情况，修改后台数据
-        this.save();
+    }
+  }
+
+  // 现场审核意见表选择框改变时
+  stChange(e: STChange): void {
+    if (e.type === 'checkbox') {
+      this.selectedAuditIds = [];
+      if (e.checkbox !== undefined && e.checkbox.length > 0) {
+        e.checkbox.forEach(v => {
+          this.selectedAuditIds.push(v.id);
+        });
       }
-      this.message.success(`${info.file.name} uploaded`);
-    } else if (info.file.status === 'error') {
-      this.attachments = fileList;
-      this.message.error(`${info.file.name} upload failed.`);
-    } else if (info.file.status === 'removed') {
-      this.attachments = fileList;
-      if (this.weixingResource?.id) {
-        // 修改情况，修改后台数据
-        this.save();
-      }
-      this.message.success(`${info.file.name} removed`);
     }
   }
 }

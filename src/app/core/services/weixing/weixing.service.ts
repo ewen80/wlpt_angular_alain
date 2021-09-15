@@ -29,7 +29,7 @@ export class WeixingResourceService {
 
   getPermissions(roleId: string): Observable<Array<{ mask: Permission }>> {
     return this.http.get(environment.serverPermissionServiceURL, {
-      resourceTypeClassName: environment.WeixingResourceTypeClassName,
+      resourceTypeClassName: environment.weixingResourceTypeClassName,
       roleId
     });
   }
