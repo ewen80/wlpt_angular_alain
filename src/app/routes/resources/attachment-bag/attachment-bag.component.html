@@ -1,0 +1,19 @@
+<form nz-form [formGroup]="bagForm" se-container="1">
+    <se-title>基本信息</se-title>
+    <se label="附件包名称" [error]="{ required: '不能为空' }">
+      <input nz-input formControlName="name" required id="name" />
+    </se>
+    <se label="备注">
+        <input nz-input formControlName="memo" id="memo" />
+    </se>
+    <se label="创建时间" *ngIf="bagInfo">
+      <label>{{ bagInfo?.createdAt }}</label>
+    </se>
+    <se-title>附件信息</se-title>
+    <se>
+      <nz-upload [nzAction]="fileUploadServiceURL" [nzFileList]="attachments" [nzRemove]="removeFile" (nzChange)="handleChange($event)">
+        <button nz-button><i nz-icon nzType="upload"></i>上传附件</button>
+      </nz-upload>
+    </se>
+  </form>
+  

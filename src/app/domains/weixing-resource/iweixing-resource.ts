@@ -1,5 +1,5 @@
 import { IAttachment } from '../iattachment';
-import { IFieldAudit } from '../ifield-audit';
+import { IFieldAudit } from '../resource/ifield-audit';
 import { Permission } from '../iresource-range-permission-wrapper';
 import { ISignature } from '../isignature';
 import { IResourceCheckIn } from '../resource/iresource-checkin';

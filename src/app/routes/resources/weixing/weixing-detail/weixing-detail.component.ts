@@ -1,25 +1,16 @@
-import { formatDate } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { STColumn, STData, STComponent, STChange } from '@delon/abc/st';
 import { ACLService } from '@delon/acl';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalService, ModalButtonOptions } from 'ng-zorro-antd/modal';
-import { NzUploadChangeParam, NzUploadFile } from 'ng-zorro-antd/upload';
-import { Observable } from 'rxjs';
+import { NzModalService } from 'ng-zorro-antd/modal';
 import { FieldAuditService } from 'src/app/core/services/field-audit.service';
-import { FileService } from 'src/app/core/services/file.service';
-import { MyResourceRoomService } from 'src/app/core/services/my-resource/my-resource-room.service';
-import { MyResourceService } from 'src/app/core/services/my-resource/my-resource.service';
-import { WeixingFieldAuditService } from 'src/app/core/services/weixing/weixing-field-audit.service';
 import { WeixingResourceService } from 'src/app/core/services/weixing/weixing.service';
-import { IAttachment } from 'src/app/domains/iattachment';
 import { Permission } from 'src/app/domains/iresource-range-permission-wrapper';
-import { IMyResource } from 'src/app/domains/my-resource/imy-resource';
 import { Region } from 'src/app/domains/region';
 import { IWeixingResource } from 'src/app/domains/weixing-resource/iweixing-resource';
-import { WeixingFieldAuditComponent } from '../weixing-audit/weixing-audit.component';
+import { FieldAuditComponent } from '../../field-audit/field-audit.component';
 
 @Component({
   selector: 'app-weixing-detail',
@@ -32,17 +23,16 @@ export class WeixingDetailComponent implements OnInit {
     private modal: NzModalService,
     private acl: ACLService,
     private weixingResourceService: WeixingResourceService,
-    private weixingFieldAuditService: WeixingFieldAuditService,
     private fieldAuditService: FieldAuditService,
     private message: NzMessageService,
-    // private fileService: FileService
   ) {}
 
   resourceForm!: FormGroup;
   @Input() resourceId?: number;
   @Output() dataChanged = new EventEmitter();
-  @Output() auditClosed = new EventEmitter();
+  @Output() auditModalClosed = new EventEmitter();
 
+  weixingFieldAuditServiceUrl = environment.fieldAuditServiceMap.get(environment.weixingResourceTypeClassName)!;
   weixingResource?: IWeixingResource;
   // signBase64 = ''; // 签名图片base64数据
 
@@ -121,7 +111,7 @@ export class WeixingDetailComponent implements OnInit {
     }
 
     // 核查意见对话框关闭时
-    this.auditClosed.subscribe({
+    this.auditModalClosed.subscribe({
       next: () => {
         this.getAudits();
       }
@@ -144,6 +134,7 @@ export class WeixingDetailComponent implements OnInit {
       this.weixingResourceService.findOne(this.resourceId).subscribe({
         next: data => {
           this.weixingResource = data;
+          this.fieldAudits = data.fieldAudits ? data.fieldAudits : [];
           // if (this.weixingResource?.sign) {
           //   this.signBase64 = `data:image/${this.weixingResource.sign.imageExtention};base64,${this.weixingResource.sign.signBase64}`;
           // }
@@ -178,8 +169,8 @@ export class WeixingDetailComponent implements OnInit {
           this.resourceForm.controls.zds.setValue(data.zds);
           // this.resourceForm.controls.hcrq.setValue(new Date(data.hcrq));
 
-          // 获取审核意见
-          this.getAudits();
+          // // 获取审核意见
+          // this.getAudits();
 
           // // 初始化上传列表
           // this.initAttachments();
@@ -335,12 +326,13 @@ export class WeixingDetailComponent implements OnInit {
   showAudit(auditId?:number): void {
     const modal = this.modal.create({
       nzTitle: '现场审核信息',
-      nzContent: WeixingFieldAuditComponent,
+      nzContent: FieldAuditComponent,
       nzComponentParams: {
-        weixingId: this.resourceId,
+        resourceType: environment.weixingResourceTypeClassName,
+        resourceId: this.resourceId,
         auditId: auditId ? auditId : 0,
       },
-      nzAfterClose: this.auditClosed,
+      nzAfterClose: this.auditModalClosed,
       nzFooter: [
         {
           label: '取消',
@@ -355,7 +347,7 @@ export class WeixingDetailComponent implements OnInit {
           onClick: (component?: any) => {
             if (component.validate()) {
               component.save();
-              modal.destroy();
+              // modal.destroy();
             }
           }
         }
@@ -366,7 +358,7 @@ export class WeixingDetailComponent implements OnInit {
   // 获取现场审核意见
   getAudits(): void {
     if(this.resourceId){
-      this.weixingFieldAuditService.findByWeixingId(this.resourceId).subscribe({
+      this.fieldAuditService.findByResourceId(this.resourceId, this.weixingFieldAuditServiceUrl).subscribe({
         next: result=> this.fieldAudits = result,
       })
     }
@@ -376,7 +368,7 @@ export class WeixingDetailComponent implements OnInit {
   // 删除现场审核意见
   removeAudits(): void {
     if(this.resourceId){
-      this.weixingFieldAuditService.delete(this.selectedAuditIds, this.resourceId).subscribe({
+      this.fieldAuditService.deleteByResourceId(this.selectedAuditIds, this.resourceId, this.weixingFieldAuditServiceUrl).subscribe({
         next: ()=> this.getAudits()
       });
     }

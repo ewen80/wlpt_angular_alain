@@ -40,10 +40,10 @@
       </nz-col>
     </nz-row>
     <nz-row>
-      <nz-col>
-        <nz-upload [nzAction]="fileUploadServiceURL" [nzFileList]="attachments" [nzRemove]="removeFile" (nzChange)="handleChange($event)">
-          <button nz-button><i nz-icon nzType="upload"></i>上传附件</button>
-        </nz-upload>
+      <nz-col nzSpan="24">
+        <button nz-button (click)="showAttachmentBag()" [disabled]="this.auditId===0">新增附件包</button>
+        <button nz-button (click)="removeAttachmentBag()" [disabled]="this.selectedAttachmentBagIds.length === 0">删除附件包</button>
+        <nz-form-control><st [columns]="attachmentBagsColumn" [data]="attachmentBags" [ps]="5" [res]="{process: resProcess}" (change)="stChange($event)"></st></nz-form-control>
       </nz-col>
     </nz-row>
   </form>

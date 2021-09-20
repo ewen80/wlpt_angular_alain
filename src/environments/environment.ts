@@ -23,6 +23,10 @@ export const environment = {
   serverResourceTypeServiceURL: '/admin/resourcetypes',
   serverResourceRangeServiceURL: '/admin/resourceranges',
   serverPermissionServiceURL: '/admin/permissions',
+  // 各资源现场审核意见服务器地址对应表
+  fieldAuditServiceMap: new Map([
+    ["pw.ewen.WLPT.domains.entities.resources.weixing.WeixingResource", "/resources/weixings/fieldaudits"], // 卫星现场审核意见服务器地址
+  ]),
   // 服务器自定义资源 *MyResource
   myResourceTypeClassName: 'pw.ewen.WLPT.domains.entities.resources.myresource.MyResource',
   serverMyResourceServiceURL: '/resources/myresources',
@@ -30,10 +34,10 @@ export const environment = {
   //                *Weixing
   weixingResourceTypeClassName: 'pw.ewen.WLPT.domains.entities.resources.weixing.WeixingResource',
   serverWeixingResourceServiceURL: '/resources/weixings',
-  //                  卫星现场审核意见service
-  serverWeixingFieldAuditServiceURL: '/resources/weixings/fieldaudits',
   // 服务器现场审核意见
   serverFieldAuditServiceURL: '/fieldaudits',
+  // 服务器附件包后台管理地址
+  serverAttachmentBagServiceURL: '/attachmentbags',
   // 服务器文件上传、删除等
   serverFileServiceURL: '/file',
   // 服务器端退出账号
