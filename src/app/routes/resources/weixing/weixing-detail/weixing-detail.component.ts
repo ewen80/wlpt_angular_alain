@@ -34,24 +34,56 @@ export class WeixingDetailComponent implements OnInit {
 
   weixingFieldAuditServiceUrl = environment.fieldAuditServiceMap.get(environment.weixingResourceTypeClassName)!;
   weixingResource?: IWeixingResource;
-  // signBase64 = ''; // 签名图片base64数据
 
   qxs: Array<{ key: string; value: string }> = [];
   selectedAuditIds: number[]  = [];
   fieldAudits: STData[] = [];
 
-  // // 文件上传相关
-  // fileDownloadRootUrl = environment.serverFileDownloadRootUrl;
-  // fileUploadServiceURL = `${environment.serverUrl + environment.serverFileServiceURL}/upload`; // 文件上传地址
-  // attachments: NzUploadFile[] = [];
 
   // 境内收视节目源选择
   jnssjmys = [
-    { value: 'yxdslw', label: '有线电视联网' },
-    { value: 'klxh', label: '开路信号' },
-    { value: 'iptv', label: 'IPTV' },
-    { value: 'other', label: '其他' }
+    { value: '有线电视联网', label: '有线电视联网' },
+    { value: '开路信号', label: '开路信号' },
+    { value: 'IPTV', label: 'IPTV' },
+    { value: '其他', label: '其他' }
   ];
+
+  // 收视内容选择框
+  ssnrCheckGroupOptions = [
+    {label: 'CCTV-法语', value: 'CCTV-法语', checked: false},
+    {label: 'CCTV-西班牙语', value: 'CCTV-西班牙语'},
+    {label: 'CCTV-阿拉伯语', value: 'CCTV-阿拉伯语'},
+    {label: 'CCTV-俄语', value: 'CCTV-俄语'},
+    {label: 'CNN', value: 'CNN'},
+    {label: 'AXN', value: 'AXN'},
+    {label: 'CNBC', value: 'CNBC'},
+    {label: 'HBO', value: 'HBO'},
+    {label: 'TV5', value: 'TV5'},
+    {label: 'CINEMAX', value: 'CINEMAX'},
+    {label: 'DISCOVERY', value: 'DISCOVERY'},
+    {label: 'NHK', value: 'NHK'},
+    {label: 'TVB', value: 'TVB'},
+    {label: 'NGC', value: 'NGC'},
+    {label: 'NOW', value: 'NOW'},
+    {label: '[V]音乐台', value: '[V]音乐台'},
+    {label: '韩国KBS', value: '韩国KBS'},
+    {label: '卫视体育台', value: '卫视体育台'},
+    {label: '卫视国际电影台', value: '卫视国际电影台'},
+    {label: '澳亚卫视中文台', value: '澳亚卫视中文台'},
+    {label: '凤凰卫视电影台', value: '凤凰卫视电影台'},
+    {label: '凤凰卫视中文台', value: '凤凰卫视中文台'},
+    {label: '凤凰卫视资讯台', value: '凤凰卫视资讯台'}, 
+    {label: '卫视体育台2', value: '卫视体育台2'},
+    {label: '星空卫视', value: '星空卫视'},
+    {label: '亚洲新闻台国际', value: '亚洲新闻台国际'},
+    {label: '古巴视野国际频道', value: '古巴视野国际频道'},
+    {label: '俄罗斯环球频道', value: '俄罗斯环球频道'},
+    {label: '今日俄罗斯', value: '今日俄罗斯'},
+    {label: '喀秋莎', value: '喀秋莎'},
+  ]
+
+  // 选中的收视内容
+  ssnr = '';
 
   // 审核意见列表列配置
   auditColumns: STColumn[] = [
@@ -69,15 +101,12 @@ export class WeixingDetailComponent implements OnInit {
     { title: '审核人', index: 'auditUserId', width: 150 }
   ];
 
-  // removeFile = (file: NzUploadFile) => {
-  //   return this.fileService.removeFile(file.response.name);
-  // };
 
   ngOnInit(): void {
     this.resourceForm = this.fb.group({
       sqdw: ['', [Validators.required]],
       qxId: ['', [Validators.required]],
-      sqlx: ['xb', [Validators.required]],
+      sqlx: ['新办', [Validators.required]],
       azdz: ['', [Validators.required]],
       bgdh: ['', [Validators.required, Validators.pattern('(\\d)+')]],
       yzbm: ['', [Validators.required]],
@@ -86,18 +115,19 @@ export class WeixingDetailComponent implements OnInit {
       jfwz: ['', [Validators.required]],
       txwz: ['', [Validators.required]],
       txsl: ['', [Validators.required]],
-      txlx: ['zk', [Validators.required]],
-      jnssjmy: ['yxdslw', [Validators.required]],
-      jnssjmy_other: [''],
-      wxcsfs: ['twcs', [Validators.required]],
-      xhtzfs: ['sz', [Validators.required]],
-      ssnr: ['', [Validators.required]],
+      txlx: ['正馈', [Validators.required]],
+      jnssjmy: ['有线电视联网', [Validators.required]],
+      jnssjmy_other: [],
+      wxmc: ['亚太六号', [Validators.required]],
+      wxcsfs: ['同网传输', [Validators.required]],
+      xhtzfs: ['数字', [Validators.required]],
       sjazdwmc: ['', [Validators.required]],
       wxssazxkz: ['', [Validators.required]],
+      ssdwlx: ['酒店', [Validators.required]],
       lpm: ['', [Validators.required]],
       lc: ['', [Validators.required]],
       zds: ['', [Validators.required]],
-      // hcrq: [Date(), [Validators.required]]
+      ssnr: ['']
     });
 
     Region.codes.forEach((value: string, key: string) => {
@@ -135,9 +165,6 @@ export class WeixingDetailComponent implements OnInit {
         next: data => {
           this.weixingResource = data;
           this.fieldAudits = data.fieldAudits ? data.fieldAudits : [];
-          // if (this.weixingResource?.sign) {
-          //   this.signBase64 = `data:image/${this.weixingResource.sign.imageExtention};base64,${this.weixingResource.sign.signBase64}`;
-          // }
 
           this.resourceForm.controls.qxId.setValue(data.qxId);
           this.resourceForm.controls.sqdw.setValue(data.sqdw);
@@ -155,65 +182,49 @@ export class WeixingDetailComponent implements OnInit {
           if (this.jnssjmys.find(item => item.value === data.jnssjmy)) {
             this.resourceForm.controls.jnssjmy.setValue(data.jnssjmy);
           } else {
-            this.resourceForm.controls.jnssjmy.setValue('other');
+            this.resourceForm.controls.jnssjmy.setValue('其他');
             this.resourceForm.controls.jnssjmy_other.setValue(data.jnssjmy);
           }
 
+          this.resourceForm.controls.wxmc.setValue(data.wxmc);
           this.resourceForm.controls.wxcsfs.setValue(data.wxcsfs);
           this.resourceForm.controls.xhtzfs.setValue(data.xhtzfs);
-          this.resourceForm.controls.ssnr.setValue(data.ssnr);
           this.resourceForm.controls.sjazdwmc.setValue(data.sjazdwmc);
           this.resourceForm.controls.wxssazxkz.setValue(data.wxssazxkzh);
+          this.resourceForm.controls.ssdwlx.setValue(data.ssdwlx);
           this.resourceForm.controls.lpm.setValue(data.lpm);
           this.resourceForm.controls.lc.setValue(data.lc);
           this.resourceForm.controls.zds.setValue(data.zds);
-          // this.resourceForm.controls.hcrq.setValue(new Date(data.hcrq));
-
-          // // 获取审核意见
-          // this.getAudits();
-
-          // // 初始化上传列表
-          // this.initAttachments();
-
-          // this.initSaveButton();
+          // 初始化收视内容
+          this.initSsnrCheckbox(data.ssnr);
         }
       });
     }
   }
 
-  // // 初始化附件
-  // initAttachments(): void {
-  //   this.attachments = [];
-  //   this.weixingResource?.attachments?.forEach(attachment => {
-  //     this.attachments.push({
-  //       uid: attachment.id!,
-  //       name: attachment.name,
-  //       status: 'done',
-  //       url: `${environment.serverFileDownloadRootUrl}\\${attachment.path}`,
-  //       response: {
-  //         name: attachment.path,
-  //         date: attachment.date,
-  //         status: 'done'
-  //       }
-  //     });
-  //   });
-  // }
+  // 初始化收视内容选择框
+  initSsnrCheckbox(ssnr: string) {
+    const arrSsnr = ssnr.split(',');
+    this.ssnrCheckGroupOptions.forEach(option=>{
+      if(arrSsnr.indexOf(option.value) > -1){
+        option.checked = true;
+      }
+    })
+  }
+
+  // 收视内容选择框变更回调,多内容用逗号分隔
+  ssnrChanged(){
+    this.ssnr = '';
+    this.ssnrCheckGroupOptions.forEach(option => {
+      if(option.checked) {
+        this.ssnr += option.value + ',';
+      }
+    });
+  }
+
 
   save(): void {
     if (this.resourceForm.valid) {
-      // // 转换附件类型
-      // const attachs: IAttachment[] = [];
-      // this.attachments.forEach(attachment => {
-      //   attachs.push({
-      //     name: attachment.name,
-      //     path: attachment.response.name,
-      //     date: attachment.response.date
-      //   });
-      // });
-
-      // const hcrq = new Date(this.resourceForm.controls.hcrq.value);
-      // const hcrqString = hcrq.toISOString().split('T')[0];
-
       if (this.resourceId) {
         // 如果是修改
         this.weixingResource!.qxId = this.resourceForm.controls.qxId.value;
@@ -229,23 +240,22 @@ export class WeixingDetailComponent implements OnInit {
         this.weixingResource!.txsl = this.resourceForm.controls.txsl.value;
         this.weixingResource!.txlx = this.resourceForm.controls.txlx.value;
 
-        if (this.resourceForm.controls.jnssjmy.value === 'other') {
+        if (this.resourceForm.controls.jnssjmy.value === '其他') {
           this.weixingResource!.jnssjmy = this.resourceForm.controls.jnssjmy_other.value;
         } else {
           this.weixingResource!.jnssjmy = this.resourceForm.controls.jnssjmy.value;
         }
 
+        this.weixingResource!.wxmc = this.resourceForm.controls.wxmc.value;
         this.weixingResource!.wxcsfs = this.resourceForm.controls.wxcsfs.value;
         this.weixingResource!.xhtzfs = this.resourceForm.controls.xhtzfs.value;
-        this.weixingResource!.ssnr = this.resourceForm.controls.ssnr.value;
+        this.weixingResource!.ssnr = this.ssnr;
         this.weixingResource!.sjazdwmc = this.resourceForm.controls.sjazdwmc.value;
         this.weixingResource!.wxssazxkzh = this.resourceForm.controls.wxssazxkz.value;
+        this.weixingResource!.ssdwlx = this.resourceForm.controls.ssdwlx.value;
         this.weixingResource!.lpm = this.resourceForm.controls.lpm.value;
         this.weixingResource!.lc = this.resourceForm.controls.lc.value;
         this.weixingResource!.zds = this.resourceForm.controls.zds.value;
-        // this.weixingResource!.hcrq = hcrqString;
-
-        // this.weixingResource!.attachments = attachs;
       } else {
         // 如果是新增
         this.weixingResource = {
@@ -261,21 +271,20 @@ export class WeixingDetailComponent implements OnInit {
           txwz: this.resourceForm.controls.txwz.value,
           txsl: this.resourceForm.controls.txsl.value,
           txlx: this.resourceForm.controls.txlx.value,
+          wxmc: this.resourceForm.controls.wxmc.value,
           jnssjmy:
-            this.resourceForm.controls.jnssjmy.value === 'other'
+            this.resourceForm.controls.jnssjmy.value === '其他'
               ? this.resourceForm.controls.jnssjmy_other.value
               : this.resourceForm.controls.jnssjmy.value,
           wxcsfs: this.resourceForm.controls.wxcsfs.value,
           xhtzfs: this.resourceForm.controls.xhtzfs.value,
-          ssnr: this.resourceForm.controls.ssnr.value,
+          ssnr: this.ssnr,
           sjazdwmc: this.resourceForm.controls.sjazdwmc.value,
           wxssazxkzh: this.resourceForm.controls.wxssazxkz.value,
+          ssdwlx: this.resourceForm.controls.ssdwlx.value,
           lpm: this.resourceForm.controls.lpm.value,
           lc: this.resourceForm.controls.lc.value,
           zds: this.resourceForm.controls.zds.value,
-          // hcrq: hcrqString,
-
-          // attachments: attachs
         };
       }
 
@@ -289,38 +298,6 @@ export class WeixingDetailComponent implements OnInit {
       });
     }
   }
-
-  // // 处理上传列表
-  // handleChange(info: NzUploadChangeParam): void {
-  //   const fileList: NzUploadFile[] = [];
-  //   info.fileList.forEach(file => {
-  //     if (file.status === 'done') {
-  //       fileList.push(file);
-  //     }
-  //   });
-
-  //   if (info.file.status === 'done') {
-  //     fileList.map(file => {
-  //       file.url = `${environment.serverFileDownloadRootUrl}\\${file.response.name}`;
-  //     });
-  //     this.attachments = fileList;
-  //     if (this.weixingResource?.id) {
-  //       // 修改情况，修改后台数据
-  //       this.save();
-  //     }
-  //     this.message.success(`${info.file.name} uploaded`);
-  //   } else if (info.file.status === 'error') {
-  //     this.attachments = fileList;
-  //     this.message.error(`${info.file.name} upload failed.`);
-  //   } else if (info.file.status === 'removed') {
-  //     this.attachments = fileList;
-  //     if (this.weixingResource?.id) {
-  //       // 修改情况，修改后台数据
-  //       this.save();
-  //     }
-  //     this.message.success(`${info.file.name} removed`);
-  //   }
-  // }
 
   // 弹出现场审核意见对话框
   showAudit(auditId?:number): void {

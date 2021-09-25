@@ -44,7 +44,7 @@ export class WeixingListComponent implements OnInit {
       }
     },
     { title: '申请单位', index: 'sqdw', width: 150 },
-    { title: '申请类型', index: 'sqlxName', sort: true },
+    { title: '申请类型', index: 'sqlx', sort: true },
     { title: '所属区', index: 'qxName', sort: 'qxId' },
     { title: '安装地址', index: 'azdz' },
   ];
@@ -53,14 +53,6 @@ export class WeixingListComponent implements OnInit {
     process: (data: STData[], rawData?: any) => {
       return data.map(d => {
         d.qxName = Region.codes.get(d.qxId);
-        switch (d.sqlx) {
-          case 'xb':
-            d.sqlxName = '新办';
-            break;
-          case 'bg':
-            d.sqlxName = '变更';
-            break;
-        }
         return d;
       });
     }

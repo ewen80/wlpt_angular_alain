@@ -1,23 +1,23 @@
-<form nz-form [formGroup]="resourceForm" se-container="2" labelWidth="100">
+<form nz-form [formGroup]="resourceForm" se-container="2">
     <se-title>基本信息</se-title>
+    <se label="编号" col="1"> {{ weixingResource?.bh }} </se>
     <se label="申请单位" [error]="{ required: '不能为空' }">
       <input type="text" nz-input formControlName="sqdw" required />
     </se>
-    <se label="编号"> {{ weixingResource?.bh }} </se>
     <se label="申请类型" [error]="{ required: '不能为空' }">
       <nz-radio-group formControlName="sqlx">
-        <label nz-radio nzValue="xb">新办</label>
-        <label nz-radio nzValue="bg">变更</label>
-        <label nz-radio nzValue="yx">延续</label>
+        <label nz-radio nzValue="新办">新办</label>
+        <label nz-radio nzValue="变更">变更</label>
+        <label nz-radio nzValue="延续">延续</label>
       </nz-radio-group>
+    </se>
+    <se label="安装地址" [error]="{ required: '不能为空' }">
+      <input type="text" nz-input formControlName="azdz" required />
     </se>
     <se label="所属区" [error]="{ required: '不能为空' }">
       <nz-select nzShowSearch nzAllowClear formControlName="qxId" required>
         <nz-option *ngFor="let qx of qxs" [nzLabel]="qx.value" [nzValue]="qx.key"> </nz-option>
       </nz-select>
-    </se>
-    <se label="安装地址" col="1" [error]="{ required: '不能为空' }">
-      <input type="text" nz-input formControlName="azdz" required />
     </se>
     <se label="办公电话" [error]="{ required: '不能为空', pattern: '只能输入数字' }">
       <input type="text" nz-input formControlName="bgdh" required />
@@ -42,34 +42,36 @@
     </se>
     <se label="天线类型" [error]="{ required: '不能为空' }">
       <nz-radio-group formControlName="txlx">
-        <label nz-radio nzValue="zk">正馈</label>
-        <label nz-radio nzValue="pk">偏馈</label>
+        <label nz-radio nzValue="正馈">正馈</label>
+        <label nz-radio nzValue="偏馈">偏馈</label>
       </nz-radio-group>
     </se>
-    <se label="境内收视节目源" labelWidth="150" col="1" [error]="{ required: '不能为空' }">
+    <se label="境内收视节目源"  [error]="{ required: '不能为空' }">
       <nz-radio-group formControlName="jnssjmy">
         <label nz-radio *ngFor="let item of jnssjmys" [nzValue]="item.value">{{ item.label }}</label>
-        <!-- <label nz-radio nzValue="yxdslw">有线电视联网</label>
-        <label nz-radio nzValue="klxh">开路信号</label>
-        <label nz-radio nzValue="iptv">IPTV</label>
-        <label nz-radio nzValue="other">其他</label> -->
       </nz-radio-group>
-      <input formControlName="jnssjmy_other" *ngIf="resourceForm.controls.jnssjmy.value === 'other'" />
+      <input formControlName="jnssjmy_other" *ngIf="resourceForm.controls.jnssjmy.value === '其他'" />
+    </se>
+    <se label="卫星名称" [error]="{ required: '不能为空' }">
+      <nz-radio-group formControlName="wxmc">
+        <label nz-radio nzValue="亚太六号">亚太六号</label>
+        <label nz-radio nzValue="中星6B">中星6B</label>
+      </nz-radio-group>
     </se>
     <se label="卫星传输方式" [error]="{ required: '不能为空' }">
       <nz-radio-group formControlName="wxcsfs">
-        <label nz-radio nzValue="twcs">同网传输</label>
-        <label nz-radio nzValue="fwcs">分网传输</label>
+        <label nz-radio nzValue="同网传输">同网传输</label>
+        <label nz-radio nzValue="分网传输">分网传输</label>
       </nz-radio-group>
     </se>
     <se label="信号调制方式" [error]="{ required: '不能为空' }">
       <nz-radio-group formControlName="xhtzfs">
-        <label nz-radio nzValue="sz">数字</label>
-        <label nz-radio nzValue="mn">模拟</label>
+        <label nz-radio nzValue="数字">数字</label>
+        <label nz-radio nzValue="模拟">模拟</label>
       </nz-radio-group>
     </se>
     <se label="收视内容" col="1" [error]="{ required: '不能为空' }">
-      <textarea nz-input formControlName="ssnr" required id="ssnr"></textarea>
+      <nz-checkbox-group formControlName="ssnr" required [(ngModel)]="ssnrCheckGroupOptions" (ngModelChange)="ssnrChanged()">    </nz-checkbox-group>
     </se>
     <se label="设计安装单位名称" labelWidth="150" [error]="{ required: '不能为空' }">
       <input nz-input formControlName="sjazdwmc" required />
@@ -79,7 +81,14 @@
     </se>
 
     <nz-divider nzOrientation="center" nzText="收视节目类型"></nz-divider>
-    <se label="类型">酒店</se>
+    <se label="类型">
+      <nz-radio-group formControlName="ssdwlx">
+        <label nz-radio nzValue="酒店">酒店</label>
+        <label nz-radio nzValue="机构">机构</label>
+        <label nz-radio nzValue="公寓">公寓</label>
+        <label nz-radio nzValue="境内">境内</label>
+      </nz-radio-group>
+    </se>
     <se label="楼盘名"><input nz-input formControlName="lpm" required id="lpm" /></se>
     <se label="楼层"><input nz-input formControlName="lc" required id="lc" /></se>
     <se label="终端数"><nz-input-number nz-input formControlName="zds" required id="zds"></nz-input-number></se>

@@ -8,8 +8,6 @@ export interface IWeixingResource {
   id?: number;
   permissions?: Array<{ mask: Permission }>;
   resourceCheckIn?: IResourceCheckIn;
-  // attachments?: IAttachment[];
-  // sign?: ISignature;
   fieldAudits?: IFieldAudit[];
 
   // 编号
@@ -42,6 +40,8 @@ export interface IWeixingResource {
   jnssjmy: string;
   // 卫星传输方式
   wxcsfs: string;
+  // 卫星名称
+  wxmc: string;
   // 信号调制方式
   xhtzfs: string;
   // 收视内容
@@ -50,12 +50,12 @@ export interface IWeixingResource {
   sjazdwmc: string;
   // 卫星设施安装许可证证号
   wxssazxkzh: string;
+  // 收视单位类型
+  ssdwlx: string;
   // 楼盘名
   lpm: string;
   // 楼层
   lc: string;
   // 终端数
   zds: number;
-  // // 核查日期
-  // hcrq: string;
 }
