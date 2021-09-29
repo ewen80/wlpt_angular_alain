@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { STColumn, STData, STComponent, STChange } from '@delon/abc/st';
 import { ACLService } from '@delon/acl';
@@ -11,6 +11,8 @@ import { Permission } from 'src/app/domains/iresource-range-permission-wrapper';
 import { Region } from 'src/app/domains/region';
 import { IWeixingResource } from 'src/app/domains/weixing-resource/iweixing-resource';
 import { FieldAuditComponent } from '../../field-audit/field-audit.component';
+import { saveAs } from 'file-saver';
+import * as FileSaver from 'file-saver';
 
 @Component({
   selector: 'app-weixing-detail',
@@ -38,7 +40,6 @@ export class WeixingDetailComponent implements OnInit {
   qxs: Array<{ key: string; value: string }> = [];
   selectedAuditIds: number[]  = [];
   fieldAudits: STData[] = [];
-
 
   // 境内收视节目源选择
   jnssjmys = [
@@ -311,6 +312,16 @@ export class WeixingDetailComponent implements OnInit {
       },
       nzAfterClose: this.auditModalClosed,
       nzFooter: [
+        {
+          label: '打印',
+          onClick: (component?: any) => {
+            this.weixingResourceService.print(this.resourceId!, component.auditId).subscribe({
+              next: (blob)=>{
+                FileSaver.saveAs(blob.body);
+              }
+            })
+          }
+        },
         {
           label: '取消',
           onClick: () => {

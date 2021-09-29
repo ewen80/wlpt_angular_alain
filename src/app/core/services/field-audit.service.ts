@@ -37,4 +37,5 @@ export class FieldAuditService {
     deleteAttachmentBags(bagIds: number[], auditId: number): Observable<void> {
         return this.http.delete(environment.serverFieldAuditServiceURL + "/attachmentbags/" + auditId + "?bagIds=" + bagIds);
     }
+
 }

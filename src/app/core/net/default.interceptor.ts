@@ -228,7 +228,7 @@ export class DefaultInterceptor implements HttpInterceptor {
       url,
       withCredentials: true,
       setHeaders: {
-        Accept: 'application/json',
+        // Accept: 'application/json',
         'X-Requested-With': 'XMLHttpRequest' // 告诉后台发送方是接口不是浏览器，不要弹出basic认证的窗口
       }
     });

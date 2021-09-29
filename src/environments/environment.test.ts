@@ -30,12 +30,10 @@ export const environment = {
   // 服务器自定义资源 *MyResource
   myResourceTypeClassName: 'pw.ewen.WLPT.domains.entities.resources.myresource.MyResource',
   serverMyResourceServiceURL: '/resources/myresources',
-  serverMyResourceRoomServiceURL: '/resources/myresource/rooms',
+  serverMyResourceRoomServiceURL: '/resources/myresources/rooms',
   //                *Weixing
   weixingResourceTypeClassName: 'pw.ewen.WLPT.domains.entities.resources.weixing.WeixingResource',
   serverWeixingResourceServiceURL: '/resources/weixings',
-  //                  卫星现场审核意见service
-  serverWeixingFieldAuditServiceURL: '/resources/weixings/fieldaudits',
   // 服务器现场审核意见
   serverFieldAuditServiceURL: '/fieldaudits',
   // 服务器附件包后台管理地址
@@ -54,4 +52,3 @@ export const environment = {
   production: false,
   useHash: false
 };
-

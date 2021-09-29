@@ -1,3 +1,4 @@
+import { HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
@@ -32,5 +33,9 @@ export class WeixingResourceService {
       resourceTypeClassName: environment.weixingResourceTypeClassName,
       roleId
     });
+  }
+
+  print(weixingId: number, auditId: number): Observable<any> {
+    return this.http.get(`${environment.serverWeixingResourceServiceURL}/fieldauditpdfs/${weixingId}/${auditId}`, undefined, {headers: new HttpHeaders().append('Accept','application/pdf'),  observe: 'response', responseType:'blob'});
   }
 }
