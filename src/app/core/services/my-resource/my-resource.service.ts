@@ -15,8 +15,12 @@ export class MyResourceService {
     return this.http.get<IMyResource>(`${environment.serverMyResourceServiceURL}/${id}`);
   }
 
-  save(myResource: IMyResource): Observable<IMyResource> {
+  add(myResource: IMyResource): Observable<IMyResource> {
     return this.http.post<IMyResource>(environment.serverMyResourceServiceURL, myResource);
+  }
+
+  update(myResource: IMyResource): Observable<void> {
+    return this.http.put<void>(environment.serverMyResourceServiceURL, myResource);
   }
 
   delete(ids: number[]): Observable<void> {

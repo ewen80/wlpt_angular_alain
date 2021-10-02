@@ -8,6 +8,7 @@ import { ResourceRangePermissionWrapperService } from 'src/app/core/services/res
 import { Permission } from 'src/app/domains/iresource-range-permission-wrapper';
 import { Region } from 'src/app/domains/region';
 import { IResourceCheckIn } from 'src/app/domains/resource/iresource-checkin';
+import { setAclAbility } from 'src/app/shared/utils/set-acl-ability';
 
 @Component({
   selector: 'app-my-resource-list',
@@ -70,18 +71,14 @@ export class MyResourceListComponent implements OnInit {
     Region.codes.forEach((value: string, key: string) => {
       this.qxs.push({ key, value });
     });
-    this.initNewButton();
+    this.initOptButton();
   }
 
-  // 初始化新建删除按钮
-  initNewButton() {
+  // 初始化新建删除等操作按钮
+  initOptButton() {
     this.myResourceService.getPermissions(this.settingService.user.roleId).subscribe({
       next: (permissions: Array<{ mask: Permission }>) => {
-        if (permissions.some(item => item.mask === Permission.WRITE)) {
-          this.acl.attachAbility(['WRITE']);
-        } else {
-          this.acl.removeAbility(['WRITE']);
-        }
+        setAclAbility(permissions, this.acl);
       }
     });
   }

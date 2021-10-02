@@ -57,8 +57,10 @@ export class ResourceDetailComponent implements OnInit {
   ];
 
   permissions = [
-    { label: '读', value: Permission.READ, checked: false },
-    { label: '写', value: Permission.WRITE, checked: false },
+    { label: '新增', value: Permission.CREATE, checked: false },
+    { label: '读取', value: Permission.READ, checked: false },
+    { label: '修改', value: Permission.WRITE, checked: false },
+    { label: '删除', value: Permission.DELETE, checked: false },
     { label: '办结', value: Permission.FINISH, checked: false }
   ];
 
@@ -223,12 +225,12 @@ export class ResourceDetailComponent implements OnInit {
         resourceTypeClassName: this.className as string
       },
       permissions: this.permissions
-        .filter(permission => {
-          return permission.checked;
-        })
-        .map(permission => {
-          return { mask: permission.value };
-        })
+                      .filter(permission => {
+                        return permission.checked;
+                      })
+                      .map(permission => {
+                        return { mask: permission.value };
+                      })
     };
 
     this.permissionWrapperService.save(wrapper).subscribe({

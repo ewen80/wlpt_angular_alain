@@ -177,6 +177,13 @@ export class MyResourceDetailComponent implements OnInit {
         this.myResource!.changdiAddress = this.resourceForm.controls.changdiAddress.value;
         this.myResource!.qxId = this.resourceForm.controls.qxId.value;
         this.myResource!.attachments = attachs;
+
+        this.myResourceService.update(this.myResource!).subscribe({
+          next: () => {
+            this.dataChanged.emit();
+            this.message.success('修改成功');
+          }
+        });
       } else {
         // 如果是新增
         this.myResource = {
@@ -185,15 +192,17 @@ export class MyResourceDetailComponent implements OnInit {
           qxId: this.resourceForm.controls.qxId.value,
           attachments: attachs
         };
+
+        this.myResourceService.add(this.myResource!).subscribe({
+          next: result => {
+            this.resourceId = result.id;
+            this.myResource = result;
+            this.dataChanged.emit();
+            this.message.success('添加成功');
+          }
+        });
       }
-      this.myResourceService.save(this.myResource!).subscribe({
-        next: result => {
-          this.resourceId = result.id;
-          this.myResource = result;
-          this.dataChanged.emit();
-          this.message.success('保存成功');
-        }
-      });
+      
     }
   }
 

@@ -58,12 +58,6 @@ export class FieldAuditComponent implements OnInit {
         { title: '创建时间', index: 'createdAt'},
         { title: '附件数量', index: 'attachmentsCount'}
       ]
-      // // 文件上传地址
-      // fileUploadServiceURL = `${environment.serverUrl + environment.serverFileServiceURL}/upload`; 
-    
-      // removeFile = (file: NzUploadFile) => {
-      //   return this.fileService.removeFile(file.response.name);
-      // };
     
       ngOnInit(): void {
         this.formGroup = this.fb.group({
@@ -102,22 +96,6 @@ export class FieldAuditComponent implements OnInit {
               }
               // 初始化附件包
               this.attachmentBags = fa.attachmentBags ? fa.attachmentBags : [];
-
-              // // 初始化附件包
-              // this.attachmentBags = [];
-              // fa.attachmentBags?.forEach(attachment => {
-              //   this.attachments.push({
-              //     uid: attachment.id!,
-              //     name: attachment.name,
-              //     status: 'done',
-              //     url: `${environment.serverFileDownloadRootUrl}\\${attachment.path}`,
-              //     response: {
-              //       name: attachment.path,
-              //       date: attachment.date,
-              //       status: 'done'
-              //     }
-              //   });
-              // });
             }
           });
         }
@@ -135,50 +113,8 @@ export class FieldAuditComponent implements OnInit {
         }
       }
     
-      // handleChange(info: NzUploadChangeParam): void {
-      //   // 处理上传列表
-      //   const fileList: NzUploadFile[] = [];
-      //   info.fileList.forEach(file => {
-      //     if (file.status === 'done') {
-      //       fileList.push(file);
-      //     }
-      //   });
-    
-      //   if (info.file.status === 'done') {
-      //     fileList.map(file => {
-      //       file.url = `${environment.serverFileDownloadRootUrl}\\${file.response.name}`;
-      //     });
-      //     this.attachments = fileList;
-      //     if (this.fieldAudit?.id) {
-      //       // 修改情况，修改后台数据
-      //       this.save();
-      //     }
-      //     this.msg.success(`${info.file.name} uploaded`);
-      //   } else if (info.file.status === 'error') {
-      //     this.attachments = fileList;
-      //     this.msg.error(`${info.file.name} upload failed.`);
-      //   } else if (info.file.status === 'removed') {
-      //     this.attachments = fileList;
-      //     if (this.fieldAudit?.id) {
-      //       // 修改情况，修改后台数据
-      //       this.save();
-      //     }
-      //     this.msg.success(`${info.file.name} removed`);
-      //   }
-      // }
-    
       save(): void {
         if (this.validate()) {
-          // // 转换附件类型
-          // const attachs: IAttachment[] = [];
-          // this.attachments.forEach(attachment => {
-          //   attachs.push({
-          //     name: attachment.name,
-          //     path: attachment.response.name,
-          //     date: attachment.response.date
-          //   });
-          // });
-
           // 对日期格式进行处理
           const auditDate = new Date(this.formGroup.controls.auditDate.value);
           const auditDateString = auditDate.toISOString().split('T')[0];

@@ -30,13 +30,13 @@
       </form>
       <nz-row [nzGutter]="16">
         <nz-col>
-          <button nz-button (click)="showDetail(undefined)" [nzType]="'primary'" acl [acl-ability]="'WRITE'">
+          <button nz-button (click)="showDetail(undefined)" [nzType]="'primary'" acl [acl-ability]="'CREATE'">
             <i nz-icon nzType="plus"></i>
             <span>新建</span>
           </button>
         </nz-col>
         <nz-col>
-          <button nz-button (click)="remove()" [nzType]="'primary'" acl [acl-ability]="'WRITE'" [disabled]="selectedIds.length === 0">
+          <button nz-button (click)="remove()" [nzType]="'primary'" acl [acl-ability]="'DELETE'" [disabled]="selectedIds.length === 0">
             <i nz-icon nzType="minus"></i>
             <span>删除</span>
           </button>

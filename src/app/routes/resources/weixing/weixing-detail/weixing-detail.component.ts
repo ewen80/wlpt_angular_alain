@@ -13,6 +13,7 @@ import { IWeixingResource } from 'src/app/domains/weixing-resource/iweixing-reso
 import { FieldAuditComponent } from '../../field-audit/field-audit.component';
 import { saveAs } from 'file-saver';
 import * as FileSaver from 'file-saver';
+import { setAclAbility } from 'src/app/shared/utils/set-acl-ability';
 
 @Component({
   selector: 'app-weixing-detail',
@@ -50,7 +51,7 @@ export class WeixingDetailComponent implements OnInit {
   ];
 
   // 收视内容选择框
-  ssnrCheckGroupOptions = [
+  ssnr = [
     {label: 'CCTV-法语', value: 'CCTV-法语', checked: false},
     {label: 'CCTV-西班牙语', value: 'CCTV-西班牙语'},
     {label: 'CCTV-阿拉伯语', value: 'CCTV-阿拉伯语'},
@@ -83,8 +84,6 @@ export class WeixingDetailComponent implements OnInit {
     {label: '喀秋莎', value: '喀秋莎'},
   ]
 
-  // 选中的收视内容
-  ssnr = '';
 
   // 审核意见列表列配置
   auditColumns: STColumn[] = [
@@ -128,18 +127,20 @@ export class WeixingDetailComponent implements OnInit {
       lpm: ['', [Validators.required]],
       lc: ['', [Validators.required]],
       zds: ['', [Validators.required]],
-      ssnr: ['']
+      // ssnr: ['']
     });
 
     Region.codes.forEach((value: string, key: string) => {
       this.qxs.push({ key, value });
     });
 
+    // 如果有resourceId则读取具体内容
     if (this.resourceId) {
       this.initDetail();
-    } else {
-      this.acl.attachAbility(['WRITE']);
-    }
+    } 
+    // 初始化权限
+    this.initOptButton();
+
 
     // 核查意见对话框关闭时
     this.auditModalClosed.subscribe({
@@ -149,13 +150,10 @@ export class WeixingDetailComponent implements OnInit {
     });
   }
 
-  // 初始化保存按钮
-  initSaveButton(): void {
-    // 修改资源
-    if (this.weixingResource?.permissions?.some(item => item.mask === Permission.WRITE)) {
-      this.acl.attachAbility(['WRITE']);
-    } else {
-      this.acl.removeAbility(['WRITE']);
+  // 初始化操作按钮
+  initOptButton(): void {
+    if(this.weixingResource && this.weixingResource.permissions) {
+      setAclAbility(this.weixingResource?.permissions, this.acl);
     }
   }
 
@@ -206,26 +204,17 @@ export class WeixingDetailComponent implements OnInit {
   // 初始化收视内容选择框
   initSsnrCheckbox(ssnr: string) {
     const arrSsnr = ssnr.split(',');
-    this.ssnrCheckGroupOptions.forEach(option=>{
+    this.ssnr.forEach(option=>{
       if(arrSsnr.indexOf(option.value) > -1){
         option.checked = true;
       }
     })
   }
 
-  // 收视内容选择框变更回调,多内容用逗号分隔
-  ssnrChanged(){
-    this.ssnr = '';
-    this.ssnrCheckGroupOptions.forEach(option => {
-      if(option.checked) {
-        this.ssnr += option.value + ',';
-      }
-    });
-  }
-
-
   save(): void {
     if (this.resourceForm.valid) {
+      // 转换收视内容
+      const strSsnr = this.ssnr.filter(option=>option.checked).map(option => {return option.value}).reduce((a,b)=>{return a+','+b+','});
       if (this.resourceId) {
         // 如果是修改
         this.weixingResource!.qxId = this.resourceForm.controls.qxId.value;
@@ -247,16 +236,24 @@ export class WeixingDetailComponent implements OnInit {
           this.weixingResource!.jnssjmy = this.resourceForm.controls.jnssjmy.value;
         }
 
+        this.weixingResource!.ssnr = strSsnr;
         this.weixingResource!.wxmc = this.resourceForm.controls.wxmc.value;
         this.weixingResource!.wxcsfs = this.resourceForm.controls.wxcsfs.value;
         this.weixingResource!.xhtzfs = this.resourceForm.controls.xhtzfs.value;
-        this.weixingResource!.ssnr = this.ssnr;
         this.weixingResource!.sjazdwmc = this.resourceForm.controls.sjazdwmc.value;
         this.weixingResource!.wxssazxkzh = this.resourceForm.controls.wxssazxkz.value;
         this.weixingResource!.ssdwlx = this.resourceForm.controls.ssdwlx.value;
         this.weixingResource!.lpm = this.resourceForm.controls.lpm.value;
         this.weixingResource!.lc = this.resourceForm.controls.lc.value;
         this.weixingResource!.zds = this.resourceForm.controls.zds.value;
+
+        this.weixingResourceService.update(this.weixingResource!).subscribe({
+          next: () => {
+            this.dataChanged.emit();
+            this.message.success('修改成功');
+          }
+        });
+
       } else {
         // 如果是新增
         this.weixingResource = {
@@ -279,24 +276,26 @@ export class WeixingDetailComponent implements OnInit {
               : this.resourceForm.controls.jnssjmy.value,
           wxcsfs: this.resourceForm.controls.wxcsfs.value,
           xhtzfs: this.resourceForm.controls.xhtzfs.value,
-          ssnr: this.ssnr,
           sjazdwmc: this.resourceForm.controls.sjazdwmc.value,
           wxssazxkzh: this.resourceForm.controls.wxssazxkz.value,
           ssdwlx: this.resourceForm.controls.ssdwlx.value,
           lpm: this.resourceForm.controls.lpm.value,
           lc: this.resourceForm.controls.lc.value,
           zds: this.resourceForm.controls.zds.value,
+          ssnr: strSsnr
         };
+
+        this.weixingResourceService.add(this.weixingResource!).subscribe({
+          next: result => {
+            this.resourceId = result.id;
+            this.weixingResource = result;
+            this.dataChanged.emit();
+            this.message.success('添加成功');
+          }
+        });
       }
 
-      this.weixingResourceService.save(this.weixingResource!).subscribe({
-        next: result => {
-          this.resourceId = result.id;
-          this.weixingResource = result;
-          this.dataChanged.emit();
-          this.message.success('保存成功');
-        }
-      });
+      
     }
   }
 
@@ -331,7 +330,12 @@ export class WeixingDetailComponent implements OnInit {
         {
           label: '确定',
           type: 'primary',
-
+          show: ()=>{
+            if(this.acl.canAbility("WRITE")) {
+              return true;
+            } 
+            return false;
+          },
           onClick: (component?: any) => {
             if (component.validate()) {
               component.save();

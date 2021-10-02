@@ -20,8 +20,12 @@ export class WeixingResourceService {
     return this.http.get<IWeixingResource[]>(`${environment.serverWeixingResourceServiceURL}/nopage`);
   }
 
-  save(myResource: IWeixingResource): Observable<IWeixingResource> {
+  add(myResource: IWeixingResource): Observable<IWeixingResource> {
     return this.http.post<IWeixingResource>(environment.serverWeixingResourceServiceURL, myResource);
+  }
+
+  update(myResource: IWeixingResource): Observable<void> {
+    return this.http.put<void>(environment.serverWeixingResourceServiceURL, myResource);
   }
 
   delete(ids: number[]): Observable<void> {
