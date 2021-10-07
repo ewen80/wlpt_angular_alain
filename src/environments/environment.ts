@@ -34,6 +34,8 @@ export const environment = {
   //                *Weixing
   weixingResourceTypeClassName: 'pw.ewen.WLPT.domains.entities.resources.weixing.WeixingResource',
   serverWeixingResourceServiceURL: '/resources/weixings',
+  //                  卫星现场审核意见service
+  serverWeixingFieldAuditServiceURL: '/resources/weixings/fieldaudits',
   // 服务器现场审核意见
   serverFieldAuditServiceURL: '/fieldaudits',
   // 服务器附件包后台管理地址
@@ -48,6 +50,12 @@ export const environment = {
   defaultAvatar: '../assets/tmp/img/avatar.jpg',
   // 默认场地审核单位名称
   defaultFieldAuditDepartment: '上海市社会文化管理处',
+  // 场地审核GPS图片显示配置
+  fieldAuditGpsUrl: 'https://apis.map.qq.com/ws/staticmap/v2/', // api接口地址
+  fieldAuditGpsKey: '5VHBZ-PGARD-NZ44L-HC5UV-A36GQ-M4BMU', // api key
+  fieldAuditGpsWidth:1000, // 图片宽度
+  fieldAuditGpsHeight:800,  // 图片高度
+  fieldAuditGpsZoom: 17,  // 放大系数
 
   production: false,
   useHash: false
