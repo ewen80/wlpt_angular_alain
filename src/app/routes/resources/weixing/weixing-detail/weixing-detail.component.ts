@@ -351,7 +351,10 @@ export class WeixingDetailComponent implements OnInit {
   getAudits(): void {
     if(this.resourceId){
       this.fieldAuditService.findByResourceId(this.resourceId, this.weixingFieldAuditServiceUrl).subscribe({
-        next: result=> this.fieldAudits = result,
+        next: result=> {
+          this.fieldAudits = result;
+          this.weixingResource!.fieldAudits = result;
+        }
       })
     }
   }
@@ -361,7 +364,10 @@ export class WeixingDetailComponent implements OnInit {
   removeAudits(): void {
     if(this.resourceId){
       this.fieldAuditService.deleteByResourceId(this.selectedAuditIds, this.resourceId, this.weixingFieldAuditServiceUrl).subscribe({
-        next: ()=> this.getAudits()
+        next: () => {
+          this.selectedAuditIds = [];
+          this.getAudits();
+        }
       });
     }
   }

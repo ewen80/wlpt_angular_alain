@@ -40,6 +40,6 @@ export class WeixingResourceService {
   }
 
   print(weixingId: number, auditId: number): Observable<any> {
-    return this.http.get(`${environment.serverWeixingResourceServiceURL}/fieldauditpdfs/${weixingId}/${auditId}`, undefined, {headers: new HttpHeaders().append('Accept','application/pdf'),  observe: 'response', responseType:'blob'});
+    return this.http.get(`${environment.serverWeixingResourceServiceURL}/print/${weixingId}/${auditId}`, undefined, {headers: new HttpHeaders().append('Accept','application/vnd.openxmlformats-officedocument.wordprocessingml.document'),  observe: 'response', responseType:'blob'});
   }
 }

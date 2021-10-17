@@ -3,12 +3,13 @@ import { IFieldAudit } from '../resource/ifield-audit';
 import { Permission } from '../iresource-range-permission-wrapper';
 import { ISignature } from '../isignature';
 import { IResourceCheckIn } from '../resource/iresource-checkin';
+import { IResourceBase } from '../resource/iresource-base';
 
-export interface IWeixingResource {
+export interface IWeixingResource extends IResourceBase {
   id?: number;
-  permissions?: Array<{ mask: Permission }>;
-  resourceCheckIn?: IResourceCheckIn;
-  fieldAudits?: IFieldAudit[];
+  // permissions?: Array<{ mask: Permission }>;
+  // resourceCheckIn?: IResourceCheckIn;
+  // fieldAudits?: IFieldAudit[];
 
   // 编号
   bh?: string;

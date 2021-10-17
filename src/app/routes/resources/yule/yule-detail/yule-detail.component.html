@@ -1,0 +1,94 @@
+<form nz-form [formGroup]="resourceForm" se-container="2" labelWidth="180">
+    <se-title>基本信息</se-title>
+    <se label="编号" col="1"> {{ yuleResourceBase?.bh }} </se>
+    <se label="单位名称" [error]="{ required: '不能为空' }">
+      <input type="text" nz-input formControlName="dwmc" required />
+    </se>
+    <se label="申办项目" [error]="{ required: '不能为空' }">
+      <nz-radio-group formControlName="sbxm">
+        <label nz-radio nzValue="新办">新办</label>
+        <label nz-radio nzValue="变更">变更</label>
+        <label nz-radio nzValue="续办">续办</label>
+      </nz-radio-group>
+    </se>
+    <se label="场所地址" [error]="{ required: '不能为空' }">
+      <input type="text" nz-input formControlName="csdz" required />
+    </se>
+    <se label="所属区" [error]="{ required: '不能为空' }">
+      <nz-select nzShowSearch nzAllowClear formControlName="qxId" required>
+        <nz-option *ngFor="let qx of qxs" [nzLabel]="qx.value" [nzValue]="qx.key"> </nz-option>
+      </nz-select>
+    </se>
+    <se label="联系人" [error]="{ required: '不能为空' }">
+      <input type="text" nz-input formControlName="lxr" required />
+    </se>
+    <se label="联系电话" [error]="{ required: '不能为空', pattern: '只能输入数字' }">
+      <input type="text" nz-input formControlName="lxdh" required />
+    </se>
+    <se label="使用面积" [error]="{ required: '不能为空', pattern: '只能输入数字'}">
+      <input type="text" nz-input formControlName="symj" required />
+    </se>
+    <se label="安全通道" [error]="{ required: '不能为空' }">
+      <input type="text" nz-input formControlName="aqtd" required />
+    </se>
+    <se label="经营范围" [error]="{ required: '不能为空' }">
+      <nz-checkbox-group formControlName="jyfw" (ngModelChange)="jyfwOnChange(this.jyfwCheckboxOptions)"></nz-checkbox-group>
+    </se>
+    <!-- 歌舞娱乐场所字段 -->
+    <nz-divider *ngIf="showGw"></nz-divider>
+    <se *ngIf="showGw" col="1" label="包房列表">
+      <nz-alert nzType="info" nzMessage="添加记录后才能增加包房和舞池" nzShowIcon *ngIf="!resourceId"></nz-alert>
+      <button nz-button (click)="showRoom()" [disabled]="!resourceId">添加包房</button>
+      <button nz-button [disabled]="selectedRoomIds.length===0 || this.gwRooms.length===0" (click)="removeRooms()">删除包房</button>
+      <st [columns]="gwRoomColumn" [data]="gwRooms" (change)="roomListChanged($event)"></st>
+      <nz-divider></nz-divider>
+      <button nz-button (click)="showWc()" [disabled]="!resourceId">添加舞池</button>
+      <button nz-button [disabled]="selectedWcIds.length===0  || this.gwWcs.length===0" (click)="removeWcs()">删除舞池</button>
+      <st [columns]="gwWcColumn" [data]="gwWcs" (change)="wcListChanged($event)"></st>
+    </se>
+    <!-- 游艺娱乐场所字段 -->
+    <nz-divider *ngIf="showYy"></nz-divider>
+    <se-title *ngIf="showYy">游艺娱乐场所信息</se-title>
+    <se col="1" *ngIf="showYy">
+      <nz-alert nzType="info" nzMessage="添加记录后才能修改游艺娱乐场所字段" nzShowIcon *ngIf="!resourceId"></nz-alert>
+    </se>
+    <se label="游戏游艺是否分区经营" labelWidth="280" *ngIf="showYy">
+      <nz-radio-group formControlName="fenqu" [nzDisabled]="!resourceId">
+        <label nz-radio nzValue="true">是</label>
+        <label nz-radio nzValue="false">否</label>
+      </nz-radio-group>
+    </se>
+    <se label="游艺设备是否具有退币、退钢珠功能" labelWidth="280" *ngIf="showYy">
+      <nz-radio-group formControlName="tuibi" [nzDisabled]="!resourceId">
+        <label nz-radio nzValue="true">是</label>
+        <label nz-radio nzValue="false">否</label>
+      </nz-radio-group>
+    </se>
+    <se label="场所使用奖品是否与奖品目录单一致" labelWidth="280" *ngIf="showYy">
+      <nz-radio-group formControlName="jiangpinCatalogSame" [nzDisabled]="!resourceId">
+        <label nz-radio nzValue="true">是</label>
+        <label nz-radio nzValue="false">否</label>
+      </nz-radio-group>
+    </se>
+    <se label="单件奖品价值是否超过500元（人民币）" labelWidth="280" *ngIf="showYy">
+      <nz-radio-group formControlName="jiangpinValue" [nzDisabled]="!resourceId">
+        <label nz-radio nzValue="true">是</label>
+        <label nz-radio nzValue="false">否</label>
+      </nz-radio-group>
+    </se>
+    <nz-divider></nz-divider>
+    <se col="1">
+      <button nz-button type="submit" nzType="primary" acl [acl-ability]="'CREATE'" [disabled]="resourceForm.invalid" *ngIf="!resourceId" (click)="save()">添加记录</button>
+      <button nz-button type="submit" nzType="primary" acl [acl-ability]="'WRITE'" [disabled]="resourceForm.invalid" *ngIf="resourceId" (click)="save()">修改记录</button>
+      <!-- <button nz-button type="button" nzType="primary" acl [acl-ability]="'FINISH'" (click)="finish()">办结</button> -->
+    </se>
+  <se-title>场地审核信息</se-title>
+  <se col="1">
+    <button nz-button type="button"  (click)="showAudit()" acl [acl-ability]="'WRITE'" [disabled]="!resourceId">新增审核信息</button>
+    <button nz-button type="button"  (click)="removeAudits()" acl [acl-ability]="'WRITE'" [disabled]="selectedAuditIds.length === 0">删除审核信息</button>
+  </se>
+  <se col="1">
+    <st  [columns]="auditColumns" [data]="fieldAudits" (dataChanged)="getAudits()" (change)="stChange($event)"></st>
+  </se>
+  
+</form>

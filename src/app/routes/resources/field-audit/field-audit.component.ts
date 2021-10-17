@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { STChange, STColumn, STData } from "@delon/abc/st";
 import { DA_SERVICE_TOKEN, ITokenService } from "@delon/auth";
 import { environment } from "@env/environment";
+import { NzImage, NzImageService } from "ng-zorro-antd/image";
 import { NzMessageService } from "ng-zorro-antd/message";
 import { NzModalService } from "ng-zorro-antd/modal";
 import { AttachmentBagService } from "src/app/core/services/attachment-bag.service";
@@ -20,6 +21,7 @@ export class FieldAuditComponent implements OnInit {
         private fb: FormBuilder,
         private msg: NzMessageService,
         private modal: NzModalService,
+        private nzImageService: NzImageService,
         private fieldAuditService: FieldAuditService,
         private attachmentBagService: AttachmentBagService,
         @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
@@ -133,9 +135,8 @@ export class FieldAuditComponent implements OnInit {
             auditDate: auditDateString,
             auditDepartment: this.formGroup.controls.auditDepartment.value,
             auditUserId: this.tokenService.get()!.user.id,
-            // attachments: attachs,
+            attachmentBags: this.fieldAudit?.attachmentBags,
           };
-          // 如果是添加调用资源对应的FieldAuditService，如果是变更调用FieldAuditService
           if(this.auditId) {
             this.fieldAuditService.save(myFieldAudit).subscribe();
           } else {
@@ -195,7 +196,10 @@ export class FieldAuditComponent implements OnInit {
       // 获取最新附件包信息
       getAttachmentBags(auditId: number): void {
         this.attachmentBagService.findByAuditId(auditId).subscribe({
-          next: bags => this.attachmentBags = bags
+          next: bags => {
+            this.attachmentBags = bags;
+            this.fieldAudit!.attachmentBags = bags;
+          }
         })
       }
 
@@ -204,5 +208,15 @@ export class FieldAuditComponent implements OnInit {
         this.fieldAuditService.deleteAttachmentBags(this.selectedAttachmentBagIds, this.auditId).subscribe({
           next: ()=>this.getAttachmentBags(this.auditId)
         })
+      }
+
+      // 显示签名
+      showSignature(): void {
+        const signatureImage: NzImage[] = [{
+          src: this.signImageUrl!,
+          width: '180px',
+          height: '320px',
+        }];
+        this.nzImageService.preview(signatureImage, { nzZoom: 1, nzRotate: -90 });
       }
 }

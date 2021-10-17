@@ -4,6 +4,7 @@ import { MenuGuard } from 'src/app/guards/menu.guard';
 
 import { MyResourceListComponent } from './my-resource/my-resource-list/my-resource-list.component';
 import { WeixingListComponent } from './weixing/weixing-list/weixing-list.component';
+import { YuleListComponent } from './yule/yule-list/yule-list.component';
 
 const routes: Routes = [
   {
@@ -11,7 +12,8 @@ const routes: Routes = [
     canActivateChild: [MenuGuard],
     children: [
       { path: 'myresources', component: MyResourceListComponent },
-      { path: 'weixings', component: WeixingListComponent }
+      { path: 'weixings', component: WeixingListComponent },
+      { path: 'yules', component: YuleListComponent},
     ]
   }
 ];

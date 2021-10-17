@@ -96,6 +96,7 @@ export class MyResourceListComponent implements OnInit {
   remove(): void {
     this.myResourceService.delete(this.selectedIds).subscribe({
       next: () => {
+        this.selectedIds = [];
         this.st.reload();
       }
     });

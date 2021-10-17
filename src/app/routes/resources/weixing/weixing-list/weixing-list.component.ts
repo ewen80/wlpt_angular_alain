@@ -93,6 +93,7 @@ export class WeixingListComponent implements OnInit {
   remove(): void {
     this.weixingResourceService.delete(this.selectedIds).subscribe({
       next: () => {
+        this.selectedIds = [];
         this.st.reload();
       }
     });

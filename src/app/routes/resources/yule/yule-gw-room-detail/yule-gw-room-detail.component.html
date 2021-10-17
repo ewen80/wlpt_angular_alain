@@ -1,0 +1,36 @@
+<form nz-form [formGroup]="resourceForm" se-container="1" labelWidth="180">
+    <se label="包房名" [error]="{ required: '不能为空' }">
+      <input nz-input formControlName="name" required  />
+    </se>
+    <se label="包房面积"  [error]="{ required: '不能为空', pattern: '只能填入数字' }">
+      <input nz-input formControlName="area" required  />
+    </se>
+    <se label="核定人数" [error]="{ required: '不能为空', pattern: '只能填入数字' }">
+        <input nz-input formControlName="hdrs" [value]="getHdrs(this.resourceForm.controls.area.value)" />
+    </se>
+    <se label="供点唱歌曲1000首以上">
+        <nz-radio-group formControlName="oneThousandSongs">
+            <label nz-radio nzValue="true">是</label>
+            <label nz-radio nzValue="false">否</label>
+        </nz-radio-group>
+    </se>
+    <se label="是否有隔断或卫生间">
+        <nz-radio-group formControlName="toilet">
+            <label nz-radio nzValue="true">是</label>
+            <label nz-radio nzValue="false">否</label>
+        </nz-radio-group>
+    </se>
+    <se label="是否安装内锁装置">
+        <nz-radio-group formControlName="innerLock">
+            <label nz-radio nzValue="true">是</label>
+            <label nz-radio nzValue="false">否</label>
+        </nz-radio-group>
+    </se>
+    <se label="是否安装透明清晰材料">
+        <nz-radio-group formControlName="window">
+            <label nz-radio nzValue="true">是</label>
+            <label nz-radio nzValue="false">否</label>
+        </nz-radio-group>
+    </se>
+  </form>
+  

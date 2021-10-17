@@ -34,7 +34,8 @@
         <nz-form-item>
           <nz-form-label>场地负责人签名</nz-form-label>
           <nz-form-control>
-            <img nz-image *ngIf="signImageUrl" [nzSrc]="signImageUrl" width="200px" height="80px" nzDisablePreview="true" />
+            <!-- <img nz-image *ngIf="signImageUrl" [nzSrc]="signImageUrl" width="200px" height="80px" nzDisablePreview="true" /> -->
+            <button  nz-button *ngIf="signImageUrl" (click)="showSignature()">查看签名</button>
           </nz-form-control>
         </nz-form-item>
       </nz-col>
@@ -52,7 +53,7 @@
     <nz-row>
       <nz-col nzSpan="24">
         <button nz-button (click)="showAttachmentBag()" acl [acl-ability]="'WRITE'" [disabled]="this.auditId===0">新增附件包</button>
-        <button nz-button (click)="removeAttachmentBag()" acl [acl-ability]="'WRITE'" [disabled]="this.selectedAttachmentBagIds.length === 0">删除附件包</button>
+        <button nz-button (click)="removeAttachmentBag()" acl [acl-ability]="'WRITE'" [disabled]="this.selectedAttachmentBagIds.length === 0 || this.attachmentBags.length === 0">删除附件包</button>
         <nz-form-control><st [columns]="attachmentBagsColumn" [data]="attachmentBags" [ps]="5" [res]="{process: resProcess}" (change)="stChange($event)"></st></nz-form-control>
       </nz-col>
     </nz-row>

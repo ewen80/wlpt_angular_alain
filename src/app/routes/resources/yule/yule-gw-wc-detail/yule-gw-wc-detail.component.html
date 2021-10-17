@@ -1,0 +1,21 @@
+<form nz-form [formGroup]="resourceForm" se-container="1" labelWidth="180">
+    <se label="舞池名" [error]="{ required: '不能为空' }">
+      <input nz-input formControlName="name" required  />
+    </se>
+    <se label="舞池面积"  [error]="{ required: '不能为空', pattern: '只能填入数字' }">
+      <input nz-input formControlName="area" required  />
+    </se>
+    <se label="舞池与休息座是否分开">
+        <nz-radio-group formControlName="dlwc">
+            <label nz-radio nzValue="true">是</label>
+            <label nz-radio nzValue="false">否</label>
+        </nz-radio-group>
+    </se>
+    <se label="是否有衣物寄放室">
+        <nz-radio-group formControlName="ywjf">
+            <label nz-radio nzValue="true">是</label>
+            <label nz-radio nzValue="false">否</label>
+        </nz-radio-group>
+    </se>
+  </form>
+  

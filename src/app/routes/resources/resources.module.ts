@@ -11,6 +11,10 @@ import { WeixingDetailComponent } from './weixing/weixing-detail/weixing-detail.
 import { FieldAuditComponent } from './field-audit/field-audit.component';
 import { WeixingListComponent } from './weixing/weixing-list/weixing-list.component';
 import { AttachmentBagComponent } from './attachment-bag/attachment-bag.component';
+import { YuleListComponent } from './yule/yule-list/yule-list.component';
+import { YuleDetailComponent } from './yule/yule-detail/yule-detail.component';
+import { YuleGwRoomComponent } from './yule/yule-gw-room-detail/yule-gw-room-detail.component';
+import { YuleGwWcComponent } from './yule/yule-gw-wc-detail/yule-gw-wc-detail.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +25,12 @@ import { AttachmentBagComponent } from './attachment-bag/attachment-bag.componen
 
     WeixingListComponent,
     WeixingDetailComponent,
+
+    YuleListComponent,
+    YuleDetailComponent, 
+    YuleGwRoomComponent,
+    YuleGwWcComponent,
+    
     FieldAuditComponent,
     AttachmentBagComponent,
   ],

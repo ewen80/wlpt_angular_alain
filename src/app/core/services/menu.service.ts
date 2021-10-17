@@ -15,11 +15,11 @@ export class MenuService {
   }
 
   save(menu: IMenu): Observable<IMenu> {
-    return this.http.post<IMenu>(environment.serverMenuServiceURL, menu);
+    return this.http.put<IMenu>(environment.serverMenuServiceURL, menu);
   }
 
-  batchSave(menus: IMenu[]): Observable<void> {
-    return this.http.put<void>(environment.serverMenuServiceURL, menus);
+  batchSave(menus: IMenu[]): Observable<IMenu[]> {
+    return this.http.put<IMenu[]>(environment.serverMenuServiceURL+"/all", menus);
   }
 
   delete(id: number): Observable<void> {
