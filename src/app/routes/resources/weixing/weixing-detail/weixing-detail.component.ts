@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { STColumn, STData, STComponent, STChange } from '@delon/abc/st';
 import { ACLService } from '@delon/acl';
@@ -11,9 +11,10 @@ import { Permission } from 'src/app/domains/iresource-range-permission-wrapper';
 import { Region } from 'src/app/domains/region';
 import { IWeixingResource } from 'src/app/domains/weixing-resource/iweixing-resource';
 import { FieldAuditComponent } from '../../field-audit/field-audit.component';
-import { saveAs } from 'file-saver';
 import * as FileSaver from 'file-saver';
 import { setAclAbility } from 'src/app/shared/utils/set-acl-ability';
+import { Observable, Subscription, timer } from 'rxjs';
+import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
 
 @Component({
   selector: 'app-weixing-detail',
@@ -28,6 +29,7 @@ export class WeixingDetailComponent implements OnInit {
     private weixingResourceService: WeixingResourceService,
     private fieldAuditService: FieldAuditService,
     private message: NzMessageService,
+    @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
   ) {}
 
   resourceForm!: FormGroup;
@@ -41,6 +43,9 @@ export class WeixingDetailComponent implements OnInit {
   qxs: Array<{ key: string; value: string }> = [];
   selectedAuditIds: number[]  = [];
   fieldAudits: STData[] = [];
+
+  // 已读状态更新订阅
+  readSubscription?: Subscription;
 
   // 境内收视节目源选择
   jnssjmys = [
@@ -196,6 +201,14 @@ export class WeixingDetailComponent implements OnInit {
           this.resourceForm.controls.zds.setValue(data.zds);
           // 初始化收视内容
           this.initSsnrCheckbox(data.ssnr);
+          // n秒后设置该资源为已读
+          if(!this.weixingResource.readed) {
+            this.readSubscription = timer(environment.setReadSeconds).subscribe({
+              next: ()=>{
+                this.weixingResourceService.read(this.resourceId!, this.tokenService.get()!.user.id).subscribe();
+              }
+            })
+          }
         }
       });
     }

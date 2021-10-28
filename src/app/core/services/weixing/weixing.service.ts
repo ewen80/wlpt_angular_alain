@@ -42,4 +42,8 @@ export class WeixingResourceService {
   print(weixingId: number, auditId: number): Observable<any> {
     return this.http.get(`${environment.serverWeixingResourceServiceURL}/print/${weixingId}/${auditId}`, undefined, {headers: new HttpHeaders().append('Accept','application/vnd.openxmlformats-officedocument.wordprocessingml.document'),  observe: 'response', responseType:'blob'});
   }
+
+  read(weixingId: number, userId: string): Observable<void> {
+    return this.http.put(`${environment.serverWeixingResourceServiceURL}/read/${weixingId}/${userId}`);
+  }
 }

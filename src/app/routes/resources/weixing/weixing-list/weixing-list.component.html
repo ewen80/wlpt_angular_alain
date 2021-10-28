@@ -47,6 +47,6 @@
     </nz-card>
   </nz-tab>
   <nz-tab *ngFor="let tab of tabs" [nzTitle]="tab.title" nzClosable>
-    <app-weixing-detail [resourceId]="tab.id" (dataChanged)="tableDataChanged()"></app-weixing-detail>
+    <app-weixing-detail #weixingDetail [resourceId]="tab.id" ></app-weixing-detail>
   </nz-tab>
 </nz-tabset>

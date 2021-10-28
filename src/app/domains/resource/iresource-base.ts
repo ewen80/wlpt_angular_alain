@@ -6,4 +6,5 @@ export interface IResourceBase {
     permissions?: Array<{ mask: Permission }>;
     resourceCheckIn?: IResourceCheckIn;
     fieldAudits?: IFieldAudit[];
+    readed?: boolean;    // 是否已读
 }

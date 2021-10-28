@@ -66,6 +66,8 @@ export const environment = {
   fieldAuditGpsWidth:1000, // 图片宽度
   fieldAuditGpsHeight:800,  // 图片高度
   fieldAuditGpsZoom: 17,  // 放大系数
+  // 打开页面设为已读的豪秒数
+  setReadSeconds: 5000,
 
   production: false,
   useHash: false

@@ -47,6 +47,6 @@
     </nz-card>
   </nz-tab>
   <nz-tab *ngFor="let tab of tabs" [nzTitle]="tab.title" nzClosable>
-    <app-yule-detail [resourceId]="tab.id" (dataChanged)="tableDataChanged()"></app-yule-detail>
+    <app-yule-detail #yuleDetail [resourceId]="tab.id" ></app-yule-detail>
   </nz-tab>
 </nz-tabset>

@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { STColumn, STData, STComponent, STChange, STRequestOptions } from '@delon/abc/st';
+import { STColumn, STData, STComponent, STChange, STRequestOptions, STColumnTag } from '@delon/abc/st';
 import { ACLService } from '@delon/acl';
 import { SettingsService } from '@delon/theme';
 import { environment } from '@env/environment';
@@ -7,6 +7,7 @@ import { YuleResourceService } from 'src/app/core/services/yule/yule.service';
 import { Permission } from 'src/app/domains/iresource-range-permission-wrapper';
 import { Region } from 'src/app/domains/region';
 import { setAclAbility } from 'src/app/shared/utils/set-acl-ability';
+import { YuleDetailComponent } from '../yule-detail/yule-detail.component';
 
 @Component({
   selector: 'app-yule-list',
@@ -27,6 +28,10 @@ export class YuleListComponent implements OnInit {
 
   qxs: Array<{ key: string; value: string }> = [];
 
+  readTag: STColumnTag = {
+    false: { text: '未读', color: 'red' },
+  };
+
   tabs: Array<{
     title: string;
     id: number | undefined;
@@ -34,6 +39,7 @@ export class YuleListComponent implements OnInit {
 
   columns: STColumn[] = [
     { title: '', index: 'id', type: 'checkbox' },
+    { title: '', index: 'readed', type: 'tag', tag: this.readTag, width: 80},
     {
       title: '编号',
       index: 'bh',
@@ -61,8 +67,8 @@ export class YuleListComponent implements OnInit {
 
   selectedIds: number[] = []; // 选中id数组
 
-  @ViewChild('st', { static: true })
-  st!: STComponent;
+  @ViewChild('st', { static: true }) st!: STComponent;
+  @ViewChild('yuleDetail')  weixingDetail!: YuleDetailComponent;
 
   ngOnInit(): void {
     Region.codes.forEach((value: string, key: string) => {
@@ -100,7 +106,9 @@ export class YuleListComponent implements OnInit {
   }
 
   closeTab({ index }: { index: number }): void {
+    this.weixingDetail.readSubscription?.unsubscribe();
     this.tabs.splice(index - 1, 1);
+    this.st.reload();
   }
 
   stChange(e: STChange): void {

@@ -43,4 +43,8 @@ export class YuleResourceService {
     return this.http.get(`${environment.serverYuleResourceBaseServiceURL}/print/${yuleId}/${auditId}`, undefined, {headers: new HttpHeaders().append('Accept','application/vnd.openxmlformats-officedocument.wordprocessingml.document'),  observe: 'response', responseType:'blob'});
   }
 
+  read(yuleId: number, userId: string): Observable<void> {
+    return this.http.put(`${environment.serverYuleResourceBaseServiceURL}/read/${yuleId}/${userId}`);
+  }
+
 }

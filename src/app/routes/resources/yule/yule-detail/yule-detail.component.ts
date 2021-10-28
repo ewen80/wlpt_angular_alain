@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { STColumn, STData, STComponent, STChange } from '@delon/abc/st';
 import { ACLService } from '@delon/acl';
@@ -22,6 +22,8 @@ import { IYuleYyBase } from 'src/app/domains/yule-resource/iyule-yy-base';
 import { IYuleGwRoom } from 'src/app/domains/yule-resource/iyule-gw-room';
 import { IYuleGwWc } from 'src/app/domains/yule-resource/iyule-gw-wc';
 import { IFieldAudit } from 'src/app/domains/resource/ifield-audit';
+import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
+import { Subscription, timer } from 'rxjs';
 
 @Component({
   selector: 'app-yule-detail',
@@ -38,6 +40,7 @@ export class YuleDetailComponent implements OnInit {
     private gwWcService: YuleGwWcService,
     private fieldAuditService: FieldAuditService,
     private message: NzMessageService,
+    @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
   ) {}
 
   resourceForm!: FormGroup;
@@ -61,6 +64,9 @@ export class YuleDetailComponent implements OnInit {
   qxs: Array<{ key: string; value: string }> = [];
   selectedAuditIds: number[]  = [];
   fieldAudits: STData[] = [];
+
+  // 已读状态更新订阅
+  readSubscription?: Subscription;
 
   selectedRoomIds:number[] = [];
   selectedWcIds:number[] = [];
@@ -363,6 +369,14 @@ export class YuleDetailComponent implements OnInit {
           this.getRooms();
           // 初始化舞池数据
           this.getWcs();
+           // n秒后设置该资源为已读
+           if(!this.yuleResourceBase.readed) {
+            this.readSubscription = timer(environment.setReadSeconds).subscribe({
+              next: ()=>{
+                this.yuleResourceService.read(this.resourceId!, this.tokenService.get()!.user.id).subscribe();
+              }
+            })
+          }
         }
       });
     }
