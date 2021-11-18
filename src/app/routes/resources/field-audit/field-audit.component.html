@@ -52,6 +52,18 @@
     </nz-row>
     <nz-row>
       <nz-col nzSpan="24">
+        <nz-form-item>
+          <nz-form-label>核查人员签名</nz-form-label>
+          <nz-form-control>
+            <nz-image-group >
+              <img nz-image style="transform:rotate(-90deg)" width="200px" *ngFor="let signature of auditorSignatures" [nzSrc]=signature.imageSrc [alt]=signature.imageAlt />
+            </nz-image-group>
+          </nz-form-control>
+        </nz-form-item>
+      </nz-col>
+    </nz-row>
+    <nz-row>
+      <nz-col nzSpan="24">
         <button nz-button (click)="showAttachmentBag()" acl [acl-ability]="'WRITE'" [disabled]="this.auditId===0">新增附件包</button>
         <button nz-button (click)="removeAttachmentBag()" acl [acl-ability]="'WRITE'" [disabled]="this.selectedAttachmentBagIds.length === 0 || this.attachmentBags.length === 0">删除附件包</button>
         <nz-form-control><st [columns]="attachmentBagsColumn" [data]="attachmentBags" [ps]="5" [res]="{process: resProcess}" (change)="stChange($event)"></st></nz-form-control>

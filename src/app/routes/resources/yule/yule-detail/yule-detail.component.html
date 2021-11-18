@@ -76,6 +76,12 @@
         <label nz-radio nzValue="false">否</label>
       </nz-radio-group>
     </se>
+    <se label="游艺设备与申请材料一致" labelWidth="280" *ngIf="showYy">
+      <nz-radio-group formControlName="materialSame" [nzDisabled]="!resourceId">
+        <label nz-radio nzValue="true">是</label>
+        <label nz-radio nzValue="false">否</label>
+      </nz-radio-group>
+    </se>
     <nz-divider></nz-divider>
     <se col="1">
       <button nz-button type="submit" nzType="primary" acl [acl-ability]="'CREATE'" [disabled]="resourceForm.invalid" *ngIf="!resourceId" (click)="save()">添加记录</button>

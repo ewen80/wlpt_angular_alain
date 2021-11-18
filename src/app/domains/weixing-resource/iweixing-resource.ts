@@ -25,6 +25,8 @@ export interface IWeixingResource extends IResourceBase {
   bgdh: string;
   // 邮政编码
   yzbm: string;
+  // 联系地址
+  lxdz: string;
   // 负责人
   fzr: string;
   // 负责人手机

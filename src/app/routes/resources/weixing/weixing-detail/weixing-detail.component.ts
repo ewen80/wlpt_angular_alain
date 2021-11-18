@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { STColumn, STData, STComponent, STChange } from '@delon/abc/st';
 import { ACLService } from '@delon/acl';
 import { environment } from '@env/environment';
@@ -15,6 +15,7 @@ import * as FileSaver from 'file-saver';
 import { setAclAbility } from 'src/app/shared/utils/set-acl-ability';
 import { Observable, Subscription, timer } from 'rxjs';
 import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
+import { ValidateFunction } from 'ajv';
 
 @Component({
   selector: 'app-weixing-detail',
@@ -54,6 +55,12 @@ export class WeixingDetailComponent implements OnInit {
     { value: 'IPTV', label: 'IPTV' },
     { value: '其他', label: '其他' }
   ];
+
+  // 卫星名称多选项
+  wxmcOptions = [
+    {label: '亚太六号', value: '亚太六号', checked: true},
+    {label: '中星6B', value: '中星6B'},
+  ]
 
   // 收视内容选择框
   ssnr = [
@@ -123,7 +130,7 @@ export class WeixingDetailComponent implements OnInit {
       txlx: ['正馈', [Validators.required]],
       jnssjmy: ['有线电视联网', [Validators.required]],
       jnssjmy_other: [],
-      wxmc: ['亚太六号', [Validators.required]],
+      wxmc: [this.wxmcOptions, [this.wxmcRequiredValidator()]],
       wxcsfs: ['同网传输', [Validators.required]],
       xhtzfs: ['数字', [Validators.required]],
       sjazdwmc: ['', [Validators.required]],
@@ -132,6 +139,7 @@ export class WeixingDetailComponent implements OnInit {
       lpm: ['', [Validators.required]],
       lc: ['', [Validators.required]],
       zds: ['', [Validators.required]],
+      lxdz: ['', [Validators.required]],
       // ssnr: ['']
     });
 
@@ -162,6 +170,33 @@ export class WeixingDetailComponent implements OnInit {
     }
   }
 
+  // 卫星名称必选验证器
+  wxmcRequiredValidator(): ValidatorFn{
+    return (control:AbstractControl) => {
+      const wxmc = control.value as Array<{label:string, value:string, checked?:boolean}>;
+      if(wxmc.some(value=> value.checked)){
+        return null;
+      } else {
+        return {required:false}
+      }
+    }
+  }
+
+  // 初始化卫星名称复选框
+  jyfwInitial(wxmcStr:string): void{
+    const wxmcArr = wxmcStr.split(",");
+    this.wxmcOptions.forEach(option => {
+      if(wxmcArr.find(wxmc=>option.value===wxmc)){
+        option.checked = true;
+      } else {
+        option.checked = false;
+      }
+    })
+    // 触发修改按钮表单认证
+    this.resourceForm.controls.wxmc.updateValueAndValidity();
+  }
+
+
   // 初始化detail数据
   initDetail(): void {
     if (this.resourceId) {
@@ -190,7 +225,6 @@ export class WeixingDetailComponent implements OnInit {
             this.resourceForm.controls.jnssjmy_other.setValue(data.jnssjmy);
           }
 
-          this.resourceForm.controls.wxmc.setValue(data.wxmc);
           this.resourceForm.controls.wxcsfs.setValue(data.wxcsfs);
           this.resourceForm.controls.xhtzfs.setValue(data.xhtzfs);
           this.resourceForm.controls.sjazdwmc.setValue(data.sjazdwmc);
@@ -199,8 +233,12 @@ export class WeixingDetailComponent implements OnInit {
           this.resourceForm.controls.lpm.setValue(data.lpm);
           this.resourceForm.controls.lc.setValue(data.lc);
           this.resourceForm.controls.zds.setValue(data.zds);
+          this.resourceForm.controls.lxdz.setValue(data.lxdz);
+
           // 初始化收视内容
           this.initSsnrCheckbox(data.ssnr);
+          // 初始化卫星名称
+          this.jyfwInitial(data.wxmc);
           // n秒后设置该资源为已读
           if(!this.weixingResource.readed) {
             this.readSubscription = timer(environment.setReadSeconds).subscribe({
@@ -226,6 +264,7 @@ export class WeixingDetailComponent implements OnInit {
 
   save(): void {
     if (this.resourceForm.valid) {
+      const wxmcArr = this.resourceForm.controls.wxmc.value as Array<{label:string,value:string,checked:boolean}>;
       // 转换收视内容
       const strSsnr = this.ssnr.filter(option=>option.checked).map(option => {return option.value}).reduce((a,b)=>{return a+','+b+','});
       if (this.resourceId) {
@@ -259,6 +298,9 @@ export class WeixingDetailComponent implements OnInit {
         this.weixingResource!.lpm = this.resourceForm.controls.lpm.value;
         this.weixingResource!.lc = this.resourceForm.controls.lc.value;
         this.weixingResource!.zds = this.resourceForm.controls.zds.value;
+        this.weixingResource!.lxdz = this.resourceForm.controls.lxdz.value;
+
+        this.weixingResource!.wxmc = wxmcArr.filter(jyfw=>jyfw.checked===true).map(wxmc => wxmc.value).toString();
 
         this.weixingResourceService.update(this.weixingResource!).subscribe({
           next: () => {
@@ -282,7 +324,6 @@ export class WeixingDetailComponent implements OnInit {
           txwz: this.resourceForm.controls.txwz.value,
           txsl: this.resourceForm.controls.txsl.value,
           txlx: this.resourceForm.controls.txlx.value,
-          wxmc: this.resourceForm.controls.wxmc.value,
           jnssjmy:
             this.resourceForm.controls.jnssjmy.value === '其他'
               ? this.resourceForm.controls.jnssjmy_other.value
@@ -295,7 +336,9 @@ export class WeixingDetailComponent implements OnInit {
           lpm: this.resourceForm.controls.lpm.value,
           lc: this.resourceForm.controls.lc.value,
           zds: this.resourceForm.controls.zds.value,
-          ssnr: strSsnr
+          ssnr: strSsnr,
+          lxdz: this.resourceForm.controls.lxdz.value,
+          wxmc: wxmcArr.filter(jyfw=>jyfw.checked===true).map(wxmc => wxmc.value).toString()
         };
 
         this.weixingResourceService.add(this.weixingResource!).subscribe({

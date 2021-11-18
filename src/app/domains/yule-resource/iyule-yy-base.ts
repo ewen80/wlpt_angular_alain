@@ -8,6 +8,8 @@ export interface IYuleYyBase{
     jiangpinCatalogSame:boolean,
     // 单件奖品价值是否超过500元
     jiangpinValue:boolean,
+    // 是否与申请材料一致
+    materialSame:boolean,
     
     yuleResourceBaseId:number,
 }

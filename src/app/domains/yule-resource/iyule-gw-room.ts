@@ -16,4 +16,6 @@ export interface IYuleGwRoom {
     window:boolean,
     // 是否有1000首以上歌曲
     oneThousandSongs:boolean,
+    // 是否有长明灯
+    everlight:boolean
 }

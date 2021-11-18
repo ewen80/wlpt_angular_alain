@@ -120,6 +120,17 @@ export class YuleDetailComponent implements OnInit {
           return "否"
         }
       }
+    },
+    {
+      title: '是否安装长明灯', 
+      index: 'everlight',
+      format: (item, col, index) => {
+        if(item.toilet) {
+          return "是";
+        } else {
+          return "否"
+        }
+      }
     }
   ];
 
@@ -232,6 +243,7 @@ export class YuleDetailComponent implements OnInit {
       fenqu: [""],
       tuibi: [""],
       jiangpinCatalogSame: [""],
+      materialSame: [""],
       jiangpinValue: [""]
     });
 
@@ -362,6 +374,7 @@ export class YuleDetailComponent implements OnInit {
             this.resourceForm.controls.tuibi.setValue(data.yyBase.tuibi.toString());
             this.resourceForm.controls.jiangpinCatalogSame.setValue(data.yyBase.jiangpinCatalogSame.toString());
             this.resourceForm.controls.jiangpinValue.setValue(data.yyBase.jiangpinValue.toString());
+            this.resourceForm.controls.materialSame.setValue(data.yyBase.materialSame.toString());
           }
           // 初始化经营范围选择框
           this.jyfwInitial(data.jyfw);
@@ -405,6 +418,7 @@ export class YuleDetailComponent implements OnInit {
             tuibi: this.resourceForm.controls.tuibi.value,
             jiangpinCatalogSame: this.resourceForm.controls.jiangpinCatalogSame.value,
             jiangpinValue: this.resourceForm.controls.jiangpinValue.value,
+            materialSame: this.resourceForm.controls.materialSame.value,
             yuleResourceBaseId: this.resourceId,
           }
           this.yuleResourceBase.yyBase = yyBase;

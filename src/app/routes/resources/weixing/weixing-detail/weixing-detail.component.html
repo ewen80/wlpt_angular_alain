@@ -25,6 +25,9 @@
     <se label="邮政编码" [error]="{ required: '不能为空' }">
       <input type="text" nz-input formControlName="yzbm" required />
     </se>
+    <se label="联系地址" [error]="{ required: '不能为空' }">
+      <input type="text" nz-input formControlName="lxdz" required />
+    </se>
     <se label="负责人" [error]="{ required: '不能为空' }">
       <input type="text" nz-input formControlName="fzr" required />
     </se>
@@ -53,10 +56,11 @@
       <input formControlName="jnssjmy_other" *ngIf="resourceForm.controls.jnssjmy.value === '其他'" />
     </se>
     <se label="卫星名称" [error]="{ required: '不能为空' }">
-      <nz-radio-group formControlName="wxmc">
+      <nz-checkbox-group formControlName="wxmc"></nz-checkbox-group>
+      <!-- <nz-radio-group formControlName="wxmc">
         <label nz-radio nzValue="亚太六号">亚太六号</label>
         <label nz-radio nzValue="中星6B">中星6B</label>
-      </nz-radio-group>
+      </nz-radio-group> -->
     </se>
     <se label="卫星传输方式" [error]="{ required: '不能为空' }">
       <nz-radio-group formControlName="wxcsfs">
@@ -86,6 +90,7 @@
         <label nz-radio nzValue="酒店">酒店</label>
         <label nz-radio nzValue="机构">机构</label>
         <label nz-radio nzValue="公寓">公寓</label>
+        <label nz-radio nzValue="其他">其他</label>
         <label nz-radio nzValue="境内">境内</label>
       </nz-radio-group>
     </se>

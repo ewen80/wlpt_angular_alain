@@ -27,6 +27,7 @@ import { IYuleGwRoom } from "src/app/domains/yule-resource/iyule-gw-room";
           innerLock: ["false"],
           window: ["true"],
           oneThousandSongs: ["true"],
+          everlight: ["true"],
       });
       if(this.roomId){
         this.initialRoom(this.roomId);
@@ -47,6 +48,7 @@ import { IYuleGwRoom } from "src/app/domains/yule-resource/iyule-gw-room";
             this.resourceForm.controls.toilet.setValue(r.toilet.toString());
             this.resourceForm.controls.innerLock.setValue(r.innerLock.toString());
             this.resourceForm.controls.window.setValue(r.window.toString());
+            this.resourceForm.controls.everlight.setValue(r.everlight);
 
           }
         })
@@ -82,6 +84,7 @@ import { IYuleGwRoom } from "src/app/domains/yule-resource/iyule-gw-room";
               innerLock: this.resourceForm.controls.innerLock.value,
               window: this.resourceForm.controls.window.value,
               oneThousandSongs: this.resourceForm.controls.oneThousandSongs.value,
+              everlight: this.resourceForm.controls.everlight.value,
               yuleResourceBaseId: this.resourceId,
             };
           
