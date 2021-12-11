@@ -7,9 +7,9 @@ export const environment = {
   appName: 'wlpt',
   appDescription: '基于ng-alain',
   // 服务器后端根地址
-  serverUrl: `https://aliyun.ewen.pw:9001`,
+  serverUrl: `http://192.168.0.51:8080`,
   // 后台文件下载根地址
-  serverFileDownloadRootUrl: 'https://aliyun.ewen.pw:9101/downloads/',
+  serverFileDownloadRootUrl: 'http://192.168.0.51/downloads/',
   // 服务器初始化服务地址
   serverInitMenuURL: '/admin/menuinit',
   // 服务器后端token刷新验证地址
@@ -54,8 +54,8 @@ export const environment = {
   serverFileServiceURL: '/file',
   // 服务器端退出账号
   serverLogoutURL: '/logout',
-  // token默认过期时间
-  tokenExpiredTime: 1000 * 60 * 5,
+  // token默认过期时间15分钟
+  tokenExpiredTime: 1000 * 60 * 15,
   // 默认用户头像
   defaultAvatar: '../assets/tmp/img/avatar.jpg',
   // 默认场地审核单位名称

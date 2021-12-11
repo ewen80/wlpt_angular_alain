@@ -1,6 +1,7 @@
-import { Component, OnInit, ViewChild, Input, TemplateRef, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, TemplateRef, Output, EventEmitter, Inject } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { STColumn, STComponent } from '@delon/abc/st';
+import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService, NzModalRef } from 'ng-zorro-antd/modal';
@@ -49,7 +50,8 @@ export class RoleDetailComponent implements OnInit {
     private roleService: RoleService,
     private userService: UserService,
     private modal: NzModalService,
-    private message: NzMessageService
+    private message: NzMessageService,
+    @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
   ) {}
 
   ngOnInit(): void {
@@ -83,7 +85,7 @@ export class RoleDetailComponent implements OnInit {
       this.roleInfoForm.controls.roleId.setValue(role.id);
       this.roleInfoForm.controls.roleName.setValue(role.name);
       this.roleInfoForm.controls.description.setValue(role.description);
-      this.userList.data = `${environment.serverUserServiceURL}/role/${role.id}`;
+      this.userList.data = `${environment.serverUserServiceURL}/role/nopage/${role.id}`;
       this.userList.reload();
     });
   }
@@ -147,12 +149,15 @@ export class RoleDetailComponent implements OnInit {
     this.userService.findAll().subscribe({
       next: users => {
         const ti: TransferItem[] = [];
-        let dir: 'left' | 'right' = 'left';
 
         users.forEach(user => {
-          if (user.roleId === this.roleId) {
+          let dir: 'left' | 'right' = 'left';
+          if(user.roleIds?.some(roleId => roleId===this.roleId)) {
             dir = 'right';
           }
+          // if (user.roleId === this.roleId) {
+          //   dir = 'right';
+          // }
           ti.push({
             key: user.id,
             title: `${user.id}(${user.name})`,

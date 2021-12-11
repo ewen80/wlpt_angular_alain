@@ -1,6 +1,8 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { STComponent } from '@delon/abc/st';
+import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
+import { SettingsService } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -27,13 +29,18 @@ export class UserdetailComponent implements OnInit {
 
   // 角色列表
   roleList: IRole[] = [];
-  roleId: string | undefined;
+  // 选中的角色ids
+  myRoleIds: string[] = []
 
   passwordVisible = false;
 
   qxs: Array<{ key: string; value: string }> = [];
 
-  constructor(private fb: FormBuilder, private userService: UserService, private roleService: RoleService, private msg: NzMessageService) {}
+  constructor(private fb: FormBuilder, 
+    private userService: UserService, 
+    private roleService: RoleService, 
+    private settings: SettingsService,
+    private msg: NzMessageService) {}
 
   ngOnInit(): void {
     this.userInfoForm = this.fb.group({
@@ -46,8 +53,9 @@ export class UserdetailComponent implements OnInit {
         }
       ],
       userName: [null, [Validators.required]],
-      roleId: [null, [Validators.required]],
-      qxId: ['', [Validators.required]]
+      roleIds: [null, [Validators.required]],
+      qxId: ['', [Validators.required]],
+      defaultRoleId: ['',[Validators.required]]
     });
 
     this.loadRole();
@@ -76,8 +84,9 @@ export class UserdetailComponent implements OnInit {
     this.userService.findOne(userId).subscribe(user => {
       this.userInfoForm.controls.userId.setValue(user.id);
       this.userInfoForm.controls.userName.setValue(user.name);
-      this.userInfoForm.controls.roleId.setValue(user.roleId);
+      this.userInfoForm.controls.roleIds.setValue(user.roleIds);
       this.userInfoForm.controls.qxId.setValue(user.qxId);
+      this.userInfoForm.controls.defaultRoleId.setValue(user.defaultRoleId);
     });
   }
 
@@ -94,14 +103,30 @@ export class UserdetailComponent implements OnInit {
     };
   }
 
+  // 所属角色选中内容变化时
+  roleChanged(roleIds: string[]) {
+    this.myRoleIds = roleIds;
+    // 判断默认角色选项当前选中项是否在角色列表中，如不在则清空当前选择,并默认选中角色列表中的第一个选项
+    const defaultRoleId = this.userInfoForm.controls.defaultRoleId.value;
+    if(!roleIds.includes(defaultRoleId)){
+      if(roleIds.length > 0) {
+        this.userInfoForm.controls.defaultRoleId.setValue(roleIds[0]);
+      } else {
+        this.userInfoForm.controls.defaultRoleId.setValue('');
+      }
+    }
+  }
+
   // 保存用户
   submit(): void {
     if (this.userInfoForm.valid) {
       const user: IUser = {
         id: this.userInfoForm.controls.userId.value,
         name: this.userInfoForm.controls.userName.value,
-        roleId: this.userInfoForm.controls.roleId.value,
-        qxId: this.userInfoForm.controls.qxId.value
+        roleIds: this.userInfoForm.controls.roleIds.value,
+        qxId: this.userInfoForm.controls.qxId.value,
+        defaultRoleId: this.userInfoForm.controls.defaultRoleId.value,
+        currentRoleId: this.settings.user.currentRoleId,
       };
       this.userService.save(user).subscribe({
         next: u => {

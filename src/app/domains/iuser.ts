@@ -9,6 +9,8 @@ export interface IUser {
   // passwordMD5?: string; // 加密密码
   token?: string; // 登录认证token
   avatar?: string; // 头像路径
-  roleId: string; // 角色id
+  roleIds?: string[]; // 用户所属角色id
+  defaultRoleId: string; // 用户默认角色
+  currentRoleId: string; // 用户当前所属角色
   qxId?: number; // 区县id
 }

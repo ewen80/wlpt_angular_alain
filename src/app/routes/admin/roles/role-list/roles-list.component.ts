@@ -47,7 +47,7 @@ export class RolesListComponent {
       }
     },
     { title: '角色名', index: 'name', width: 150, sort: true },
-    { title: '用户数', index: 'users.length' },
+    { title: '用户数', index: 'userIds.length' },
     { title: '描述', index: 'description' }
   ];
   selectedRows: STData[] = [];
@@ -68,7 +68,7 @@ export class RolesListComponent {
   // 返回数据预处理，判断用户数是否为0，为0才能删除
   dataProcess(data: STData[]): STData[] {
     return data.map(v => {
-      v.disabled = v.users.length !== 0;
+      v.disabled = v.userIds.length !== 0;
       return v;
     });
   }

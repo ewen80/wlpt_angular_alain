@@ -2,11 +2,12 @@ import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest
 import { Injectable, Injector } from '@angular/core';
 import { Router } from '@angular/router';
 import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
-import { _HttpClient } from '@delon/theme';
+import { SettingsService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { catchError, filter, mergeMap, switchMap, take, tap } from 'rxjs/operators';
+import { StartupService } from '../startup/startup.service';
 
 const CODEMESSAGE: { [key: number]: string } = {
   200: '服务器成功返回请求的数据。',
@@ -35,7 +36,7 @@ export class DefaultInterceptor implements HttpInterceptor {
   private refreshToking = false;
   private refreshToken$: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
-  constructor(private injector: Injector) {
+  constructor(private injector: Injector, private startupSrv: StartupService, private settingSrv: SettingsService) {
     if (this.refreshTokenType === 'auth-refresh') {
       this.buildAuthRefresh();
     }
@@ -150,6 +151,9 @@ export class DefaultInterceptor implements HttpInterceptor {
           }
           this.tokenSrv.set(authToken);
           this.refreshToking = false;
+
+          // 刷新用户菜单
+          this.startupSrv.loadMenu(this.settingSrv.user.currentRoleId);
         },
         err => {
           this.toLogin();

@@ -55,7 +55,7 @@ export const environment = {
   // 服务器端退出账号
   serverLogoutURL: '/logout',
   // token默认过期时间
-  tokenExpiredTime: 1000 * 60 * 5,
+  tokenExpiredTime: 1000 * 60 * 15,
   // 默认用户头像
   defaultAvatar: '../assets/tmp/img/avatar.jpg',
   // 默认场地审核单位名称

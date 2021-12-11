@@ -65,49 +65,50 @@ export class StartupService {
   //     );
   // }
 
-  // private viaMock(resolve: any, reject: any): void {
-  //   // const tokenData = this.tokenService.get();
-  //   // if (!tokenData.token) {
-  //   //   this.injector.get(Router).navigateByUrl('/passport/login');
-  //   //   resolve({});
-  //   //   return;
-  //   // }
-  //   // mock
-  //   const app: any = {
-  //     name: `ng-alain`,
-  //     description: `Ng-zorro admin panel front-end framework`,
-  //   };
-  //   const user: any = {
-  //     name: 'Admin',
-  //     avatar: './assets/tmp/img/avatar.jpg',
-  //     email: 'cipchk@qq.com',
-  //     token: '123456789',
-  //   };
-  //   // Application information: including site name, description, year
-  //   this.settingService.setApp(app);
-  //   // User information: including name, avatar, email address
-  //   this.settingService.setUser(user);
-  //   // ACL: Set the permissions to full, https://ng-alain.com/acl/getting-started
-  //   this.aclService.setFull(true);
-  //   // Menu data, https://ng-alain.com/theme/menu
-  //   this.menuService.add([
-  //     {
-  //       text: 'Main',
-  //       group: true,
-  //       children: [
-  //         {
-  //           text: 'Dashboard',
-  //           link: '/dashboard',
-  //           icon: { type: 'icon', value: 'appstore' },
-  //         },
-  //       ],
-  //     },
-  //   ]);
-  //   // Can be set page suffix title, https://ng-alain.com/theme/title
-  //   this.titleService.suffix = app.name;
+  private viaMock(resolve: any, reject: any): void {
+    // const tokenData = this.tokenService.get();
+    // if (!tokenData.token) {
+    //   this.injector.get(Router).navigateByUrl('/passport/login');
+    //   resolve({});
+    //   return;
+    // }
+    // mock
+    const app: any = {
+      name: `ng-alain`,
+      description: `Ng-zorro admin panel front-end framework`,
+    };
+    const user: any = {
+      name: 'Admin',
+      avatar: './assets/tmp/img/avatar.jpg',
+      email: 'cipchk@qq.com',
+      token: '123456789',
+    };
+    // Application information: including site name, description, year
+    this.settingService.setApp(app);
+    // User information: including name, avatar, email address
+    this.settingService.setUser(user);
+    // ACL: Set the permissions to full, https://ng-alain.com/acl/getting-started
+    this.aclService.setFull(true);
+    // Menu data, https://ng-alain.com/theme/menu
+    this.menuService.add([
+      {
+        text: 'Main',
+        group: true,
+        children: [
+          {
+            text: 'Dashboard',
+            link: '/dashboard',
+            icon: { type: 'icon', value: 'appstore' },
+            badge: 3
+          },
+        ],
+      },
+    ]);
+    // Can be set page suffix title, https://ng-alain.com/theme/title
+    this.titleService.suffix = app.name;
 
-  //   resolve({});
-  // }
+    resolve({});
+  }
 
   // 从Session中获取配置
   private viaSession(resolv: any, reject: any): void {
@@ -121,31 +122,36 @@ export class StartupService {
     const sessionUser = sessionStorage.getItem('_token');
     if (sessionUser == null) {
       resolv({});
+    } else {
+      // 读取菜单信息
+      this.loadMenu(this.settingService.user.currentRoleId);
+      resolv({});
     }
 
-    const userObj = JSON.parse(sessionUser as string);
-    const user: IUser = {
-      id: userObj.user.id,
-      name: userObj.user.name,
-      token: userObj.token,
-      avatar: userObj.user.avater,
-      roleId: userObj.user.roleId,
-      qxId: userObj.user.qxId
-    };
-    if (!user.avatar) {
-      user.avatar = environment.defaultAvatar;
-    }
-    // User information: including name, avatar, email address
-    this.settingService.setUser(user);
-    resolv({});
+    // const userObj = JSON.parse(sessionUser as string);
+    // const user: IUser = {
+    //   id: userObj.user.id,
+    //   name: userObj.user.name,
+    //   token: userObj.token,
+    //   avatar: userObj.user.avater,
+    //   roleIds: userObj.user.roleIds,
+    //   qxId: userObj.user.qxId,
+    //   currentRoleId: userObj.user.currentRoleId,
+    //   defaultRoleId: userObj.user.defaultRoleId,
+    // };
+    // if (!user.avatar) {
+    //   user.avatar = environment.defaultAvatar;
+    // }
+    // // User information: including name, avatar, email address
+    // this.settingService.setUser(user);
+    // resolv({});
 
-    // 读取菜单信息
-    this.loadMenu(user.id);
+
   }
 
   // 读取菜单信息
-  private loadMenu(userId: string) {
-    const menuUrl = `${environment.serverMenuServiceURL}/${userId}`;
+  public loadMenu(roleId: string) {
+    const menuUrl = `${environment.serverMenuServiceURL}/${roleId}`;
     this.httpClient.get(menuUrl).subscribe({
       next: (resp: any) => {
         const menus: Menu[] = new Array<Menu>();
@@ -167,6 +173,7 @@ export class StartupService {
         type: 'icon',
         value: obj.iconClass
       },
+      badge: obj.unReadCount,
       children: []
     };
 

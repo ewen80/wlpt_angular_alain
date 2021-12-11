@@ -4,5 +4,5 @@ export interface IRole {
   id: string;
   name: string;
   description: string;
-  users?: IUser[];
+  userIds?: string[];
 }

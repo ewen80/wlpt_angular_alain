@@ -77,7 +77,8 @@ export class ResourceDetailComponent implements OnInit {
         }
       ],
       name: ['', [Validators.required]],
-      description: ['']
+      description: [''],
+      repositoryBeanName: ['', [Validators.required]],
     });
 
     this.resourceRangeSearchForm = this.fb.group({
@@ -128,6 +129,7 @@ export class ResourceDetailComponent implements OnInit {
       this.resourceTypeForm.controls.className.setValue(type.className);
       this.resourceTypeForm.controls.name.setValue(type.name);
       this.resourceTypeForm.controls.description.setValue(type.description);
+      this.resourceTypeForm.controls.repositoryBeanName.setValue(type.repositoryBeanName);
       // 读取ranges信息
       this.loadResourceRange(className, undefined);
     });
@@ -159,6 +161,7 @@ export class ResourceDetailComponent implements OnInit {
       const resourceType: IResourceType = {
         className: this.resourceTypeForm.controls.className.value,
         name: this.resourceTypeForm.controls.name.value,
+        repositoryBeanName: this.resourceTypeForm.controls.repositoryBeanName.value,
         description: this.resourceTypeForm.controls.description.value
       };
       this.resourceTypeService.save(resourceType).subscribe({

@@ -47,7 +47,7 @@ export class UserlistComponent implements OnInit {
       }
     },
     { title: '用户名', index: 'name', width: 150, sort: true },
-    { title: '所属角色id', index: 'roleId', sort: true },
+    { title: '所属角色id', index: 'roleIds' },
     { title: '所属区', index: 'qxName' },
     {
       buttons: [
@@ -88,9 +88,6 @@ export class UserlistComponent implements OnInit {
     }
     if (this.searchUserName) {
       filterStr += `name:*${this.searchUserName}*,`;
-    }
-    if (this.searchRoleId) {
-      filterStr += `role.id:*${this.searchRoleId}*,`;
     }
     if (this.searchQxIds.length > 0) {
       filterStr += 'qxId()';

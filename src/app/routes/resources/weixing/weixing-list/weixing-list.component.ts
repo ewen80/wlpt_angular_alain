@@ -79,7 +79,7 @@ export class WeixingListComponent implements OnInit {
 
   // 初始化新建删除等操作按钮
   initOptButton() {
-    this.weixingResourceService.getPermissions(this.settingService.user.roleId).subscribe({
+    this.weixingResourceService.getPermissions(this.settingService.user.currentRoleId).subscribe({
       next: (permissions: Array<{ mask: Permission }>) => {
         setAclAbility(permissions, this.acl);
       }

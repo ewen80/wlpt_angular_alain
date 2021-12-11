@@ -2,6 +2,7 @@ import { HttpHeaders } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, Inject, OnInit, TemplateRef } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { StartupService } from '@core';
 import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
 import { SettingsService, User, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
@@ -10,6 +11,7 @@ import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { UserService } from 'src/app/core/services/user.service';
+import { IUser } from 'src/app/domains/iuser';
 import { Md5 } from 'ts-md5';
 
 @Component({
@@ -21,6 +23,12 @@ import { Md5 } from 'ts-md5';
     </div>
     <nz-dropdown-menu #userMenu="nzDropdownMenu">
       <div nz-menu class="width-sm">
+        <div nz-menu-item>
+          <div nz-dropdown [nzDropdownMenu]="roleMenu" nzPlacement="bottomLeft">
+          <i nz-icon nzType="user" class="mr-sm"></i>切换角色
+          <i nz-icon nzType="down"></i>
+          </div>
+        </div>
         <div
           nz-menu-item
           (click)="showUpdatePasswordModal(updatePasswordModalTitle, updatePasswordModalContent, updatePasswordModalFooter)"
@@ -43,9 +51,16 @@ import { Md5 } from 'ts-md5';
         <li nz-menu-divider></li> -->
         <div nz-menu-item (click)="logout()">
           <i nz-icon nzType="logout" class="mr-sm"></i>
-          退出登录
+          注销
         </div>
       </div>
+    </nz-dropdown-menu>
+    <nz-dropdown-menu #roleMenu="nzDropdownMenu">
+      <ul nz-menu>
+        <li nz-menu-item *ngFor="let roleId of user.roleIds" [nzSelected]="roleId === user.currentRoleId" (click)="changeCurrentRole(roleId)">
+          {{ roleId }}
+        </li>
+      </ul>
     </nz-dropdown-menu>
     <ng-template #updatePasswordModalTitle>
       <span>修改密码</span>
@@ -83,6 +98,7 @@ export class HeaderUserComponent implements OnInit {
 
   constructor(
     private settings: SettingsService,
+    private startupSrv: StartupService,
     private router: Router,
     @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
     private httpClient: _HttpClient,
@@ -105,7 +121,7 @@ export class HeaderUserComponent implements OnInit {
     });
   }
   ngOnInit(): void {
-    this.userId = this.tokenService.get()!.user.id;
+    this.userId = this.settings.user.id;
   }
 
   // 异步密码验证器
@@ -189,5 +205,23 @@ export class HeaderUserComponent implements OnInit {
       },
       error: () => this.msg.error('修改失败')
     });
+  }
+
+  // 变更用户当前角色
+  changeCurrentRole(roleId:string) {
+     
+
+    this.userService.changeCurrentRole(this.userId, roleId).subscribe({
+      next: () => {
+        // 修改settingsService中的当前用户信息
+        const user = this.settings.user;
+        user.currentRoleId = roleId;
+        this.settings.setUser(user);
+        this.startupSrv.loadMenu(roleId);
+        this.router.navigateByUrl("/");
+        
+        this.msg.success("当前角色已变更");
+      }
+    })
   }
 }

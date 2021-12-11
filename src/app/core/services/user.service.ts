@@ -47,4 +47,9 @@ export class UserService {
       passwordMD5
     });
   }
+
+  changeCurrentRole(userId: string, currentRoleId: string): Observable<void> {
+    return this.http.put<void>(environment.serverUserServiceURL + '/' + userId + '/' + currentRoleId);
+  }
+
 }

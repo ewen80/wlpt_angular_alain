@@ -31,6 +31,7 @@ import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzTransferModule } from 'ng-zorro-antd/transfer';
 import { NzTreeModule } from 'ng-zorro-antd/tree';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
+import { NzCascaderModule } from 'ng-zorro-antd/cascader';
 
 export const SHARED_ZORRO_MODULES = [
   NzFormModule,
@@ -66,5 +67,6 @@ export const SHARED_ZORRO_MODULES = [
   NzSwitchModule,
   DelonACLModule,
   NzDividerModule,
-  NzImageModule
+  NzImageModule,
+  NzCascaderModule,
 ];

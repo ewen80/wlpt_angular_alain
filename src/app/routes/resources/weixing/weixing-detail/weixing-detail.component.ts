@@ -16,6 +16,7 @@ import { setAclAbility } from 'src/app/shared/utils/set-acl-ability';
 import { Observable, Subscription, timer } from 'rxjs';
 import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
 import { ValidateFunction } from 'ajv';
+import { SettingsService } from '@delon/theme';
 
 @Component({
   selector: 'app-weixing-detail',
@@ -30,7 +31,7 @@ export class WeixingDetailComponent implements OnInit {
     private weixingResourceService: WeixingResourceService,
     private fieldAuditService: FieldAuditService,
     private message: NzMessageService,
-    @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
+    private settings: SettingsService,
   ) {}
 
   resourceForm!: FormGroup;
@@ -243,7 +244,7 @@ export class WeixingDetailComponent implements OnInit {
           if(!this.weixingResource.readed) {
             this.readSubscription = timer(environment.setReadSeconds).subscribe({
               next: ()=>{
-                this.weixingResourceService.read(this.resourceId!, this.tokenService.get()!.user.id).subscribe();
+                this.weixingResourceService.read(this.resourceId!, this.settings.user.id).subscribe();
               }
             })
           }

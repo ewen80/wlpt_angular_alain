@@ -117,15 +117,22 @@ export class UserLoginComponent implements OnDestroy {
       })
       .subscribe({
         next: resp => {
+          const user = resp as IUser;
           // 清空路由复用信息
           this.reuseTabService.clear();
           // 设置用户Token信息
           const authToken = {
-            user: resp,
+            // user: resp,
             token: this.userId.value,
             expired: +new Date() + environment.tokenExpiredTime
           };
           this.tokenService.set(authToken);
+
+          if (!user.avatar) {
+            user.avatar = environment.defaultAvatar;
+          }
+          this.settingsService.setUser(user);
+
           // 重新获取 StartupService 内容，我们始终认为应用信息一般都会受当前用户授权范围而影响
           this.startupSrv.load().then(() => {
             let url = this.tokenService.referrer!.url || '/';
@@ -140,45 +147,45 @@ export class UserLoginComponent implements OnDestroy {
 
   // #region social
 
-  open(type: string, openType: SocialOpenType = 'href'): void {
-    let url = ``;
-    let callback = ``;
-    // eslint-disable-next-line
-    if (environment.production) {
-      callback = `https://ng-alain.github.io/ng-alain/#/passport/callback/${type}`;
-    } else {
-      callback = `http://localhost:4200/#/passport/callback/${type}`;
-    }
-    switch (type) {
-      case 'auth0':
-        url = `//cipchk.auth0.com/login?client=8gcNydIDzGBYxzqV0Vm1CX_RXH-wsWo5&redirect_uri=${decodeURIComponent(callback)}`;
-        break;
-      case 'github':
-        url = `//github.com/login/oauth/authorize?client_id=9d6baae4b04a23fcafa2&response_type=code&redirect_uri=${decodeURIComponent(
-          callback
-        )}`;
-        break;
-      case 'weibo':
-        url = `https://api.weibo.com/oauth2/authorize?client_id=1239507802&response_type=code&redirect_uri=${decodeURIComponent(callback)}`;
-        break;
-    }
-    if (openType === 'window') {
-      this.socialService
-        .login(url, '/', {
-          type: 'window'
-        })
-        .subscribe(res => {
-          if (res) {
-            this.settingsService.setUser(res);
-            this.router.navigateByUrl('/');
-          }
-        });
-    } else {
-      this.socialService.login(url, '/', {
-        type: 'href'
-      });
-    }
-  }
+  // open(type: string, openType: SocialOpenType = 'href'): void {
+  //   let url = ``;
+  //   let callback = ``;
+  //   // eslint-disable-next-line
+  //   if (environment.production) {
+  //     callback = `https://ng-alain.github.io/ng-alain/#/passport/callback/${type}`;
+  //   } else {
+  //     callback = `http://localhost:4200/#/passport/callback/${type}`;
+  //   }
+  //   switch (type) {
+  //     case 'auth0':
+  //       url = `//cipchk.auth0.com/login?client=8gcNydIDzGBYxzqV0Vm1CX_RXH-wsWo5&redirect_uri=${decodeURIComponent(callback)}`;
+  //       break;
+  //     case 'github':
+  //       url = `//github.com/login/oauth/authorize?client_id=9d6baae4b04a23fcafa2&response_type=code&redirect_uri=${decodeURIComponent(
+  //         callback
+  //       )}`;
+  //       break;
+  //     case 'weibo':
+  //       url = `https://api.weibo.com/oauth2/authorize?client_id=1239507802&response_type=code&redirect_uri=${decodeURIComponent(callback)}`;
+  //       break;
+  //   }
+  //   if (openType === 'window') {
+  //     this.socialService
+  //       .login(url, '/', {
+  //         type: 'window'
+  //       })
+  //       .subscribe(res => {
+  //         if (res) {
+  //           this.settingsService.setUser(res);
+  //           this.router.navigateByUrl('/');
+  //         }
+  //       });
+  //   } else {
+  //     this.socialService.login(url, '/', {
+  //       type: 'href'
+  //     });
+  //   }
+  // }
 
   // #endregion
 

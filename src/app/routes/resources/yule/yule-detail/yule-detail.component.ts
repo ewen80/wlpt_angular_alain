@@ -24,6 +24,7 @@ import { IYuleGwWc } from 'src/app/domains/yule-resource/iyule-gw-wc';
 import { IFieldAudit } from 'src/app/domains/resource/ifield-audit';
 import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
 import { Subscription, timer } from 'rxjs';
+import { SettingsService } from '@delon/theme';
 
 @Component({
   selector: 'app-yule-detail',
@@ -40,7 +41,7 @@ export class YuleDetailComponent implements OnInit {
     private gwWcService: YuleGwWcService,
     private fieldAuditService: FieldAuditService,
     private message: NzMessageService,
-    @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
+    private settings: SettingsService,
   ) {}
 
   resourceForm!: FormGroup;
@@ -386,7 +387,7 @@ export class YuleDetailComponent implements OnInit {
            if(!this.yuleResourceBase.readed) {
             this.readSubscription = timer(environment.setReadSeconds).subscribe({
               next: ()=>{
-                this.yuleResourceService.read(this.resourceId!, this.tokenService.get()!.user.id).subscribe();
+                this.yuleResourceService.read(this.resourceId!, this.settings.user.id).subscribe();
               }
             })
           }

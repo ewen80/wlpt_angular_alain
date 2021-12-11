@@ -1,14 +1,26 @@
 <nz-card [nzBordered]="false" nzTitle="用户信息">
-  <form nz-form [formGroup]="userInfoForm" (ngSubmit)="submit()" se-container="1" labelWidth="80">
+  <form nz-form [formGroup]="userInfoForm" (ngSubmit)="submit()" se-container="1" labelWidth="100">
     <se label="用户id" [error]="{ required: '不能为空', uniqueUserId: 'id已经存在' }">
       <input type="text" nz-input formControlName="userId" required placeholder="必填项" />
     </se>
     <se label="用户名" [error]="{ required: '不能为空' }">
       <input type="text" nz-input formControlName="userName" required placeholder="必填项" />
     </se>
-    <se label="角色" [error]="{ required: '不能为空' }">
-      <nz-select nzShowSearch nzPlaceHolder="选择角色" nzAllowClear formControlName="roleId" required>
+    <se label="角色" [error]="{ required: '不能为空' }" optionalHelp="更新所属角色后需要重新登录才能生效">
+      <nz-select 
+        [nzMaxTagCount]="8" 
+        [nzMaxTagPlaceholder]="tagPlaceHolder"
+        nzMode="multiple"
+        nzPlaceHolder="选择角色"
+        (ngModelChange)="roleChanged($event)" 
+        formControlName="roleIds" required>
         <nz-option *ngFor="let role of roleList" [nzLabel]="role.id" [nzValue]="role.id"> </nz-option>
+      </nz-select>
+      <ng-template #tagPlaceHolder let-selectedList>and {{ selectedList.length }} more selected</ng-template>
+    </se>
+    <se label="默认角色" [error]="{ required: '不能为空'}">
+      <nz-select formControlName="defaultRoleId" required="" nzPlaceHolder="用户登陆后默认使用的角色">
+        <nz-option *ngFor="let roleId of myRoleIds" [nzLabel]="roleId" [nzValue]="roleId"></nz-option>
       </nz-select>
     </se>
     <se label="所属区" [error]="{ required: '不能为空' }">

@@ -2,6 +2,7 @@ import { Component, EventEmitter, Inject, Input, OnInit, Output } from "@angular
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { STChange, STColumn, STData } from "@delon/abc/st";
 import { DA_SERVICE_TOKEN, ITokenService } from "@delon/auth";
+import { SettingsService } from "@delon/theme";
 import { environment } from "@env/environment";
 import { NzImage, NzImageService } from "ng-zorro-antd/image";
 import { NzMessageService } from "ng-zorro-antd/message";
@@ -25,7 +26,7 @@ export class FieldAuditComponent implements OnInit {
         private nzImageService: NzImageService,
         private fieldAuditService: FieldAuditService,
         private attachmentBagService: AttachmentBagService,
-        @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
+        private settings: SettingsService,
       ) {}
     
       @Input() auditId = 0;
@@ -144,7 +145,7 @@ export class FieldAuditComponent implements OnInit {
             content: this.formGroup.controls.content.value,
             auditDate: auditDateString,
             auditDepartment: this.formGroup.controls.auditDepartment.value,
-            auditUserId: this.tokenService.get()!.user.id,
+            auditUserId: this.settings.user.id,
             attachmentBags: this.fieldAudit?.attachmentBags,
           };
           if(this.auditId) {
@@ -153,7 +154,10 @@ export class FieldAuditComponent implements OnInit {
             const serverUrl = environment.fieldAuditServiceMap.get(this.resourceType);
             if(serverUrl) {
               this.fieldAuditService.saveByResourceId(myFieldAudit, this.resourceId, serverUrl).subscribe({
-                next: fieldAudit => this.auditId = fieldAudit.id!
+                next: fieldAudit => {
+                  this.fieldAudit = fieldAudit;
+                  this.auditId = fieldAudit.id!;
+                }
               });
             }
           }

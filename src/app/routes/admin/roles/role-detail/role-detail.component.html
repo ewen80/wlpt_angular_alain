@@ -46,5 +46,8 @@
   <st #userList [columns]="usersColumn"></st>
 </nz-card>
 <ng-template #addUsersDialog>
-  <nz-transfer #usersTransfer nzShowSearch [nzDataSource]="usersTransferDataSource"> </nz-transfer>
+  <nz-transfer #usersTransfer 
+  nzShowSearch 
+  [nzListStyle]="{'height.px': 400 }"
+  [nzDataSource]="usersTransferDataSource"> </nz-transfer>
 </ng-template>
