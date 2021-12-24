@@ -27,11 +27,9 @@ export const environment = {
   fieldAuditServiceMap: new Map([
     ["pw.ewen.WLPT.domains.entities.resources.weixing.WeixingResource", "/resources/weixings/fieldaudits"], // 卫星现场审核意见服务器地址
     ["pw.ewen.WLPT.domains.entities.resources.yule.YuleResourceBase", "/resources/yules/fieldaudits"], // 娱乐现场审核意见服务器地址
+    ["pw.ewen.WLPT.domains.entities.resources.vod.VodResource", "/resources/vods/fieldaudits"], // vod现场审核意见服务器地址
   ]),
-  // 服务器自定义资源 *MyResource
-  myResourceTypeClassName: 'pw.ewen.WLPT.domains.entities.resources.myresource.MyResource',
-  serverMyResourceServiceURL: '/resources/myresources',
-  serverMyResourceRoomServiceURL: '/resources/myresources/rooms',
+  // 服务器自定义资源 
   //                 *Weixing
   weixingResourceTypeClassName: 'pw.ewen.WLPT.domains.entities.resources.weixing.WeixingResource',
   serverWeixingResourceServiceURL: '/resources/weixings',
@@ -46,6 +44,9 @@ export const environment = {
   serverYuleGwWcServiceURL: '/resources/yules/wcs',
   //                  *娱乐现场审核意见service
   serverYuleFieldAuditServiceURL: '/resources/yules/fieldaudits',
+  //                 *Vod
+  vodResourceTypeClassName: 'pw.ewen.WLPT.domains.entities.resources.vod.VodResource',
+  serverVodResourceServiceURL: '/resources/vods',
   // 服务器现场审核意见
   serverFieldAuditServiceURL: '/fieldaudits',
   // 服务器附件包后台管理地址
@@ -54,7 +55,7 @@ export const environment = {
   serverFileServiceURL: '/file',
   // 服务器端退出账号
   serverLogoutURL: '/logout',
-  // token默认过期时间
+  // token默认过期时间15分钟
   tokenExpiredTime: 1000 * 60 * 15,
   // 默认用户头像
   defaultAvatar: '../assets/tmp/img/avatar.jpg',

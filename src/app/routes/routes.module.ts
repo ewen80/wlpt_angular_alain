@@ -11,8 +11,6 @@ import { UserLoginComponent } from './passport/login/login.component';
 // import { PassportModule } from './passport/passport.module';
 import { UserRegisterResultComponent } from './passport/register-result/register-result.component';
 import { UserRegisterComponent } from './passport/register/register.component';
-import { MyResourceDetailComponent } from './resources/my-resource/my-resource-detail/my-resource-detail.component';
-import { MyResourceListComponent } from './resources/my-resource/my-resource-list/my-resource-list.component';
 import { UploadComponent } from './resources/upload/upload.component';
 import { RouteRoutingModule } from './routes-routing.module';
 

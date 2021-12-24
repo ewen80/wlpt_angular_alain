@@ -6,5 +6,6 @@ export interface IMenu {
   iconClass?: string;
   parentId: number;
   children?: IMenu[];
+  resourceType: string;
   unReadCount?: number;
 }

@@ -1,0 +1,49 @@
+<form nz-form [formGroup]="resourceForm" se-container="2">
+    <se-title>基本信息</se-title>
+    <se label="编号" col="1"> {{ vodResource?.bh }} </se>
+    <se label="系统名称" [error]="{ required: '不能为空' }">
+      <input type="text" nz-input formControlName="sysName" required />
+    </se>
+    <se label="设备名称" [error]="{ required: '不能为空' }">
+      <input type="text" nz-input formControlName="deviceName" required />
+    </se>
+    <se label="制造厂商" [error]="{ required: '不能为空' }">
+      <input type="text" nz-input formControlName="manufacturer" required />
+    </se>
+    <se label="设备型号" [error]="{ required: '不能为空' }">
+      <input type="text" nz-input formControlName="deviceModel" required />
+    </se>
+    <se label="取样方式" [error]="{ required: '不能为空' }">
+      <input type="text" nz-input formControlName="samplingMethod" required />
+    </se>
+    <se label="检测地点" [error]="{ required: '不能为空' }">
+      <input type="text" nz-input formControlName="detectLocation" required />
+    </se>
+    <se label="检测单位" [error]="{ required: '不能为空' }">
+      <input type="text" nz-input formControlName="detectUnit" required />
+    </se>
+    <se label="系统说明" [error]="{ required: '不能为空' }" col="1">
+      <input type="text" nz-input formControlName="sysExplanation" required />
+    </se>
+    <se label="检测依据" [error]="{ required: '不能为空' }" col="1">
+      <input type="text" nz-input formControlName="detectBasis" required />
+    </se>
+    <se label="检测概况" [error]="{ required: '不能为空' }" col="1">
+      <input type="text" nz-input formControlName="detectOverview" required />
+    </se>
+    <nz-divider></nz-divider>
+    <se col="1">
+      <button nz-button type="submit" nzType="primary" acl [acl-ability]="'CREATE'" [disabled]="resourceForm.invalid" *ngIf="!resourceId" (click)="save()">添加</button>
+      <button nz-button type="submit" nzType="primary" acl [acl-ability]="'WRITE'" [disabled]="resourceForm.invalid" *ngIf="resourceId" (click)="save()">修改</button>
+      <!-- <button nz-button type="button" nzType="primary" acl [acl-ability]="'FINISH'" (click)="finish()">办结</button> -->
+    </se>
+  <se-title>场地审核信息</se-title>
+  <se col="1">
+    <button nz-button type="button"  (click)="showAudit()" acl [acl-ability]="'WRITE'" [disabled]="!resourceId">新增审核信息</button>
+    <button nz-button type="button"  (click)="removeAudits()" acl [acl-ability]="'WRITE'" [disabled]="selectedAuditIds.length === 0">删除审核信息</button>
+  </se>
+  <se col="1">
+    <st  [columns]="auditColumns" [data]="fieldAudits" (dataChanged)="getAudits()" (change)="stChange($event)"></st>
+  </se>
+  
+</form>

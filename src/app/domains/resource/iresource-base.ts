@@ -3,6 +3,7 @@ import { IFieldAudit } from "./ifield-audit";
 import { IResourceCheckIn } from "./iresource-checkin";
 
 export interface IResourceBase {
+    id?: number;
     permissions?: Array<{ mask: Permission }>;
     resourceCheckIn?: IResourceCheckIn;
     fieldAudits?: IFieldAudit[];

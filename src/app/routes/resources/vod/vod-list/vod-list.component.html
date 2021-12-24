@@ -6,27 +6,25 @@
         <div nz-row [nzGutter]="{ xs: 8, sm: 8, md: 8, lg: 24, xl: 48, xxl: 48 }">
           <div nz-col nzMd="6">
             <nz-form-item>
-              <nz-form-label nzFor="changdiName">场地名称</nz-form-label>
+              <nz-form-label nzFor="sysName">系统名称</nz-form-label>
               <nz-form-control>
-                <input nz-input [(ngModel)]="searchChangdiName" name="changdiName" id="changdiName" />
+                <input nz-input [(ngModel)]="searchSysName" name="sysName" id="sysName" />
               </nz-form-control>
             </nz-form-item>
           </div>
           <div nz-col nzMd="6">
             <nz-form-item>
-              <nz-form-label nzFor="changdiAddr">场地地址</nz-form-label>
+              <nz-form-label nzFor="deviceName">设备名称</nz-form-label>
               <nz-form-control>
-                <input nz-input name="changdiAddr" [(ngModel)]="searchChangdiAddress" id="changdiAddr" />
+                <input nz-input [(ngModel)]="searchDeviceName" name="deviceName" id="deviceName" />
               </nz-form-control>
             </nz-form-item>
           </div>
           <div nz-col nzMd="6">
             <nz-form-item>
-              <nz-form-label nzFor="qxId">所属区</nz-form-label>
+              <nz-form-label nzFor="detectLocation">检测地点</nz-form-label>
               <nz-form-control>
-                <nz-select name="qxId" nzMode="multiple" nzPlaceHolder="所属区" [(ngModel)]="searchQxIds">
-                  <nz-option *ngFor="let qx of qxs" [nzLabel]="qx.value" [nzValue]="qx.key"></nz-option>
-                </nz-select>
+                <input nz-input [(ngModel)]="searchDetectLocation" name="detectLocation" id="detectLocation" />
               </nz-form-control>
             </nz-form-item>
           </div>
@@ -50,26 +48,11 @@
           </button>
         </nz-col>
         <nz-col nzLg="8"></nz-col>
-        <nz-col>
-          <div>
-            <nz-radio-group [(ngModel)]="searchFinished" class="mr-md" (ngModelChange)="searchFinishedChanged($event)">
-              <label nz-radio-button [nzValue]="'all'">
-                <span>全部</span>
-              </label>
-              <label nz-radio-button [nzValue]="'unFinished'">
-                <span>待办结</span>
-              </label>
-              <label nz-radio-button [nzValue]="'finished'">
-                <span>已办结</span>
-              </label>
-            </nz-radio-group>
-          </div>
-        </nz-col>
       </nz-row>
-      <st #st [widthMode]="{ type: 'strict' }" [columns]="columns" [data]="dataUrl" [res]="stRes" (change)="stChange($event)"> </st>
+      <st #st [widthMode]="{ type: 'strict' }" [columns]="columns" [data]="dataUrl" (change)="stChange($event)"> </st>
     </nz-card>
   </nz-tab>
   <nz-tab *ngFor="let tab of tabs" [nzTitle]="tab.title" nzClosable>
-    <app-my-resource-detail [resourceId]="tab.id" (dataChanged)="tableDataChanged()"></app-my-resource-detail>
+    <app-vod-detail #vodDetail [resourceId]="tab.id" ></app-vod-detail>
   </nz-tab>
 </nz-tabset>

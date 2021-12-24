@@ -35,7 +35,8 @@ export class MenusComponent implements OnInit {
     this.menuForm = this.fb.group({
       name: ['', [Validators.required]],
       path: ['', [Validators.required]],
-      iconClass: ['']
+      iconClass: [''],
+      resourceType: ['', [Validators.required]],
     });
 
     this.loadMenu();
@@ -67,6 +68,7 @@ export class MenusComponent implements OnInit {
     this.menuForm.controls.name.setValue(selectedNode.title);
     this.menuForm.controls.path.setValue(selectedNode.origin.path);
     this.menuForm.controls.iconClass.setValue(selectedNode.origin.icon);
+    this.menuForm.controls.resourceType.setValue(selectedNode.origin.resourceType);
 
     this.modalTitle = '修改菜单';
 
@@ -95,6 +97,7 @@ export class MenusComponent implements OnInit {
       name: this.menuForm.controls.name.value,
       path: this.menuForm.controls.path.value,
       iconClass: this.menuForm.controls.iconClass.value,
+      resourceType: this.menuForm.controls.resourceType.value,
       orderId: this.menuId ? +selectedNode.key : 0,
       parentId: this.menuId ? (selectedNode.parentNode ? +selectedNode.parentNode.key : 0) : +selectedNode.key
     };
@@ -155,6 +158,7 @@ export class MenusComponent implements OnInit {
           name: brotherNodes[i].title,
           path: brotherNodes[i].origin.path,
           iconClass: brotherNodes[i].origin.icon,
+          resourceType: brotherNodes[i].origin.resourceType,
           parentId: dragNode.parentNode ? +dragNode.parentNode.key : 0,
           orderId: i
         };
@@ -197,7 +201,8 @@ export class MenusComponent implements OnInit {
       isLeaf: false,
       expanded: true,
       orderId: menu.orderId,
-      path: menu.path
+      path: menu.path,
+      resourceType: menu.resourceType,
     };
 
     if (menu.children && menu.children.length > 0) {

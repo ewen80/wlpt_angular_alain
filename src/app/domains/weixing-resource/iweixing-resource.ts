@@ -6,11 +6,6 @@ import { IResourceCheckIn } from '../resource/iresource-checkin';
 import { IResourceBase } from '../resource/iresource-base';
 
 export interface IWeixingResource extends IResourceBase {
-  id?: number;
-  // permissions?: Array<{ mask: Permission }>;
-  // resourceCheckIn?: IResourceCheckIn;
-  // fieldAudits?: IFieldAudit[];
-
   // 编号
   bh?: string;
   // 申请单位

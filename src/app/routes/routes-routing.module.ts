@@ -17,7 +17,6 @@ import { UserLockComponent } from './passport/lock/lock.component';
 import { UserLoginComponent } from './passport/login/login.component';
 import { UserRegisterResultComponent } from './passport/register-result/register-result.component';
 import { UserRegisterComponent } from './passport/register/register.component';
-import { MyResourceListComponent } from './resources/my-resource/my-resource-list/my-resource-list.component';
 import { UploadComponent } from './resources/upload/upload.component';
 
 const routes: Routes = [

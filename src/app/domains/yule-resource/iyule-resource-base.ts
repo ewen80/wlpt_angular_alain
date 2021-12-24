@@ -4,7 +4,6 @@ import { IYuleGwWc } from "./iyule-gw-wc";
 import { IYuleYyBase } from "./iyule-yy-base";
 
 export interface IYuleResourceBase extends IResourceBase {
-    id?:number;
     // 编号
     bh?:string;
     // 各区id
