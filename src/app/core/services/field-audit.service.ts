@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { _HttpClient } from "@delon/theme";
 import { environment } from "@env/environment";
 import { Observable } from "rxjs";
-import { IFieldAudit } from "src/app/domains/resource/ifield-audit";
+import { IFieldAudit } from "src/app/domains/resources/ifield-audit";
 
 @Injectable({
     providedIn: 'root'

@@ -3,7 +3,7 @@ import { STColumn, STData, STComponent, STChange, STRequestOptions, STColumnTag 
 import { ACLService } from '@delon/acl';
 import { SettingsService } from '@delon/theme';
 import { environment } from '@env/environment';
-import { WeixingResourceService } from 'src/app/core/services/weixing/weixing.service';
+import { WeixingResourceService } from 'src/app/core/services/weixing.service';
 import { Permission } from 'src/app/domains/iresource-range-permission-wrapper';
 import { Region } from 'src/app/domains/region';
 import { setAclAbility } from 'src/app/shared/utils/set-acl-ability';

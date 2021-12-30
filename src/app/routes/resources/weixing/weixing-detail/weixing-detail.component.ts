@@ -6,10 +6,9 @@ import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FieldAuditService } from 'src/app/core/services/field-audit.service';
-import { WeixingResourceService } from 'src/app/core/services/weixing/weixing.service';
+import { WeixingResourceService } from 'src/app/core/services/weixing.service';
 import { Permission } from 'src/app/domains/iresource-range-permission-wrapper';
 import { Region } from 'src/app/domains/region';
-import { IWeixingResource } from 'src/app/domains/weixing-resource/iweixing-resource';
 import { FieldAuditComponent } from '../../field-audit/field-audit.component';
 import * as FileSaver from 'file-saver';
 import { setAclAbility } from 'src/app/shared/utils/set-acl-ability';
@@ -17,6 +16,7 @@ import { Observable, Subscription, timer } from 'rxjs';
 import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
 import { ValidateFunction } from 'ajv';
 import { SettingsService } from '@delon/theme';
+import { IWeixingResource } from 'src/app/domains/resources/iweixing-resource';
 
 @Component({
   selector: 'app-weixing-detail',
@@ -241,7 +241,7 @@ export class WeixingDetailComponent implements OnInit {
           // 初始化卫星名称
           this.jyfwInitial(data.wxmc);
           // n秒后设置该资源为已读
-          if(!this.weixingResource.readed) {
+          if(this.weixingResource && !this.weixingResource.readed) {
             this.readSubscription = timer(environment.setReadSeconds).subscribe({
               next: ()=>{
                 this.weixingResourceService.read(this.resourceId!, this.settings.user.id).subscribe();

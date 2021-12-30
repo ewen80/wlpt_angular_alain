@@ -4,8 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng s -o",
-    "build": "npm run ng-high-memory build -- --configuration production",
-    "build-test": "npm run ng-high-memory build -- --configuration test",
+    "build": "ng build ",
     "test": "ng test",
     "lint": "npm run lint:ts",
     "e2e": "ng e2e",

@@ -7,9 +7,9 @@ export const environment = {
   appName: 'wlpt',
   appDescription: '基于ng-alain',
   // 服务器后端根地址
-  serverUrl: `http://192.168.0.51:8080`,
+  serverUrl: `https://changdi.shssgc.org.cn/test/api`,
   // 后台文件下载根地址
-  serverFileDownloadRootUrl: 'http://192.168.0.51/downloads/',
+  serverFileDownloadRootUrl: 'http://changdi.shssgc.org.cn/test/downloads/',
   // 服务器初始化服务地址
   serverInitMenuURL: '/admin/menuinit',
   // 服务器后端token刷新验证地址
@@ -28,6 +28,7 @@ export const environment = {
     ["pw.ewen.WLPT.domains.entities.resources.weixing.WeixingResource", "/resources/weixings/fieldaudits"], // 卫星现场审核意见服务器地址
     ["pw.ewen.WLPT.domains.entities.resources.yule.YuleResourceBase", "/resources/yules/fieldaudits"], // 娱乐现场审核意见服务器地址
     ["pw.ewen.WLPT.domains.entities.resources.vod.VodResource", "/resources/vods/fieldaudits"], // vod现场审核意见服务器地址
+    ["pw.ewen.WLPT.domains.entities.resources.artifactshop.ArtifactShopResource", "/resources/artifactshops/fieldaudits"], // 文物商店现场审核意见服务器地址
   ]),
   // 服务器自定义资源 
   //                 *Weixing
@@ -47,6 +48,9 @@ export const environment = {
   //                 *Vod
   vodResourceTypeClassName: 'pw.ewen.WLPT.domains.entities.resources.vod.VodResource',
   serverVodResourceServiceURL: '/resources/vods',
+  //                 *文物商店
+  artifactShopResourceTypeClassName: 'pw.ewen.WLPT.domains.entities.resources.artifactshop.ArtifactShopResource',
+  serverArtifactShopResourceServiceURL: '/resources/artifactshops',
   // 服务器现场审核意见
   serverFieldAuditServiceURL: '/fieldaudits',
   // 服务器附件包后台管理地址
@@ -58,7 +62,7 @@ export const environment = {
   // token默认过期时间15分钟
   tokenExpiredTime: 1000 * 60 * 15,
   // 默认用户头像
-  defaultAvatar: '../assets/tmp/img/avatar.jpg',
+  defaultAvatar: './assets/avatar.jpg',
   // 默认场地审核单位名称
   defaultFieldAuditDepartment: '上海市社会文化管理处',
   // 场地审核GPS图片显示配置

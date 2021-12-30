@@ -9,23 +9,22 @@ import { FieldAuditService } from 'src/app/core/services/field-audit.service';
 import { FieldAuditComponent } from '../../field-audit/field-audit.component';
 import * as FileSaver from 'file-saver';
 import { setAclAbility } from 'src/app/shared/utils/set-acl-ability';
-import { Observable, Subscription, timer } from 'rxjs';
-import { ValidateFunction } from 'ajv';
 import { SettingsService } from '@delon/theme';
-import { VodResourceService } from 'src/app/core/services/vod.service';
-import { IVodResource } from 'src/app/domains/resources/ivod-resource';
+import { ArtifactShopResourceService } from 'src/app/core/services/iartifactshop.service';
+import { IArtifactShopResource } from 'src/app/domains/resources/iartifactshop-resource';
+import { Subscription, timer } from 'rxjs';
 
 @Component({
-  selector: 'app-vod-detail',
-  templateUrl: './vod-detail.component.html',
+  selector: 'app-artifactshop-detail',
+  templateUrl: './artifactshop-detail.component.html',
   styles: []
 })
-export class VodDetailComponent implements OnInit {
+export class ArtifactShopDetailComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private modal: NzModalService,
     private acl: ACLService,
-    private vodResourceService: VodResourceService,
+    private resourceService: ArtifactShopResourceService,
     private fieldAuditService: FieldAuditService,
     private message: NzMessageService,
     private settings: SettingsService,
@@ -36,10 +35,9 @@ export class VodDetailComponent implements OnInit {
   @Output() dataChanged = new EventEmitter();
   @Output() auditModalClosed = new EventEmitter();
 
-  vodFieldAuditServiceUrl = environment.fieldAuditServiceMap.get(environment.vodResourceTypeClassName)!;
-  vodResource?: IVodResource;
+  fieldAuditServiceUrl = environment.fieldAuditServiceMap.get(environment.artifactShopResourceTypeClassName)!;
+  resource?: IArtifactShopResource;
 
-  qxs: Array<{ key: string; value: string }> = [];
   selectedAuditIds: number[]  = [];
   fieldAudits: STData[] = [];
 
@@ -65,16 +63,12 @@ export class VodDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.resourceForm = this.fb.group({
-      sysName: ['', [Validators.required]],
-      deviceName: ['', [Validators.required]],
-      manufacturer: ['', [Validators.required]],
-      deviceModel: ['', [Validators.required]],
-      samplingMethod: ['', [Validators.required]],
-      detectLocation: ['', [Validators.required]],
-      detectUnit: ['', [Validators.required]],
-      sysExplanation: ['', [Validators.required]],
-      detectBasis: ['', [Validators.required]],
-      detectOverview: ['', [Validators.required]],
+      sqdw: ['', [Validators.required]],
+      faren: ['', [Validators.required]],
+      csdz: ['', [Validators.required]],
+      lxr: ['', [Validators.required]],
+      sbxm: ['', [Validators.required]],
+      lxdh: ['', [Validators.required]],
     });
 
 
@@ -96,8 +90,8 @@ export class VodDetailComponent implements OnInit {
 
   // 初始化操作按钮
   initOptButton(): void {
-    if(this.vodResource && this.vodResource.permissions) {
-      setAclAbility(this.vodResource?.permissions, this.acl);
+    if(this.resource && this.resource.permissions) {
+      setAclAbility(this.resource?.permissions, this.acl);
     }
   }
 
@@ -106,27 +100,23 @@ export class VodDetailComponent implements OnInit {
   // 初始化detail数据
   initDetail(): void {
     if (this.resourceId) {
-      this.vodResourceService.findOne(this.resourceId).subscribe({
+      this.resourceService.findOne(this.resourceId).subscribe({
         next: data => {
-          this.vodResource = data;
+          this.resource = data;
           this.fieldAudits = data.fieldAudits ? data.fieldAudits : [];
 
-          this.resourceForm.controls.sysName.setValue(data.sysName);
-          this.resourceForm.controls.deviceName.setValue(data.deviceName);
-          this.resourceForm.controls.manufacturer.setValue(data.manufacturer);
-          this.resourceForm.controls.deviceModel.setValue(data.deviceModel);
-          this.resourceForm.controls.samplingMethod.setValue(data.samplingMethod);
-          this.resourceForm.controls.detectLocation.setValue(data.detectLocation);
-          this.resourceForm.controls.detectUnit.setValue(data.detectUnit);
-          this.resourceForm.controls.sysExplanation.setValue(data.sysExplanation);
-          this.resourceForm.controls.detectBasis.setValue(data.detectBasis);
-          this.resourceForm.controls.detectOverview.setValue(data.detectOverview);
+          this.resourceForm.controls.sqdw.setValue(data.sqdw);
+          this.resourceForm.controls.faren.setValue(data.faren);
+          this.resourceForm.controls.csdz.setValue(data.csdz);
+          this.resourceForm.controls.lxr.setValue(data.lxr);
+          this.resourceForm.controls.sbxm.setValue(data.sbxm);
+          this.resourceForm.controls.lxdh.setValue(data.lxdh);
 
           // n秒后设置该资源为已读
-          if(!this.vodResource.readed) {
+          if(!this.resource.readed) {
             this.readSubscription = timer(environment.setReadSeconds).subscribe({
               next: ()=>{
-                this.vodResourceService.read(this.resourceId!, this.settings.user.id).subscribe();
+                this.resourceService.read(this.resourceId!, this.settings.user.id).subscribe();
               }
             })
           }
@@ -140,18 +130,14 @@ export class VodDetailComponent implements OnInit {
     if (this.resourceForm.valid) {
       if (this.resourceId) {
         // 如果是修改
-        this.vodResource!.sysName = this.resourceForm.controls.sysName.value;
-        this.vodResource!.deviceName = this.resourceForm.controls.deviceName.value;
-        this.vodResource!.manufacturer = this.resourceForm.controls.manufacturer.value;
-        this.vodResource!.deviceModel = this.resourceForm.controls.deviceModel.value;
-        this.vodResource!.samplingMethod = this.resourceForm.controls.samplingMethod.value;
-        this.vodResource!.detectLocation = this.resourceForm.controls.detectLocation.value;
-        this.vodResource!.detectUnit = this.resourceForm.controls.detectUnit.value;
-        this.vodResource!.sysExplanation = this.resourceForm.controls.sysExplanation.value;
-        this.vodResource!.detectBasis = this.resourceForm.controls.detectBasis.value;
-        this.vodResource!.detectOverview = this.resourceForm.controls.detectOverview.value;
+        this.resource!.sqdw = this.resourceForm.controls.sqdw.value;
+        this.resource!.faren = this.resourceForm.controls.faren.value;
+        this.resource!.csdz = this.resourceForm.controls.csdz.value;
+        this.resource!.lxr = this.resourceForm.controls.lxr.value;
+        this.resource!.sbxm = this.resourceForm.controls.sbxm.value;
+        this.resource!.lxdh = this.resourceForm.controls.lxdh.value;
 
-        this.vodResourceService.update(this.vodResource!).subscribe({
+        this.resourceService.update(this.resource!).subscribe({
           next: () => {
             this.dataChanged.emit();
             this.message.success('修改成功');
@@ -160,24 +146,19 @@ export class VodDetailComponent implements OnInit {
 
       } else {
         // 如果是新增
-        this.vodResource = {
-          sysName: this.resourceForm.controls.sysName.value,
-          deviceName: this.resourceForm.controls.deviceName.value,
-          manufacturer: this.resourceForm.controls.manufacturer.value,
-          deviceModel: this.resourceForm.controls.deviceModel.value,
-          samplingMethod: this.resourceForm.controls.samplingMethod.value,
-          detectLocation: this.resourceForm.controls.detectLocation.value,
-          detectUnit: this.resourceForm.controls.detectUnit.value,
-          sysExplanation: this.resourceForm.controls.sysExplanation.value,
-          detectBasis: this.resourceForm.controls.detectBasis.value,
-          detectOverview: this.resourceForm.controls.detectOverview.value,
-
+        this.resource = {
+          sqdw: this.resourceForm.controls.sqdw.value,
+          faren: this.resourceForm.controls.faren.value,
+          csdz: this.resourceForm.controls.csdz.value,
+          lxr: this.resourceForm.controls.lxr.value,
+          sbxm: this.resourceForm.controls.sbxm.value,
+          lxdh: this.resourceForm.controls.lxdh.value,
         };
 
-        this.vodResourceService.add(this.vodResource!).subscribe({
+        this.resourceService.add(this.resource!).subscribe({
           next: result => {
             this.resourceId = result.id;
-            this.vodResource = result;
+            this.resource = result;
             this.dataChanged.emit();
             this.message.success('添加成功');
           }
@@ -194,7 +175,7 @@ export class VodDetailComponent implements OnInit {
       nzTitle: '现场审核信息',
       nzContent: FieldAuditComponent,
       nzComponentParams: {
-        resourceType: environment.vodResourceTypeClassName,
+        resourceType: environment.artifactShopResourceTypeClassName,
         resourceId: this.resourceId,
         auditId: auditId ? auditId : 0,
       },
@@ -203,7 +184,7 @@ export class VodDetailComponent implements OnInit {
         {
           label: '打印',
           onClick: (component?: any) => {
-            this.vodResourceService.print(this.resourceId!, component.auditId).subscribe({
+            this.resourceService.print(this.resourceId!, component.auditId).subscribe({
               next: (blob)=>{
                 FileSaver.saveAs(blob.body);
               }
@@ -239,10 +220,10 @@ export class VodDetailComponent implements OnInit {
   // 获取现场审核意见
   getAudits(): void {
     if(this.resourceId){
-      this.fieldAuditService.findByResourceId(this.resourceId, this.vodFieldAuditServiceUrl).subscribe({
+      this.fieldAuditService.findByResourceId(this.resourceId, this.fieldAuditServiceUrl).subscribe({
         next: result=> {
           this.fieldAudits = result;
-          this.vodResource!.fieldAudits = result;
+          this.resource!.fieldAudits = result;
         }
       })
     }
@@ -252,7 +233,7 @@ export class VodDetailComponent implements OnInit {
   // 删除现场审核意见
   removeAudits(): void {
     if(this.resourceId){
-      this.fieldAuditService.deleteByResourceId(this.selectedAuditIds, this.resourceId, this.vodFieldAuditServiceUrl).subscribe({
+      this.fieldAuditService.deleteByResourceId(this.selectedAuditIds, this.resourceId, this.fieldAuditServiceUrl).subscribe({
         next: () => {
           this.selectedAuditIds = [];
           this.getAudits();

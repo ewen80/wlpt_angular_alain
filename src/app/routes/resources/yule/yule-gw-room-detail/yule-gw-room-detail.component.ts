@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { YuleGwRoomService } from "src/app/core/services/yule/yule-gw-room.service";
-import { IYuleGwRoom } from "src/app/domains/yule-resource/iyule-gw-room";
+import { IYuleGwRoom } from "src/app/domains/resources/yule-resource/iyule-gw-room";
 
 @Component({
     selector: 'app-yule-gw-room-detail',

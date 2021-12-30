@@ -11,7 +11,7 @@ import { AttachmentBagService } from "src/app/core/services/attachment-bag.servi
 import { FieldAuditService } from "src/app/core/services/field-audit.service";
 import { IAttachmentBag } from "src/app/domains/iattachment-bag";
 import { ISignature } from "src/app/domains/isignature";
-import { IFieldAudit } from "src/app/domains/resource/ifield-audit";
+import { IFieldAudit } from "src/app/domains/resources/ifield-audit";
 import { AttachmentBagComponent } from "../attachment-bag/attachment-bag.component";
 
 @Component({

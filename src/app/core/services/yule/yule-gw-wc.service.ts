@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { _HttpClient } from "@delon/theme";
 import { environment } from "@env/environment";
 import { Observable } from "rxjs";
-import { IYuleGwWc } from "src/app/domains/yule-resource/iyule-gw-wc";
+import { IYuleGwWc } from "src/app/domains/resources/yule-resource/iyule-gw-wc";
 
 @Injectable({
     providedIn: 'root'

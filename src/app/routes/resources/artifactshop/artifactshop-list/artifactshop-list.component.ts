@@ -3,33 +3,30 @@ import { STColumn, STData, STComponent, STChange, STRequestOptions, STColumnTag 
 import { ACLService } from '@delon/acl';
 import { SettingsService } from '@delon/theme';
 import { environment } from '@env/environment';
-import { VodResourceService } from 'src/app/core/services/vod.service';
-import { WeixingResourceService } from 'src/app/core/services/weixing.service';
+import { ArtifactShopResourceService } from 'src/app/core/services/iartifactshop.service';
 import { Permission } from 'src/app/domains/iresource-range-permission-wrapper';
-import { Region } from 'src/app/domains/region';
 import { setAclAbility } from 'src/app/shared/utils/set-acl-ability';
-import { VodDetailComponent } from '../vod-detail/vod-detail.component';
+import { ArtifactShopDetailComponent } from '../artifactshop-detail/artifactshop-detail.component';
 
 @Component({
-  selector: 'app-vod-list',
-  templateUrl: './vod-list.component.html',
+  selector: 'app-artifactshop-list',
+  templateUrl: './artifactshop-list.component.html',
   styles: []
 })
-export class VodListComponent implements OnInit {
-  constructor(private vodResourceService: VodResourceService, private settingService: SettingsService, private acl: ACLService) {}
+export class ArtifactShopListComponent implements OnInit {
+  constructor(private artifactShopResourceService: ArtifactShopResourceService, private settingService: SettingsService, private acl: ACLService) {}
 
-  dataUrl = environment.serverVodResourceServiceURL;
+  dataUrl = environment.serverArtifactShopResourceServiceURL;
 
   selectedTabIndex = 0;
 
-  // 查询系统名称
-  searchSysName = '';
-  // 查询设备名称
-  searchDeviceName = '';
-  // 查询检测地点
-  searchDetectLocation = '';
+  // 查询申请单位
+  searchSqdw = '';
+  // 查询场所地址
+  searchCsdz = '';
+  // 查询申办项目
+  searchSbxm = '';
 
-  qxs: Array<{ key: string; value: string }> = [];
 
   tabs: Array<{
     title: string;
@@ -53,17 +50,17 @@ export class VodListComponent implements OnInit {
         this.showDetail(record.id);
       }
     },
-    { title: '系统名称', index: 'sysName', width: 150 },
-    { title: '设备名称', index: 'deviceName' },
-    { title: '制造厂商', index: 'manufacturer' },
-    { title: '检测地点', index: 'detectLocation' },
+    { title: '申请单位', index: 'sqdw', width: 150 },
+    { title: '场所地址', index: 'csdz' },
+    { title: '申办项目', index: 'xbxm' },
+    { title: '法人', index: 'faren' },
   ];
 
 
   selectedIds: number[] = []; // 选中id数组
 
   @ViewChild('st', { static: true })  st!: STComponent;
-  @ViewChild('vodDetail')  vodDetail!: VodDetailComponent;
+  @ViewChild('artifactShopDetail')  artifactShopDetail!: ArtifactShopDetailComponent;
 
   ngOnInit(): void {
     this.initOptButton();
@@ -71,7 +68,7 @@ export class VodListComponent implements OnInit {
 
   // 初始化新建删除等操作按钮
   initOptButton() {
-    this.vodResourceService.getPermissions(this.settingService.user.currentRoleId).subscribe({
+    this.artifactShopResourceService.getPermissions(this.settingService.user.currentRoleId).subscribe({
       next: (permissions: Array<{ mask: Permission }>) => {
         setAclAbility(permissions, this.acl);
       }
@@ -89,7 +86,7 @@ export class VodListComponent implements OnInit {
 
   // 删除
   remove(): void {
-    this.vodResourceService.delete(this.selectedIds).subscribe({
+    this.artifactShopResourceService.delete(this.selectedIds).subscribe({
       next: () => {
         this.selectedIds = [];
         this.st.reload();
@@ -98,7 +95,7 @@ export class VodListComponent implements OnInit {
   }
 
   closeTab({ index }: { index: number }): void {
-    this.vodDetail.readSubscription?.unsubscribe();
+    this.artifactShopDetail.readSubscription?.unsubscribe();
     this.tabs.splice(index - 1, 1);
     this.st.reload();
 
@@ -116,9 +113,9 @@ export class VodListComponent implements OnInit {
   }
 
   reset(): void {
-    this.searchDetectLocation = '';
-    this.searchDeviceName = '';
-    this.searchSysName = '';
+    this.searchCsdz = '';
+    this.searchSbxm = '';
+    this.searchSqdw = '';
     this.search();
   }
 
@@ -126,16 +123,16 @@ export class VodListComponent implements OnInit {
   search(): void {
     let filterStr = '';
 
-    if (this.searchSysName) {
-      filterStr += `sysName:*${this.searchSysName}*,`;
+    if (this.searchCsdz) {
+      filterStr += `csdz:*${this.searchCsdz}*,`;
     }
 
-    if (this.searchDeviceName) {
-      filterStr += `deviceName:*${this.searchDeviceName}*,`;
+    if (this.searchSbxm) {
+      filterStr += `sbxm:*${this.searchSbxm}*,`;
     }
 
-    if (this.searchDetectLocation) {
-      filterStr += `detectLocation:*${this.searchDetectLocation}*,`;
+    if (this.searchSqdw) {
+      filterStr += `sqdw:*${this.searchSqdw}*,`;
     }
     
     this.st.req.params = { filter: filterStr };

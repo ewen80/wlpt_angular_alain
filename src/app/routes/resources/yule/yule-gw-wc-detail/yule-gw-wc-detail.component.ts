@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { YuleGwWcService } from "src/app/core/services/yule/yule-gw-wc.service";
-import { IYuleGwRoom } from "src/app/domains/yule-resource/iyule-gw-room";
-import { IYuleGwWc } from "src/app/domains/yule-resource/iyule-gw-wc";
+import { IYuleGwRoom } from "src/app/domains/resources/yule-resource/iyule-gw-room";
+import { IYuleGwWc } from "src/app/domains/resources/yule-resource/iyule-gw-wc";
 
 @Component({
     selector: 'app-yule-gw-wc-detail',

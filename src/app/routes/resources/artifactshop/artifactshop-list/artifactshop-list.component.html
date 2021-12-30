@@ -1,0 +1,58 @@
+<page-header [title]="'场地查看管理'"></page-header>
+<nz-tabset nzType="editable-card" nzHideAdd [(nzSelectedIndex)]="selectedTabIndex" (nzClose)="closeTab($event)">
+  <nz-tab nzTitle="场地列表">
+    <nz-card [nzBordered]="false">
+      <form nz-form [nzLayout]="'inline'" (ngSubmit)="search()" class="search__form">
+        <div nz-row [nzGutter]="{ xs: 8, sm: 8, md: 8, lg: 24, xl: 48, xxl: 48 }">
+          <div nz-col nzMd="6">
+            <nz-form-item>
+              <nz-form-label nzFor="sqdw">申请单位</nz-form-label>
+              <nz-form-control>
+                <input nz-input [(ngModel)]="searchSqdw" name="sqdw" id="sqdw" />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col nzMd="6">
+            <nz-form-item>
+              <nz-form-label nzFor="csdz">场所地址</nz-form-label>
+              <nz-form-control>
+                <input nz-input [(ngModel)]="searchCsdz" name="csdz" id="csdz" />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col nzMd="6">
+            <nz-form-item>
+              <nz-form-label nzFor="sbxm">申办项目</nz-form-label>
+              <nz-form-control>
+                <input nz-input [(ngModel)]="searchSbxm" name="sbxm" id="sbxm" />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col [class.text-right]="false" nzMd="6">
+            <button nz-button type="submit" [nzType]="'primary'">查询</button>
+            <button nz-button type="reset" (click)="reset()" class="mx-sm">重置</button>
+          </div>
+        </div>
+      </form>
+      <nz-row [nzGutter]="16">
+        <nz-col>
+          <button nz-button (click)="showDetail(undefined)" [nzType]="'primary'" acl [acl-ability]="'CREATE'">
+            <i nz-icon nzType="plus"></i>
+            <span>新建</span>
+          </button>
+        </nz-col>
+        <nz-col>
+          <button nz-button (click)="remove()" [nzType]="'primary'" acl [acl-ability]="'DELETE'" [disabled]="selectedIds.length === 0">
+            <i nz-icon nzType="minus"></i>
+            <span>删除</span>
+          </button>
+        </nz-col>
+        <nz-col nzLg="8"></nz-col>
+      </nz-row>
+      <st #st [widthMode]="{ type: 'strict' }" [columns]="columns" [data]="dataUrl" (change)="stChange($event)"> </st>
+    </nz-card>
+  </nz-tab>
+  <nz-tab *ngFor="let tab of tabs" [nzTitle]="tab.title" nzClosable>
+    <app-artifactshop-detail #artifactShopDetail [resourceId]="tab.id" ></app-artifactshop-detail>
+  </nz-tab>
+</nz-tabset>

@@ -1,4 +1,4 @@
-import { IResourceBase } from "../resource/iresource-base";
+import { IResourceBase } from "../iresource-base";
 import { IYuleGwRoom } from "./iyule-gw-room";
 import { IYuleGwWc } from "./iyule-gw-wc";
 import { IYuleYyBase } from "./iyule-yy-base";

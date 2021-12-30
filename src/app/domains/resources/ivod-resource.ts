@@ -1,4 +1,4 @@
-import { IResourceBase } from "../resource/iresource-base";
+import { IResourceBase } from "./iresource-base";
 
 export interface IVodResource extends IResourceBase {
 

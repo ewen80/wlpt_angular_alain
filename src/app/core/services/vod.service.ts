@@ -4,7 +4,7 @@ import { _HttpClient } from "@delon/theme";
 import { environment } from "@env/environment";
 import { Observable } from "rxjs";
 import { Permission } from "src/app/domains/iresource-range-permission-wrapper";
-import { IVodResource } from "src/app/domains/vod/ivod-resource";
+import { IVodResource } from "src/app/domains/resources/ivod-resource";
 
 @Injectable({
     providedIn: 'root'

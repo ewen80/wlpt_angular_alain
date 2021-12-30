@@ -9,6 +9,9 @@ name: build&docker
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - master
 jobs:
   nginx:
     runs-on: ubuntu-latest

@@ -13,6 +13,8 @@ import { YuleGwRoomComponent } from './yule/yule-gw-room-detail/yule-gw-room-det
 import { YuleGwWcComponent } from './yule/yule-gw-wc-detail/yule-gw-wc-detail.component';
 import { VodListComponent } from './vod/vod-list/vod-list.component';
 import { VodDetailComponent } from './vod/vod-detail/vod-detail.component';
+import { ArtifactShopListComponent } from './artifactshop/artifactshop-list/artifactshop-list.component';
+import { ArtifactShopDetailComponent } from './artifactshop/artifactshop-detail/artifactshop-detail.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +30,9 @@ import { VodDetailComponent } from './vod/vod-detail/vod-detail.component';
 
     VodListComponent,
     VodDetailComponent,
+
+    ArtifactShopListComponent,
+    ArtifactShopDetailComponent,
     
     FieldAuditComponent,
     AttachmentBagComponent,
