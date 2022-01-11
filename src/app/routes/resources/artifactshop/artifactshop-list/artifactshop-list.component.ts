@@ -52,7 +52,7 @@ export class ArtifactShopListComponent implements OnInit {
     },
     { title: '申请单位', index: 'sqdw', width: 150 },
     { title: '场所地址', index: 'csdz' },
-    { title: '申办项目', index: 'xbxm' },
+    { title: '申办项目', index: 'sbxm' },
     { title: '法人', index: 'faren' },
   ];
 
