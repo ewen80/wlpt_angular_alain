@@ -10,7 +10,9 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { RoleService } from 'src/app/core/services/role.service';
 import { UserService } from 'src/app/core/services/user.service';
+import { IRole } from 'src/app/domains/irole';
 import { IUser } from 'src/app/domains/iuser';
 import { Md5 } from 'ts-md5';
 
@@ -105,6 +107,7 @@ export class HeaderUserComponent implements OnInit {
     private modal: NzModalService,
     private fb: FormBuilder,
     private userService: UserService,
+    private roleService: RoleService,
     private msg: NzMessageService
   ) {
     this.updatePasswordForm = this.fb.group({
@@ -209,8 +212,6 @@ export class HeaderUserComponent implements OnInit {
 
   // 变更用户当前角色
   changeCurrentRole(roleId:string) {
-     
-
     this.userService.changeCurrentRole(this.userId, roleId).subscribe({
       next: () => {
         // 修改settingsService中的当前用户信息
