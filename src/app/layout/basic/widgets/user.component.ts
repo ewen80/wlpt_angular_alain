@@ -8,7 +8,7 @@ import { SettingsService, User, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RoleService } from 'src/app/core/services/role.service';
 import { UserService } from 'src/app/core/services/user.service';
@@ -59,8 +59,8 @@ import { Md5 } from 'ts-md5';
     </nz-dropdown-menu>
     <nz-dropdown-menu #roleMenu="nzDropdownMenu">
       <ul nz-menu>
-        <li nz-menu-item *ngFor="let roleId of user.roleIds" [nzSelected]="roleId === user.currentRoleId" (click)="changeCurrentRole(roleId)">
-          {{ roleId }}
+        <li nz-menu-item *ngFor="let role of roles" [nzSelected]="role.id === user.currentRoleId" (click)="changeCurrentRole(role.id)">
+          {{ role.name }} ( {{ role.id }})
         </li>
       </ul>
     </nz-dropdown-menu>
@@ -92,7 +92,11 @@ export class HeaderUserComponent implements OnInit {
     return this.settings.user;
   }
 
+  // 用户角色详细信息
+  roles:IRole[] = [];
+
   private userId = '';
+  
 
   updatePasswordForm!: FormGroup;
 
@@ -123,8 +127,16 @@ export class HeaderUserComponent implements OnInit {
       reNewPassword: ['', [Validators.required, this.newPasswordConfirmValidator()]]
     });
   }
+
   ngOnInit(): void {
     this.userId = this.settings.user.id;
+    (this.settings.user as IUser).roleIds?.forEach(roleId=>{
+      this.roleService.findOne(roleId).subscribe({
+        next:role=>{
+          this.roles.push(role);
+        }
+      })
+    });
   }
 
   // 异步密码验证器
