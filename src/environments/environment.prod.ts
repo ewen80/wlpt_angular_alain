@@ -3,7 +3,7 @@ export const environment = {
   appName: 'wlpt',
   appDescription: '基于ng-alain',
   // 服务器后端根地址
-  serverUrl: `http://changdi.shssgc.org.cn/api`,
+  serverUrl: `http://changdi.shssgc.org.cn:8080`,
   // 后台文件下载根地址
   serverFileDownloadRootUrl: 'http://changdi.shssgc.org.cn/downloads',
   // 服务器初始化服务地址
