@@ -132,7 +132,7 @@ export class AttachmentBagComponent implements OnInit {
             uid: attachment.id!,
             name: attachment.name,
             status: 'done',
-            url: `${environment.serverFileDownloadRootUrl}\\${attachment.path}`,
+            url: `${environment.serverFileDownloadRootUrl}\\${attachment.path}?name=${attachment.name}`,
             response: {
               name: attachment.path,
               date: attachment.date,
