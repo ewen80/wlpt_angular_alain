@@ -63,7 +63,7 @@ export const environment = {
   defaultFieldAuditDepartment: '上海市社会文化管理处',
   // 场地审核GPS图片显示配置
   // fieldAuditGpsUrl: 'https://apis.map.qq.com/ws/staticmap/v2/', // api接口地址
-  fieldAuditGpsUrl: '/map/ws/staticmap/v2/', // api接口地址
+  fieldAuditGpsUrl: 'https://changdi.shssgc.org.cn/map/ws/staticmap/v2/', // api接口地址
   fieldAuditGpsKey: '5VHBZ-PGARD-NZ44L-HC5UV-A36GQ-M4BMU', // api key
   fieldAuditGpsWidth:1000, // 图片宽度
   fieldAuditGpsHeight:800,  // 图片高度
