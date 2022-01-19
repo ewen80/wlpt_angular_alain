@@ -30,6 +30,10 @@ export class AttachmentBagComponent implements OnInit {
     // 文件上传地址
     fileUploadServiceURL = environment.serverUrl + environment.serverFileServiceURL + "/upload"; 
 
+    // 上传图片预览参数
+    previewVisible = false;
+    previewImage?: string;
+
     ngOnInit(): void {
       this.bagForm = this.fb.group({
           name: ['', [Validators.required]],
@@ -54,8 +58,18 @@ export class AttachmentBagComponent implements OnInit {
 
     // 删除附件
     removeFile = (file: NzUploadFile) => {
-        return this.fileService.removeFile(file.response.name);
+        return this.fileService.removeFile(file.response.path);
     };
+
+    // 清理无效附件
+    clearAttachments():void {
+      // 如果没有附件包id，且已经上传了附件则删除所有附件
+      if(!this.bagId) {
+        this.attachments.forEach(attachment=>{
+          this.fileService.removeFile(attachment.response.path).subscribe();
+        })
+      }
+    }
 
     // 处理上传列表
     handleChange(info: NzUploadChangeParam): void {
@@ -69,7 +83,7 @@ export class AttachmentBagComponent implements OnInit {
     
         if (info.file.status === 'done') {
           fileList.map(file => {
-            file.url = `${environment.serverFileDownloadRootUrl}\\${file.response.name}`;
+            file.url = `${environment.serverFileDownloadRootUrl}\\${file.response.path}?name=${file.response.name}`;
           });
           this.attachments = fileList;
           if (this.bagInfo?.id) {
@@ -97,7 +111,7 @@ export class AttachmentBagComponent implements OnInit {
           this.attachments.forEach(attachment => {
             attachs.push({
               name: attachment.name,
-              path: attachment.response.name,
+              path: attachment.response.path,
               date: attachment.response.date
             });
           });
@@ -134,7 +148,8 @@ export class AttachmentBagComponent implements OnInit {
             status: 'done',
             url: `${environment.serverFileDownloadRootUrl}\\${attachment.path}?name=${attachment.name}`,
             response: {
-              name: attachment.path,
+              name: attachment.name,
+              path: attachment.path,
               date: attachment.date,
               status: 'done'
             }
@@ -142,4 +157,9 @@ export class AttachmentBagComponent implements OnInit {
         });
       }
 
+      // 图片预览处理
+      handlePreview = async (file: NzUploadFile): Promise<void> => {
+        this.previewImage = file.url;
+        this.previewVisible = true;
+      };
 }

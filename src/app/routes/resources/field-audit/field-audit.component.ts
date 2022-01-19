@@ -1,3 +1,4 @@
+import { componentFactoryName } from "@angular/compiler";
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { STChange, STColumn, STData } from "@delon/abc/st";
@@ -78,7 +79,9 @@ export class FieldAuditComponent implements OnInit {
 
         // 订阅附件包对话框关闭事件，当对话框关闭时刷新附件包列表
         this.attachmentBagModalClosed.subscribe({
-          next: () => this.getAttachmentBags(this.auditId)
+          next: () => {
+            this.getAttachmentBags(this.auditId);
+          }
         });
       }
 
@@ -185,17 +188,20 @@ export class FieldAuditComponent implements OnInit {
             auditId: this.auditId,
           },
           nzAfterClose: this.attachmentBagModalClosed,
+          nzOnCancel: (component:any) => {
+            // 关闭时执行附件包清理程序，防止上传附件后没有新增附件包导致附件未清理
+            component.clearAttachments();
+          },
           nzFooter: [
             {
               label: '取消',
-              onClick: () => {
+              onClick: (component?: any) => {
                 modal.destroy();
               }
             },
             {
               label: '确定',
               type: 'primary',
-    
               onClick: (component?: any) => {
                 if (component.validate()) {
                   component.save();
