@@ -1,6 +1,7 @@
 import { formatDate } from "@angular/common";
 import { Component, Inject, Input, LOCALE_ID, OnInit, Output } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { ACLService } from "@delon/acl";
 import { environment } from "@env/environment";
 import { NzMessageService } from "ng-zorro-antd/message";
 import { NzUploadChangeParam, NzUploadFile } from "ng-zorro-antd/upload";
@@ -8,6 +9,8 @@ import { AttachmentBagService } from "src/app/core/services/attachment-bag.servi
 import { FileService } from "src/app/core/services/file.service";
 import { IAttachment } from "src/app/domains/iattachment";
 import { IAttachmentBag } from "src/app/domains/iattachment-bag";
+import { Permission } from "src/app/domains/iresource-range-permission-wrapper";
+import { setAclAbility } from "src/app/shared/utils/set-acl-ability";
 
 @Component({
     selector: 'app-attachment-bag',
@@ -23,6 +26,7 @@ export class AttachmentBagComponent implements OnInit {
 
     @Input() bagId = 0;
     @Input() auditId = 0;
+    @Input() permissions: {mask:Permission}[] = [];
 
     bagForm !: FormGroup;
     bagInfo?: IAttachmentBag;
@@ -34,12 +38,16 @@ export class AttachmentBagComponent implements OnInit {
     previewVisible = false;
     previewImage?: string;
 
+    // 是否可以上传附件
+    canUpload = false;
+
     ngOnInit(): void {
       this.bagForm = this.fb.group({
           name: ['', [Validators.required]],
           memo: [''],
         })
       this.initBag(this.bagId);
+      this.initPermission();
     }
 
     initBag(bagId: number): void {
@@ -56,9 +64,23 @@ export class AttachmentBagComponent implements OnInit {
         
     }
 
+    // 初始化权限操作按钮
+    initPermission(): void {
+      // 如果有写权限
+      if(this.permissions.some(permission=> permission.mask === Permission.WRITE )) {
+        this.canUpload = true;
+      } else {
+        this.canUpload = false;
+      }
+    }
+
     // 删除附件
     removeFile = (file: NzUploadFile) => {
+      if(this.permissions.some(permission=>permission.mask===Permission.WRITE)) {
         return this.fileService.removeFile(file.response.path);
+      } else {
+        return false;
+      }
     };
 
     // 清理无效附件

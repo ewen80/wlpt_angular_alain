@@ -55,9 +55,9 @@
         <nz-form-item>
           <nz-form-label>核查人员签名</nz-form-label>
           <nz-form-control>
-            <nz-image-group >
-              <img nz-image style="transform:rotate(-90deg)" width="200px" *ngFor="let signature of auditorSignatures" [nzSrc]=signature.imageSrc [alt]=signature.imageAlt />
-            </nz-image-group>
+              <div *ngFor="let signature of auditorSignatures">
+                <img nz-image style="transform:rotate(-90deg)"  width="100"  [nzSrc]=signature.imageSrc [alt]=signature.imageAlt />
+              </div>
           </nz-form-control>
         </nz-form-item>
       </nz-col>

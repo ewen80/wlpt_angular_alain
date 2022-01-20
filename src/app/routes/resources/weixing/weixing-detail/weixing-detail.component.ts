@@ -7,13 +7,11 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FieldAuditService } from 'src/app/core/services/field-audit.service';
 import { WeixingResourceService } from 'src/app/core/services/weixing.service';
-import { Permission } from 'src/app/domains/iresource-range-permission-wrapper';
 import { Region } from 'src/app/domains/region';
 import { FieldAuditComponent } from '../../field-audit/field-audit.component';
 import * as FileSaver from 'file-saver';
 import { setAclAbility } from 'src/app/shared/utils/set-acl-ability';
 import { Observable, Subscription, timer } from 'rxjs';
-import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
 import { ValidateFunction } from 'ajv';
 import { SettingsService } from '@delon/theme';
 import { IWeixingResource } from 'src/app/domains/resources/iweixing-resource';
@@ -365,6 +363,7 @@ export class WeixingDetailComponent implements OnInit {
         resourceType: environment.weixingResourceTypeClassName,
         resourceId: this.resourceId,
         auditId: auditId ? auditId : 0,
+        permissions: this.weixingResource?.permissions,
       },
       nzAfterClose: this.auditModalClosed,
       nzFooter: [

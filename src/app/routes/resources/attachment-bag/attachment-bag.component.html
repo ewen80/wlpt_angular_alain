@@ -11,7 +11,8 @@
     </se>
     <se-title>附件信息</se-title>
     <se>
-      <nz-upload [nzAction]="fileUploadServiceURL" 
+      <nz-upload [nzDisabled]="!canUpload"
+        [nzAction]="fileUploadServiceURL" 
         [nzFileList]="attachments" 
         nzListType="picture-card" 
         [nzRemove]="removeFile" 

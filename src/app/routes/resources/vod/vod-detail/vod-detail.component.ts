@@ -197,6 +197,7 @@ export class VodDetailComponent implements OnInit {
         resourceType: environment.vodResourceTypeClassName,
         resourceId: this.resourceId,
         auditId: auditId ? auditId : 0,
+        permissions: this.vodResource?.permissions,
       },
       nzAfterClose: this.auditModalClosed,
       nzFooter: [

@@ -1,8 +1,6 @@
-import { componentFactoryName } from "@angular/compiler";
 import { Component, EventEmitter, Inject, Input, OnInit, Output } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { STChange, STColumn, STData } from "@delon/abc/st";
-import { DA_SERVICE_TOKEN, ITokenService } from "@delon/auth";
 import { SettingsService } from "@delon/theme";
 import { environment } from "@env/environment";
 import { NzImage, NzImageService } from "ng-zorro-antd/image";
@@ -11,7 +9,7 @@ import { NzModalService } from "ng-zorro-antd/modal";
 import { AttachmentBagService } from "src/app/core/services/attachment-bag.service";
 import { FieldAuditService } from "src/app/core/services/field-audit.service";
 import { IAttachmentBag } from "src/app/domains/iattachment-bag";
-import { ISignature } from "src/app/domains/isignature";
+import { Permission } from "src/app/domains/iresource-range-permission-wrapper";
 import { IFieldAudit } from "src/app/domains/resources/ifield-audit";
 import { AttachmentBagComponent } from "../attachment-bag/attachment-bag.component";
 
@@ -22,7 +20,6 @@ import { AttachmentBagComponent } from "../attachment-bag/attachment-bag.compone
 export class FieldAuditComponent implements OnInit {
     constructor(
         private fb: FormBuilder,
-        private msg: NzMessageService,
         private modal: NzModalService,
         private nzImageService: NzImageService,
         private fieldAuditService: FieldAuditService,
@@ -31,11 +28,12 @@ export class FieldAuditComponent implements OnInit {
       ) {}
     
       @Input() auditId = 0;
-      // @Input() weixingId !: number;
       // 现场审核意见对应的资源类型
       @Input() resourceType = '';
       // 资源id
       @Input() resourceId = 0;
+      // 权限
+      @Input() permissions : Array<{mask:Permission}> = [];
       // 附近包对话框关闭事件
       @Output() attachmentBagModalClosed = new EventEmitter();
     
@@ -186,6 +184,7 @@ export class FieldAuditComponent implements OnInit {
           nzComponentParams: {
             bagId: bagId ? bagId : 0,
             auditId: this.auditId,
+            permissions: this.permissions,
           },
           nzAfterClose: this.attachmentBagModalClosed,
           nzOnCancel: (component:any) => {
