@@ -19,7 +19,7 @@
 # Default server configuration
 #
 server {
-	listen 81;
+	listen 80;
 
 	location /test/ {
 		index index.html;
@@ -34,10 +34,6 @@ server {
 
 	location /test/api/ {
 		proxy_pass http://spring:8081/;
-	}
-
-	location /map/ {
-		proxy_pass https://apis.map.qq.com/;
 	}
 
 }
