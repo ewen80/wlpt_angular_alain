@@ -57,10 +57,6 @@
     </se>
     <se label="卫星名称" [error]="{ required: '不能为空' }">
       <nz-checkbox-group formControlName="wxmc"></nz-checkbox-group>
-      <!-- <nz-radio-group formControlName="wxmc">
-        <label nz-radio nzValue="亚太六号">亚太六号</label>
-        <label nz-radio nzValue="中星6B">中星6B</label>
-      </nz-radio-group> -->
     </se>
     <se label="卫星传输方式" [error]="{ required: '不能为空' }">
       <nz-radio-group formControlName="wxcsfs">
@@ -74,8 +70,8 @@
         <label nz-radio nzValue="模拟">模拟</label>
       </nz-radio-group>
     </se>
-    <se label="收视内容" col="1">
-      <nz-checkbox-group [(ngModel)]="ssnr" [ngModelOptions]="{ standalone: true }"></nz-checkbox-group>
+    <se label="收视内容" col="1" [error]="{ required: '不能为空' }">
+      <nz-checkbox-group formControlName="ssnr"></nz-checkbox-group>
     </se>
     <se label="设计安装单位名称" labelWidth="150" [error]="{ required: '不能为空' }">
       <input nz-input formControlName="sjazdwmc" required />
