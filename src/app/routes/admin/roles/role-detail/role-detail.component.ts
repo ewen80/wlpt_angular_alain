@@ -30,6 +30,8 @@ export class RoleDetailComponent implements OnInit {
   @ViewChild('usersTransfer')
   usersTransfer!: NzTransferComponent;
 
+  // 角色信息
+  roleInfo?: IRole;
   // 角色信息表
   roleInfoForm!: FormGroup;
   // 用户列表查询表
@@ -82,6 +84,7 @@ export class RoleDetailComponent implements OnInit {
   loadRole(roleId: string): void {
     this.roleInfoForm.controls.roleId.disable(); // 有角色id则禁用roleId输入框
     this.roleService.findOne(roleId).subscribe(role => {
+      this.roleInfo = role;
       this.roleInfoForm.controls.roleId.setValue(role.id);
       this.roleInfoForm.controls.roleName.setValue(role.name);
       this.roleInfoForm.controls.description.setValue(role.description);
@@ -96,7 +99,8 @@ export class RoleDetailComponent implements OnInit {
       const role: IRole = {
         id: this.roleInfoForm.controls.roleId.value,
         name: this.roleInfoForm.controls.roleName.value,
-        description: this.roleInfoForm.controls.description.value
+        description: this.roleInfoForm.controls.description.value,
+        userIds: this.roleInfo?.userIds,
       };
       this.roleService.save(role).subscribe({
         next: r => {

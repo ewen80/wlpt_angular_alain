@@ -11,9 +11,30 @@
     </se>
     <se-title>附件信息</se-title>
     <se>
-      <nz-upload [nzAction]="fileUploadServiceURL" [nzFileList]="attachments" [nzRemove]="removeFile" (nzChange)="handleChange($event)">
-        <button nz-button><i nz-icon nzType="upload"></i>上传附件</button>
+      <nz-upload [nzDisabled]="!canUpload"
+        [nzAction]="fileUploadServiceURL" 
+        [nzFileList]="attachments" 
+        nzListType="picture-card" 
+        [nzRemove]="removeFile" 
+        [nzPreview]="handlePreview"
+        (nzChange)="handleChange($event)">
+        <div>
+          <i nz-icon nzType="plus"></i>
+          <div style="margin-top: 8px">上传</div>
+        </div>
+        <!-- <button nz-button><i nz-icon nzType="upload"></i>上传附件</button> -->
       </nz-upload>
     </se>
   </form>
+
+  <nz-modal
+        [nzVisible]="previewVisible"
+        [nzContent]="modalContent"
+        [nzFooter]="null"
+        (nzOnCancel)="previewVisible = false"
+      >
+        <ng-template #modalContent>
+          <img [src]="previewImage" [ngStyle]="{ width: '100%' }" />
+        </ng-template>
+      </nz-modal>
   

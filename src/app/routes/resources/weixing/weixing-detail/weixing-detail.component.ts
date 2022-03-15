@@ -7,13 +7,11 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { FieldAuditService } from 'src/app/core/services/field-audit.service';
 import { WeixingResourceService } from 'src/app/core/services/weixing.service';
-import { Permission } from 'src/app/domains/iresource-range-permission-wrapper';
 import { Region } from 'src/app/domains/region';
 import { FieldAuditComponent } from '../../field-audit/field-audit.component';
 import * as FileSaver from 'file-saver';
 import { setAclAbility } from 'src/app/shared/utils/set-acl-ability';
 import { Observable, Subscription, timer } from 'rxjs';
-import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
 import { ValidateFunction } from 'ajv';
 import { SettingsService } from '@delon/theme';
 import { IWeixingResource } from 'src/app/domains/resources/iweixing-resource';
@@ -64,7 +62,7 @@ export class WeixingDetailComponent implements OnInit {
   ]
 
   // 收视内容选择框
-  ssnr = [
+  ssnrOptions = [
     {label: 'CCTV-法语', value: 'CCTV-法语', checked: false},
     {label: 'CCTV-西班牙语', value: 'CCTV-西班牙语'},
     {label: 'CCTV-阿拉伯语', value: 'CCTV-阿拉伯语'},
@@ -141,7 +139,7 @@ export class WeixingDetailComponent implements OnInit {
       lc: ['', [Validators.required]],
       zds: ['', [Validators.required]],
       lxdz: ['', [Validators.required]],
-      // ssnr: ['']
+      ssnr: [this.ssnrOptions, [this.ssnrRequiredValidator()]]
     });
 
     Region.codes.forEach((value: string, key: string) => {
@@ -171,6 +169,18 @@ export class WeixingDetailComponent implements OnInit {
     }
   }
 
+  // 收视内容必选验证器
+  ssnrRequiredValidator():ValidatorFn {
+    return (control:AbstractControl) => {
+      const options = control.value as Array<{label:string, value:string, checked?:boolean}>;
+      if(options.some(value=> value.checked)){
+        return null;
+      } else {
+        return {required:false}
+      }
+    }
+  }
+
   // 卫星名称必选验证器
   wxmcRequiredValidator(): ValidatorFn{
     return (control:AbstractControl) => {
@@ -184,7 +194,7 @@ export class WeixingDetailComponent implements OnInit {
   }
 
   // 初始化卫星名称复选框
-  jyfwInitial(wxmcStr:string): void{
+  wxmcInitial(wxmcStr:string): void{
     const wxmcArr = wxmcStr.split(",");
     this.wxmcOptions.forEach(option => {
       if(wxmcArr.find(wxmc=>option.value===wxmc)){
@@ -195,6 +205,20 @@ export class WeixingDetailComponent implements OnInit {
     })
     // 触发修改按钮表单认证
     this.resourceForm.controls.wxmc.updateValueAndValidity();
+  }
+
+  // 初始化收视内容选择框
+  ssnrInitial(ssnrStr: string) {
+    const ssnrArr = ssnrStr.split(",");
+    this.ssnrOptions.forEach(option => {
+      if(ssnrArr.find(ssnr=>option.value===ssnr)){
+        option.checked = true;
+      } else {
+        option.checked = false;
+      }
+    })
+    // 触发修改按钮表单认证
+    this.resourceForm.controls.ssnr.updateValueAndValidity();
   }
 
 
@@ -237,9 +261,9 @@ export class WeixingDetailComponent implements OnInit {
           this.resourceForm.controls.lxdz.setValue(data.lxdz);
 
           // 初始化收视内容
-          this.initSsnrCheckbox(data.ssnr);
+          this.ssnrInitial(data.ssnr);
           // 初始化卫星名称
-          this.jyfwInitial(data.wxmc);
+          this.wxmcInitial(data.wxmc);
           // n秒后设置该资源为已读
           if(this.weixingResource && !this.weixingResource.readed) {
             this.readSubscription = timer(environment.setReadSeconds).subscribe({
@@ -253,21 +277,12 @@ export class WeixingDetailComponent implements OnInit {
     }
   }
 
-  // 初始化收视内容选择框
-  initSsnrCheckbox(ssnr: string) {
-    const arrSsnr = ssnr.split(',');
-    this.ssnr.forEach(option=>{
-      if(arrSsnr.indexOf(option.value) > -1){
-        option.checked = true;
-      }
-    })
-  }
-
   save(): void {
     if (this.resourceForm.valid) {
       const wxmcArr = this.resourceForm.controls.wxmc.value as Array<{label:string,value:string,checked:boolean}>;
+      const ssnrArr = this.resourceForm.controls.ssnr.value as Array<{label:string,value:string,checked:boolean}>;
       // 转换收视内容
-      const strSsnr = this.ssnr.filter(option=>option.checked).map(option => {return option.value}).reduce((a,b)=>{return a+','+b+','});
+      // const strSsnr = this.ssnrOptions.filter(option=>option.checked).map(option => {return option.value}).reduce((a,b)=>{return a+','+b+','});
       if (this.resourceId) {
         // 如果是修改
         this.weixingResource!.qxId = this.resourceForm.controls.qxId.value;
@@ -289,7 +304,7 @@ export class WeixingDetailComponent implements OnInit {
           this.weixingResource!.jnssjmy = this.resourceForm.controls.jnssjmy.value;
         }
 
-        this.weixingResource!.ssnr = strSsnr;
+        // this.weixingResource!.ssnr = strSsnr;
         this.weixingResource!.wxmc = this.resourceForm.controls.wxmc.value;
         this.weixingResource!.wxcsfs = this.resourceForm.controls.wxcsfs.value;
         this.weixingResource!.xhtzfs = this.resourceForm.controls.xhtzfs.value;
@@ -302,6 +317,7 @@ export class WeixingDetailComponent implements OnInit {
         this.weixingResource!.lxdz = this.resourceForm.controls.lxdz.value;
 
         this.weixingResource!.wxmc = wxmcArr.filter(jyfw=>jyfw.checked===true).map(wxmc => wxmc.value).toString();
+        this.weixingResource!.ssnr = ssnrArr.filter(ssnr=>ssnr.checked===true).map(ssnr => ssnr.value).toString();
 
         this.weixingResourceService.update(this.weixingResource!).subscribe({
           next: () => {
@@ -337,9 +353,10 @@ export class WeixingDetailComponent implements OnInit {
           lpm: this.resourceForm.controls.lpm.value,
           lc: this.resourceForm.controls.lc.value,
           zds: this.resourceForm.controls.zds.value,
-          ssnr: strSsnr,
+          // ssnr: strSsnr,
           lxdz: this.resourceForm.controls.lxdz.value,
-          wxmc: wxmcArr.filter(jyfw=>jyfw.checked===true).map(wxmc => wxmc.value).toString()
+          wxmc: wxmcArr.filter(jyfw=>jyfw.checked===true).map(wxmc => wxmc.value).toString(),
+          ssnr: ssnrArr.filter(ssnr=>ssnr.checked===true).map(ssnr => ssnr.value).toString()
         };
 
         this.weixingResourceService.add(this.weixingResource!).subscribe({
@@ -365,6 +382,7 @@ export class WeixingDetailComponent implements OnInit {
         resourceType: environment.weixingResourceTypeClassName,
         resourceId: this.resourceId,
         auditId: auditId ? auditId : 0,
+        permissions: this.weixingResource?.permissions,
       },
       nzAfterClose: this.auditModalClosed,
       nzFooter: [

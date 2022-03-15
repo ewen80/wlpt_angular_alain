@@ -533,6 +533,7 @@ export class YuleDetailComponent implements OnInit {
         resourceType: environment.yuleResourceBaseTypeClassName,
         resourceId: this.resourceId,
         auditId: auditId ? auditId : 0,
+        permissions: this.yuleResourceBase?.permissions,
       },
       nzAfterClose: this.auditModalClosed,
       nzFooter: [

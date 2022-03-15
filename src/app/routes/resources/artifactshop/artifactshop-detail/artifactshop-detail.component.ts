@@ -178,6 +178,7 @@ export class ArtifactShopDetailComponent implements OnInit {
         resourceType: environment.artifactShopResourceTypeClassName,
         resourceId: this.resourceId,
         auditId: auditId ? auditId : 0,
+        permissions: this.resource?.permissions,
       },
       nzAfterClose: this.auditModalClosed,
       nzFooter: [

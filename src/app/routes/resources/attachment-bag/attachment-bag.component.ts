@@ -1,6 +1,7 @@
 import { formatDate } from "@angular/common";
 import { Component, Inject, Input, LOCALE_ID, OnInit, Output } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { ACLService } from "@delon/acl";
 import { environment } from "@env/environment";
 import { NzMessageService } from "ng-zorro-antd/message";
 import { NzUploadChangeParam, NzUploadFile } from "ng-zorro-antd/upload";
@@ -8,6 +9,8 @@ import { AttachmentBagService } from "src/app/core/services/attachment-bag.servi
 import { FileService } from "src/app/core/services/file.service";
 import { IAttachment } from "src/app/domains/iattachment";
 import { IAttachmentBag } from "src/app/domains/iattachment-bag";
+import { Permission } from "src/app/domains/iresource-range-permission-wrapper";
+import { setAclAbility } from "src/app/shared/utils/set-acl-ability";
 
 @Component({
     selector: 'app-attachment-bag',
@@ -23,6 +26,7 @@ export class AttachmentBagComponent implements OnInit {
 
     @Input() bagId = 0;
     @Input() auditId = 0;
+    @Input() permissions: {mask:Permission}[] = [];
 
     bagForm !: FormGroup;
     bagInfo?: IAttachmentBag;
@@ -30,12 +34,20 @@ export class AttachmentBagComponent implements OnInit {
     // 文件上传地址
     fileUploadServiceURL = environment.serverUrl + environment.serverFileServiceURL + "/upload"; 
 
+    // 上传图片预览参数
+    previewVisible = false;
+    previewImage?: string;
+
+    // 是否可以上传附件
+    canUpload = false;
+
     ngOnInit(): void {
       this.bagForm = this.fb.group({
           name: ['', [Validators.required]],
           memo: [''],
         })
       this.initBag(this.bagId);
+      this.initPermission();
     }
 
     initBag(bagId: number): void {
@@ -52,10 +64,34 @@ export class AttachmentBagComponent implements OnInit {
         
     }
 
+    // 初始化权限操作按钮
+    initPermission(): void {
+      // 如果有写权限
+      if(this.permissions.some(permission=> permission.mask === Permission.WRITE )) {
+        this.canUpload = true;
+      } else {
+        this.canUpload = false;
+      }
+    }
+
     // 删除附件
     removeFile = (file: NzUploadFile) => {
-        return this.fileService.removeFile(file.response.name);
+      if(this.permissions.some(permission=>permission.mask===Permission.WRITE)) {
+        return this.fileService.removeFile(file.response.path);
+      } else {
+        return false;
+      }
     };
+
+    // 清理无效附件
+    clearAttachments():void {
+      // 如果没有附件包id，且已经上传了附件则删除所有附件
+      if(!this.bagId) {
+        this.attachments.forEach(attachment=>{
+          this.fileService.removeFile(attachment.response.path).subscribe();
+        })
+      }
+    }
 
     // 处理上传列表
     handleChange(info: NzUploadChangeParam): void {
@@ -69,7 +105,7 @@ export class AttachmentBagComponent implements OnInit {
     
         if (info.file.status === 'done') {
           fileList.map(file => {
-            file.url = `${environment.serverFileDownloadRootUrl}\\${file.response.name}`;
+            file.url = `${environment.serverFileDownloadRootUrl}\\${file.response.path}?name=${file.response.name}`;
           });
           this.attachments = fileList;
           if (this.bagInfo?.id) {
@@ -97,7 +133,7 @@ export class AttachmentBagComponent implements OnInit {
           this.attachments.forEach(attachment => {
             attachs.push({
               name: attachment.name,
-              path: attachment.response.name,
+              path: attachment.response.path,
               date: attachment.response.date
             });
           });
@@ -132,9 +168,10 @@ export class AttachmentBagComponent implements OnInit {
             uid: attachment.id!,
             name: attachment.name,
             status: 'done',
-            url: `${environment.serverFileDownloadRootUrl}\\${attachment.path}`,
+            url: `${environment.serverFileDownloadRootUrl}\\${attachment.path}?name=${attachment.name}`,
             response: {
-              name: attachment.path,
+              name: attachment.name,
+              path: attachment.path,
               date: attachment.date,
               status: 'done'
             }
@@ -142,4 +179,9 @@ export class AttachmentBagComponent implements OnInit {
         });
       }
 
+      // 图片预览处理
+      handlePreview = async (file: NzUploadFile): Promise<void> => {
+        this.previewImage = file.url;
+        this.previewVisible = true;
+      };
 }

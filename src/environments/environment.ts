@@ -9,7 +9,7 @@ export const environment = {
   // 服务器后端根地址
   serverUrl: `http://localhost:4200/api`,
   // 后台文件下载根地址
-  serverFileDownloadRootUrl: 'http://localhost/waap/downloads/',
+  serverFileDownloadRootUrl: 'http://localhost:8888/downloads',
   // 服务器初始化服务地址
   serverInitMenuURL: '/admin/menuinit',
   // 服务器后端token刷新验证地址

@@ -5,7 +5,7 @@ export const environment = {
   // 服务器后端根地址
   serverUrl: `https://changdi.shssgc.org.cn/test/api`,
   // 后台文件下载根地址
-  serverFileDownloadRootUrl: 'http://changdi.shssgc.org.cn/test/downloads/',
+  serverFileDownloadRootUrl: 'https://changdi.shssgc.org.cn/test/downloads',
   // 服务器初始化服务地址
   serverInitMenuURL: '/admin/menuinit',
   // 服务器后端token刷新验证地址
@@ -62,7 +62,8 @@ export const environment = {
   // 默认场地审核单位名称
   defaultFieldAuditDepartment: '上海市社会文化管理处',
   // 场地审核GPS图片显示配置
-  fieldAuditGpsUrl: 'https://apis.map.qq.com/ws/staticmap/v2/', // api接口地址
+  // fieldAuditGpsUrl: 'https://apis.map.qq.com/ws/staticmap/v2/', // api接口地址
+  fieldAuditGpsUrl: 'https://changdi.shssgc.org.cn/test//map/ws/staticmap/v2/', // api接口地址
   fieldAuditGpsKey: '5VHBZ-PGARD-NZ44L-HC5UV-A36GQ-M4BMU', // api key
   fieldAuditGpsWidth:1000, // 图片宽度
   fieldAuditGpsHeight:800,  // 图片高度
