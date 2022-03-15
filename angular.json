@@ -79,7 +79,12 @@
               "file-saver",
               "hammerjs",
               "date-fns"
-            ]
+            ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "node_modules/"
+              ]
+            }
           },
           "configurations": {
             "production": {
@@ -207,5 +212,8 @@
       }
     }
   },
-  "defaultProject": "waap"
+  "defaultProject": "waap",
+  "cli": {
+    "packageManager": "yarn"
+  }
 }
